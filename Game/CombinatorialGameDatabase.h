@@ -1,46 +1,36 @@
 //
 // Created by ardour on 08-02-22.
 //
+#pragma once
 
 #ifndef CGSYNCH_2_COMBINATORIALGAMEDATABASE_H
 #define CGSYNCH_2_COMBINATORIALGAMEDATABASE_H
 
 
-#include <unordered_map>
+#include <vector>
 #include <unordered_set>
-#include <utility>
 #include "CombinatorialGame.h"
-#include <boost/container_hash/hash.hpp>
+
+typedef size_t GameId;
+class CombinatorialGame;
 
 class CGDatabase {
 public:
-	CGDatabase() = default;
-	~CGDatabase();
+	CGDatabase();
+//	~CGDatabase();
 
+    GameId createGameId(std::unordered_set<GameId> left, std::unordered_set<GameId> right);
+    CombinatorialGame& createGame(std::unordered_set<GameId> left, std::unordered_set<GameId> right);
+    CombinatorialGame& getGame(GameId id) { return existingGames.at(id); }
 
-	CombinatorialGame* getGameWithSets(const std::unordered_set<CombinatorialGame*>&, const std::unordered_set<CombinatorialGame*>&);
-	// Gets the combinatorial game by the left and right options of an existing game
-	CombinatorialGame* getGame(CombinatorialGame*);
+    CombinatorialGame& getZero() { return getGame(0); }
+
 private:
-
-	typedef std::pair<
-		std::unordered_set<CombinatorialGame*>,
-		std::unordered_set<CombinatorialGame*>
-	> OptionSetPair;
-
-	std::unordered_map<
-		OptionSetPair,
-		CombinatorialGame*
-	> database;
+    std::vector<CombinatorialGame> existingGames;
 };
 
-//class pairHash {
-//	size_t operator()(std::pair<std::unordered_set<CombinatorialGame*>, std::unordered_set<CombinatorialGame*>> pair) const {
-//		return pair.first.hash_function() ^ std::hash(pair.second);
-//	}
-//};
-
-CGDatabase cgDatabase;
+#define GAME(game) (cgDatabase.getGame(game))
+extern CGDatabase cgDatabase;
 
 
 

@@ -8,6 +8,9 @@
 #include <vector>
 #include <string>
 #include <unordered_set>
+#include "CombinatorialGameDatabase.h"
+
+typedef size_t GameId;
 
 enum class WinningPlayer {
 	LEFT,
@@ -22,23 +25,25 @@ std::ostream& operator<<(std::ostream &os, WinningPlayer winningPlayer);
 
 class CombinatorialGame {
 public:
-	CombinatorialGame(std::unordered_set<CombinatorialGame*>& rightOptions, std::unordered_set<CombinatorialGame*>& leftOptions);
-	CombinatorialGame(const CombinatorialGame& other);
-	void copyCache(const CombinatorialGame& other);
 
-	std::string getDisplayString() {
-		return "0";
-	}
+    // DO NOT USE THIS! Instead, use cgDatabase.createGame(leftOptions, rightOptions);
+    CombinatorialGame(std::unordered_set<GameId> leftOptions, std::unordered_set<GameId> rightOptions, GameId id);
+	CombinatorialGame(const CombinatorialGame& other);
+
+    void copyCache(const CombinatorialGame& other);
+
+	std::string getDisplayString();
 
 	WinningPlayer getWinner();
+    size_t getBirthday();
 
-	const std::unordered_set<CombinatorialGame*>& getLeftOptions() const { return leftOptions; }
-	const std::unordered_set<CombinatorialGame*>& getRightOptions() const { return rightOptions; }
+	const std::unordered_set<GameId>& getLeftOptions() const { return leftOptions; }
+	const std::unordered_set<GameId>& getRightOptions() const { return rightOptions; }
 
 
-	CombinatorialGame* operator-() const;
-	CombinatorialGame* operator+(const CombinatorialGame& other) const;
-	CombinatorialGame* operator-(const CombinatorialGame& other) const;
+	CombinatorialGame* operator-();
+	CombinatorialGame* operator+(const CombinatorialGame& other);
+	CombinatorialGame* operator-(const CombinatorialGame& other);
 	// == means isomorphic, use .equals() to test for equality.
 	bool operator==(const CombinatorialGame& other) const;
 
@@ -49,11 +54,12 @@ public:
 private:
 	CombinatorialGame() = default;
 
-	std::unordered_set<CombinatorialGame*> leftOptions;
-	std::unordered_set<CombinatorialGame*> rightOptions;
-	std::string displayName;
-	const size_t id;
+	std::unordered_set<GameId> leftOptions;
+	std::unordered_set<GameId> rightOptions;
+    std::unordered_set<GameId> parents;
+    const size_t id;
 
+	std::string displayString;
 	WinningPlayer cachedWinner = WinningPlayer::NONE;
 };
 

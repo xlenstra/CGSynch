@@ -1,33 +1,19 @@
-//
-// Created by ardour on 08-02-22.
-//
-
+////
+//// Created by ardour on 08-02-22.
+////
 #include "CombinatorialGameDatabase.h"
 
-CGDatabase::~CGDatabase() {
-	for (auto [key, value] : database) {
-		delete value;
-	}
+GameId CGDatabase::createGameId(std::unordered_set<GameId> left, std::unordered_set<GameId> right) {
+    existingGames.emplace_back(left, right, existingGames.size());
+    return existingGames.size()-1;
 }
 
-CombinatorialGame* CGDatabase::getGameWithSets(
-	const std::unordered_set<CombinatorialGame*>& leftOptions,
-	const std::unordered_set<CombinatorialGame*>& rightOptions
-) {
-	std::pair<std::unordered_set<CombinatorialGame*>, std::unordered_set<CombinatorialGame*>> positionSets =
-		std::make_pair(leftOptions, rightOptions);
+CombinatorialGame& CGDatabase::createGame(std::unordered_set<GameId> left, std::unordered_set<GameId> right) {
+    return getGame(createGameId(left, right));
 }
 
-
-CombinatorialGame* CGDatabase::getGame(CombinatorialGame* game) {
-	std::pair<std::unordered_set<CombinatorialGame*>, std::unordered_set<CombinatorialGame*>> positionSets =
-		std::make_pair(game->getLeftOptions(), game->getRightOptions());
-	if (database.contains(positionSets)) {
-		return database[positionSets];
-	} else {
-		database[positionSets] = game;
-		return game;
-	}
+CGDatabase::CGDatabase() {
+    existingGames.emplace_back(std::unordered_set<GameId>(), std::unordered_set<GameId>(), 0);
 }
 
-
+CGDatabase cgDatabase;

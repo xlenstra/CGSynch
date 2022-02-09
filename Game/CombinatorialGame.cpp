@@ -6,9 +6,7 @@
 #include <utility>
 #include <iostream>
 #include "CombinatorialGame.h"
-#include "CombinatorialGameDatabase.h"
 
-size_t next_unused_id = 0;
 
 std::ostream& operator<<(std::ostream& os, WinningPlayer winningPlayer) {
 	static const std::string LEFT = "LEFT";
@@ -28,17 +26,18 @@ std::ostream& operator<<(std::ostream& os, WinningPlayer winningPlayer) {
 
 
 CombinatorialGame::CombinatorialGame(
-	std::unordered_set<CombinatorialGame*>& rightOptions,
-	std::unordered_set<CombinatorialGame*>& leftOptions
-) : leftOptions(std::move(leftOptions)), rightOptions(std::move(rightOptions)), id(next_unused_id) {
-	next_unused_id++;
-}
+    std::unordered_set<GameId> leftOptions,
+    std::unordered_set<GameId> rightOptions,
+    GameId id
+) : leftOptions(std::move(leftOptions)), rightOptions(std::move(rightOptions)), id(id) {}
 
 
-CombinatorialGame::CombinatorialGame(const CombinatorialGame& other) {
-	leftOptions = other.leftOptions;
-	rightOptions = other.rightOptions;
-	copyCache();
+CombinatorialGame::CombinatorialGame(const CombinatorialGame& other) :
+    leftOptions(other.leftOptions),
+    rightOptions(other.rightOptions),
+    id(other.id)
+{
+	copyCache(other);
 }
 
 
@@ -50,15 +49,15 @@ WinningPlayer CombinatorialGame::getWinner() {
 	} else {
 		bool leftHasWinningMove = false;
 		bool rightHasWinningMove = false;
-		for (auto& game : leftOptions) {
-			WinningPlayer leftWinner = game.getWinner();
+		for (const auto& gameId : leftOptions) {
+			WinningPlayer leftWinner = GAME(gameId).getWinner();
 			if (leftWinner == WinningPlayer::LEFT || leftWinner == WinningPlayer::PREVIOUS) {
 				leftHasWinningMove = true;
 				break;
 			}
 		}
-		for (auto& game : rightOptions) {
-			WinningPlayer rightWinner = game.getWinner();
+		for (const auto& gameId : rightOptions) {
+			WinningPlayer rightWinner = GAME(gameId).getWinner();
 			if (rightWinner == WinningPlayer::RIGHT || rightWinner == WinningPlayer::PREVIOUS) {
 				rightHasWinningMove = true;
 				break;
@@ -69,26 +68,25 @@ WinningPlayer CombinatorialGame::getWinner() {
 		else if (rightHasWinningMove) winner = WinningPlayer::RIGHT;
 		else winner = WinningPlayer::PREVIOUS;
 	}
-	std::cout << "Winner has been found to be " << winner << std::endl;
 	cachedWinner = winner;
 	return winner;
 }
 
-CombinatorialGame* CombinatorialGame::operator-() const {
-	std::unordered_set<CombinatorialGame*> newRightOptions;
-	newRightOptions.reserve(leftOptions.size());
-	for (const auto& leftOption : leftOptions) {
-		newRightOptions.insert(cgDatabase.getGame(-*leftOption));
-	}
-	std::unordered_set<CombinatorialGame*> newLeftOptions;
-	newLeftOptions.reserve(rightOptions.size());
-	for (const auto& rightOption: rightOptions) {
-		newLeftOptions.insert(cgDatabase.getGame(-*rightOption));
-	}
-	return cgDatabase.getGameWithSets(newLeftOptions,newRightOptions);
+CombinatorialGame* CombinatorialGame::operator-() {
+//	std::unordered_set<GameId> newRightOptions;
+//	newRightOptions.reserve(leftOptions.size());
+//	for (const auto& leftOption : leftOptions) {
+//		newRightOptions.insert(-cgDatabase.getGame(leftOption));
+//	}
+//	std::unordered_set<GameId> newLeftOptions;
+//	newLeftOptions.reserve(rightOptions.size());
+//	for (const auto& rightOption: rightOptions) {
+//		newLeftOptions.insert(-cgDatabase.getGame(rightOption));
+//	}
+//	return cgDatabase.getGameWithSets(newLeftOptions,newRightOptions);
 }
 
-CombinatorialGame* CombinatorialGame::operator+(const CombinatorialGame& other) const {
+CombinatorialGame* CombinatorialGame::operator+(const CombinatorialGame& other) {
 //	std::unordered_set<CombinatorialGame> newLeftOptions;
 //	std::unordered_set<CombinatorialGame> newRightOptions;
 //	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
@@ -108,7 +106,7 @@ CombinatorialGame* CombinatorialGame::operator+(const CombinatorialGame& other) 
 //	return CombinatorialGame(newLeftOptions, newRightOptions);
 }
 
-CombinatorialGame* CombinatorialGame::operator-(const CombinatorialGame& other) const {
+CombinatorialGame* CombinatorialGame::operator-(const CombinatorialGame& other) {
 //	std::unordered_set<CombinatorialGame> newLeftOptions;
 //	std::unordered_set<CombinatorialGame> newRightOptions;
 //
@@ -121,6 +119,36 @@ bool CombinatorialGame::operator==(const CombinatorialGame& other) const {
 
 void CombinatorialGame::copyCache(const CombinatorialGame& other) {
 	cachedWinner = std::max(other.cachedWinner, cachedWinner);
-	if (!displayName.empty())
-		displayName = other.displayName;
+	if (!displayString.empty())
+        displayString = other.displayString;
 }
+
+std::string CombinatorialGame::getDisplayString() {
+    if (!displayString.empty()) return displayString;
+    displayString = "{";
+    for (const auto &leftId: leftOptions) {
+        displayString += GAME(leftId).getDisplayString() + ",";
+    }
+    if (!leftOptions.empty()) displayString += "\b"; // remove trailing ,
+    displayString += "|";
+    for (const auto &rightId: rightOptions) {
+        displayString += GAME(rightId).getDisplayString() + ",";
+    }
+    if (!rightOptions.empty()) displayString += "\b"; // remove trailing ,
+    displayString += "}";
+    return displayString;
+}
+
+size_t CombinatorialGame::getBirthday() {
+    if (leftOptions.empty() && rightOptions.empty()) return 0;
+    size_t maxFound = 0;
+    for (const auto& leftId : leftOptions) {
+        maxFound = std::max(maxFound, GAME(leftId).getBirthday());
+    }
+    for (const auto& rightId: rightOptions) {
+        maxFound = std::max(maxFound, GAME(rightId).getBirthday());
+    }
+    return maxFound + 1;
+}
+
+
