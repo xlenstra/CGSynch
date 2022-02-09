@@ -41,9 +41,9 @@ public:
 	const std::unordered_set<GameId>& getRightOptions() const { return rightOptions; }
 
 
-	CombinatorialGame* operator-();
-	CombinatorialGame* operator+(const CombinatorialGame& other);
-	CombinatorialGame* operator-(const CombinatorialGame& other);
+	GameId operator-();
+    GameId operator+(const CombinatorialGame& other);
+    GameId operator-(const CombinatorialGame& other);
 	// == means isomorphic, use .equals() to test for equality.
 	bool operator==(const CombinatorialGame& other) const;
 

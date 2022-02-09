@@ -18,18 +18,23 @@ class CGDatabase {
 public:
 	CGDatabase();
 //	~CGDatabase();
+    void print(std::ostream& os);
 
-    GameId createGameId(std::unordered_set<GameId> left, std::unordered_set<GameId> right);
-    CombinatorialGame& createGame(std::unordered_set<GameId> left, std::unordered_set<GameId> right);
+    GameId createGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
+    CombinatorialGame& createGame(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
     CombinatorialGame& getGame(GameId id) { return existingGames.at(id); }
 
     CombinatorialGame& getZero() { return getGame(0); }
 
+    const GameId zeroId = 0;
+
 private:
     std::vector<CombinatorialGame> existingGames;
 };
+std::ostream& operator<<(std::ostream& os, CGDatabase database);
 
-#define GAME(game) (cgDatabase.getGame(game))
+#define GET_GAME(gameId) (cgDatabase.getGame(gameId))
+#define GAME(left, right) (cgDatabase.createGame(left, right))
 extern CGDatabase cgDatabase;
 
 
