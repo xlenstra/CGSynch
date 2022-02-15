@@ -8,7 +8,13 @@
 #include <vector>
 #include <string>
 #include <unordered_set>
+#include <compare>
 #include "CombinatorialGameDatabase.h"
+#include "util.h"
+
+// Many of these functions are marked as 'const'. However, not all of them actually are.
+// 'const' only means the games themselves are not changed, but indirectly they may call
+// functions which cache more properties of this game.
 
 typedef size_t GameId;
 
@@ -40,27 +46,38 @@ public:
 	const std::unordered_set<GameId>& getLeftOptions() const { return leftOptions; }
 	const std::unordered_set<GameId>& getRightOptions() const { return rightOptions; }
 
+	CombinatorialGame& getCanonicalForm();
+	bool isInteger();
 
-	GameId operator-();
-    GameId operator+(const CombinatorialGame& other);
-    GameId operator-(const CombinatorialGame& other);
-	// == means isomorphic, use .equals() to test for equality.
+
+	CombinatorialGame& operator-() const;
+	CombinatorialGame& operator+(const CombinatorialGame& other) const;
+	CombinatorialGame& operator-(const CombinatorialGame& other) const;
+	/** == means isomorphic, use `a \<=> b == 0` to test for equality in the combinatorial game sense. */
 	bool operator==(const CombinatorialGame& other) const;
+	std::partial_ordering operator<=>(const CombinatorialGame& other) const;
 
 	[[nodiscard]] size_t getId() const {
 		return id;
 	}
 
 private:
-	CombinatorialGame() = default;
 
 	std::unordered_set<GameId> leftOptions;
 	std::unordered_set<GameId> rightOptions;
-    std::unordered_set<GameId> parents;
+//    std::unordered_set<GameId> parents;
     const size_t id;
 
-	std::string displayString;
-	WinningPlayer cachedWinner = WinningPlayer::NONE;
+
+	// CACHE BLOCK
+		std::string displayString = "";
+		WinningPlayer cachedWinner = WinningPlayer::NONE;
+		GameId canonicalFormId = -1;
+		std::optional<bool> cachedIsInteger;
+	///
+
+
+	CombinatorialGame& getSimplestAlreadyCalculatedForm() const;
 };
 
 

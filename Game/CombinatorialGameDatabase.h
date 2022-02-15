@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <unordered_set>
+#include <memory>
 #include "CombinatorialGame.h"
 
 typedef size_t GameId;
@@ -22,19 +23,19 @@ public:
 
     GameId createGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
     CombinatorialGame& createGame(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
-    CombinatorialGame& getGame(GameId id) { return existingGames.at(id); }
+    inline CombinatorialGame& getGame(GameId id) { return *existingGames.at(id); }
 
     CombinatorialGame& getZero() { return getGame(0); }
 
     const GameId zeroId = 0;
 
 private:
-    std::vector<CombinatorialGame> existingGames;
+    std::vector<std::shared_ptr<CombinatorialGame>> existingGames;
 };
 std::ostream& operator<<(std::ostream& os, CGDatabase database);
 
 #define GET_GAME(gameId) (cgDatabase.getGame(gameId))
-#define GAME(left, right) (cgDatabase.createGame(left, right))
+#define CREATE_GAME(left, right) (cgDatabase.createGame(left, right))
 extern CGDatabase cgDatabase;
 
 
