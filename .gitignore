@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Building folders
+*[cC][mM]ake*
+!CMakeLists.txt
+CGSynch_2
+CGSynch_2.cbp
+.idea/*
+
+# Scratch files
+Scratch/*
