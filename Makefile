@@ -129,77 +129,125 @@ CGSynch_2/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/build
 .PHONY : CGSynch_2/fast
 
-Game/CombinatorialGame.o: Game/CombinatorialGame.cpp.o
-.PHONY : Game/CombinatorialGame.o
+AbstractGame/CombinatorialGame.o: AbstractGame/CombinatorialGame.cpp.o
+.PHONY : AbstractGame/CombinatorialGame.o
 
 # target to build an object file
-Game/CombinatorialGame.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/CombinatorialGame.cpp.o
-.PHONY : Game/CombinatorialGame.cpp.o
+AbstractGame/CombinatorialGame.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/CombinatorialGame.cpp.o
+.PHONY : AbstractGame/CombinatorialGame.cpp.o
 
-Game/CombinatorialGame.i: Game/CombinatorialGame.cpp.i
-.PHONY : Game/CombinatorialGame.i
+AbstractGame/CombinatorialGame.i: AbstractGame/CombinatorialGame.cpp.i
+.PHONY : AbstractGame/CombinatorialGame.i
 
 # target to preprocess a source file
-Game/CombinatorialGame.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/CombinatorialGame.cpp.i
-.PHONY : Game/CombinatorialGame.cpp.i
+AbstractGame/CombinatorialGame.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/CombinatorialGame.cpp.i
+.PHONY : AbstractGame/CombinatorialGame.cpp.i
 
-Game/CombinatorialGame.s: Game/CombinatorialGame.cpp.s
-.PHONY : Game/CombinatorialGame.s
+AbstractGame/CombinatorialGame.s: AbstractGame/CombinatorialGame.cpp.s
+.PHONY : AbstractGame/CombinatorialGame.s
 
 # target to generate assembly for a file
-Game/CombinatorialGame.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/CombinatorialGame.cpp.s
-.PHONY : Game/CombinatorialGame.cpp.s
+AbstractGame/CombinatorialGame.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/CombinatorialGame.cpp.s
+.PHONY : AbstractGame/CombinatorialGame.cpp.s
 
-Game/CombinatorialGameDatabase.o: Game/CombinatorialGameDatabase.cpp.o
-.PHONY : Game/CombinatorialGameDatabase.o
+AbstractGame/CombinatorialGameDatabase.o: AbstractGame/CombinatorialGameDatabase.cpp.o
+.PHONY : AbstractGame/CombinatorialGameDatabase.o
 
 # target to build an object file
-Game/CombinatorialGameDatabase.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/CombinatorialGameDatabase.cpp.o
-.PHONY : Game/CombinatorialGameDatabase.cpp.o
+AbstractGame/CombinatorialGameDatabase.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/CombinatorialGameDatabase.cpp.o
+.PHONY : AbstractGame/CombinatorialGameDatabase.cpp.o
 
-Game/CombinatorialGameDatabase.i: Game/CombinatorialGameDatabase.cpp.i
-.PHONY : Game/CombinatorialGameDatabase.i
+AbstractGame/CombinatorialGameDatabase.i: AbstractGame/CombinatorialGameDatabase.cpp.i
+.PHONY : AbstractGame/CombinatorialGameDatabase.i
 
 # target to preprocess a source file
-Game/CombinatorialGameDatabase.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/CombinatorialGameDatabase.cpp.i
-.PHONY : Game/CombinatorialGameDatabase.cpp.i
+AbstractGame/CombinatorialGameDatabase.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/CombinatorialGameDatabase.cpp.i
+.PHONY : AbstractGame/CombinatorialGameDatabase.cpp.i
 
-Game/CombinatorialGameDatabase.s: Game/CombinatorialGameDatabase.cpp.s
-.PHONY : Game/CombinatorialGameDatabase.s
+AbstractGame/CombinatorialGameDatabase.s: AbstractGame/CombinatorialGameDatabase.cpp.s
+.PHONY : AbstractGame/CombinatorialGameDatabase.s
 
 # target to generate assembly for a file
-Game/CombinatorialGameDatabase.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/CombinatorialGameDatabase.cpp.s
-.PHONY : Game/CombinatorialGameDatabase.cpp.s
+AbstractGame/CombinatorialGameDatabase.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/CombinatorialGameDatabase.cpp.s
+.PHONY : AbstractGame/CombinatorialGameDatabase.cpp.s
 
-Game/SynchronousGame.o: Game/SynchronousGame.cpp.o
-.PHONY : Game/SynchronousGame.o
+AbstractGame/SynchronousGame.o: AbstractGame/SynchronousGame.cpp.o
+.PHONY : AbstractGame/SynchronousGame.o
 
 # target to build an object file
-Game/SynchronousGame.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/SynchronousGame.cpp.o
-.PHONY : Game/SynchronousGame.cpp.o
+AbstractGame/SynchronousGame.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/SynchronousGame.cpp.o
+.PHONY : AbstractGame/SynchronousGame.cpp.o
 
-Game/SynchronousGame.i: Game/SynchronousGame.cpp.i
-.PHONY : Game/SynchronousGame.i
+AbstractGame/SynchronousGame.i: AbstractGame/SynchronousGame.cpp.i
+.PHONY : AbstractGame/SynchronousGame.i
 
 # target to preprocess a source file
-Game/SynchronousGame.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/SynchronousGame.cpp.i
-.PHONY : Game/SynchronousGame.cpp.i
+AbstractGame/SynchronousGame.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/SynchronousGame.cpp.i
+.PHONY : AbstractGame/SynchronousGame.cpp.i
 
-Game/SynchronousGame.s: Game/SynchronousGame.cpp.s
-.PHONY : Game/SynchronousGame.s
+AbstractGame/SynchronousGame.s: AbstractGame/SynchronousGame.cpp.s
+.PHONY : AbstractGame/SynchronousGame.s
 
 # target to generate assembly for a file
-Game/SynchronousGame.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/Game/SynchronousGame.cpp.s
-.PHONY : Game/SynchronousGame.cpp.s
+AbstractGame/SynchronousGame.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/SynchronousGame.cpp.s
+.PHONY : AbstractGame/SynchronousGame.cpp.s
+
+CombinatorialRuleset/RulesetDatabase.o: CombinatorialRuleset/RulesetDatabase.cpp.o
+.PHONY : CombinatorialRuleset/RulesetDatabase.o
+
+# target to build an object file
+CombinatorialRuleset/RulesetDatabase.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialRuleset/RulesetDatabase.cpp.o
+.PHONY : CombinatorialRuleset/RulesetDatabase.cpp.o
+
+CombinatorialRuleset/RulesetDatabase.i: CombinatorialRuleset/RulesetDatabase.cpp.i
+.PHONY : CombinatorialRuleset/RulesetDatabase.i
+
+# target to preprocess a source file
+CombinatorialRuleset/RulesetDatabase.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialRuleset/RulesetDatabase.cpp.i
+.PHONY : CombinatorialRuleset/RulesetDatabase.cpp.i
+
+CombinatorialRuleset/RulesetDatabase.s: CombinatorialRuleset/RulesetDatabase.cpp.s
+.PHONY : CombinatorialRuleset/RulesetDatabase.s
+
+# target to generate assembly for a file
+CombinatorialRuleset/RulesetDatabase.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialRuleset/RulesetDatabase.cpp.s
+.PHONY : CombinatorialRuleset/RulesetDatabase.cpp.s
+
+CombinatorialRuleset/RulesetMath.o: CombinatorialRuleset/RulesetMath.cpp.o
+.PHONY : CombinatorialRuleset/RulesetMath.o
+
+# target to build an object file
+CombinatorialRuleset/RulesetMath.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialRuleset/RulesetMath.cpp.o
+.PHONY : CombinatorialRuleset/RulesetMath.cpp.o
+
+CombinatorialRuleset/RulesetMath.i: CombinatorialRuleset/RulesetMath.cpp.i
+.PHONY : CombinatorialRuleset/RulesetMath.i
+
+# target to preprocess a source file
+CombinatorialRuleset/RulesetMath.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialRuleset/RulesetMath.cpp.i
+.PHONY : CombinatorialRuleset/RulesetMath.cpp.i
+
+CombinatorialRuleset/RulesetMath.s: CombinatorialRuleset/RulesetMath.cpp.s
+.PHONY : CombinatorialRuleset/RulesetMath.s
+
+# target to generate assembly for a file
+CombinatorialRuleset/RulesetMath.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialRuleset/RulesetMath.cpp.s
+.PHONY : CombinatorialRuleset/RulesetMath.cpp.s
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -234,15 +282,21 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... CGSynch_2"
-	@echo "... Game/CombinatorialGame.o"
-	@echo "... Game/CombinatorialGame.i"
-	@echo "... Game/CombinatorialGame.s"
-	@echo "... Game/CombinatorialGameDatabase.o"
-	@echo "... Game/CombinatorialGameDatabase.i"
-	@echo "... Game/CombinatorialGameDatabase.s"
-	@echo "... Game/SynchronousGame.o"
-	@echo "... Game/SynchronousGame.i"
-	@echo "... Game/SynchronousGame.s"
+	@echo "... AbstractGame/CombinatorialGame.o"
+	@echo "... AbstractGame/CombinatorialGame.i"
+	@echo "... AbstractGame/CombinatorialGame.s"
+	@echo "... AbstractGame/CombinatorialGameDatabase.o"
+	@echo "... AbstractGame/CombinatorialGameDatabase.i"
+	@echo "... AbstractGame/CombinatorialGameDatabase.s"
+	@echo "... AbstractGame/SynchronousGame.o"
+	@echo "... AbstractGame/SynchronousGame.i"
+	@echo "... AbstractGame/SynchronousGame.s"
+	@echo "... CombinatorialRuleset/RulesetDatabase.o"
+	@echo "... CombinatorialRuleset/RulesetDatabase.i"
+	@echo "... CombinatorialRuleset/RulesetDatabase.s"
+	@echo "... CombinatorialRuleset/RulesetMath.o"
+	@echo "... CombinatorialRuleset/RulesetMath.i"
+	@echo "... CombinatorialRuleset/RulesetMath.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

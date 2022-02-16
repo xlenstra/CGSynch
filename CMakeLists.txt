@@ -5,4 +5,18 @@ add_compile_options(-Wall -Wextra)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
 
-add_executable(CGSynch_2 main.cpp Game/CombinatorialGame.cpp Game/SynchronousGame.cpp Game/CombinatorialGame.h Game/SynchronousGame.h Game/CombinatorialGameDatabase.cpp Game/CombinatorialGameDatabase.h Game/util.h)
+add_executable(CGSynch_2
+        main.cpp
+        AbstractGame/CombinatorialGame.cpp
+        AbstractGame/SynchronousGame.cpp
+        AbstractGame/CombinatorialGame.h
+        AbstractGame/SynchronousGame.h
+        AbstractGame/CombinatorialGameDatabase.cpp
+        AbstractGame/CombinatorialGameDatabase.h
+        AbstractGame/util.h
+        CombinatorialRuleset/RulesetMath.h
+        CombinatorialRuleset/RulesetMath.cpp
+        CombinatorialRuleset/Ruleset.h
+        CombinatorialRuleset/RulesetDatabase.h
+        CombinatorialRuleset/RulesetDatabase.cpp
+    )

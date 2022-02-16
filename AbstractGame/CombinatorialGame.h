@@ -74,13 +74,11 @@ private:
 		WinningPlayer cachedWinner = WinningPlayer::NONE;
 		GameId canonicalFormId = -1;
 		std::optional<bool> cachedIsInteger;
-	///
+	//
 
 
 	CombinatorialGame& getSimplestAlreadyCalculatedForm() const;
 };
-
-
 
 
 
