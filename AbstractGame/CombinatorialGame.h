@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_set>
 #include <compare>
+#include <boost/optional.hpp>
 #include "CombinatorialGameDatabase.h"
 #include "util.h"
 
@@ -73,7 +74,7 @@ private:
 		std::string displayString = "";
 		WinningPlayer cachedWinner = WinningPlayer::NONE;
 		GameId canonicalFormId = -1;
-		std::optional<bool> cachedIsInteger;
+		boost::optional<bool> cachedIsInteger;
 	//
 
 

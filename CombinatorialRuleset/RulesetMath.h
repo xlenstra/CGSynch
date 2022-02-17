@@ -6,7 +6,7 @@
 #define CGSYNCH_2_RULESETMATH_H
 
 #include <string>
-#include "Ruleset.h"
+#include "AbstractRuleset.h"
 
 /** A class implementing the ruleset called 'the mathematical notation of games'.
  * A board position consists of two sets, the left set and the right set.
@@ -19,7 +19,7 @@
  * The left set is written between the first { and the outermost |,
  * the right set between the outermost | and the last }.
  */
-class MathRuleset : public Ruleset<std::string> {
+class MathRuleset : public AbstractRuleset<std::string> {
 public:
 	MathRuleset(std::string inputString);
 

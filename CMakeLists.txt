@@ -16,7 +16,7 @@ add_executable(CGSynch_2
         AbstractGame/util.h
         CombinatorialRuleset/RulesetMath.h
         CombinatorialRuleset/RulesetMath.cpp
-        CombinatorialRuleset/Ruleset.h
+        CombinatorialRuleset/AbstractRuleset.h
         CombinatorialRuleset/RulesetDatabase.h
         CombinatorialRuleset/RulesetDatabase.cpp
     )

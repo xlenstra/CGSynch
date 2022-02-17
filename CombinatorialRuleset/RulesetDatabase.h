@@ -5,19 +5,26 @@
 #ifndef CGSYNCH_2_RULESETDATABASE_H
 #define CGSYNCH_2_RULESETDATABASE_H
 
-#include "Ruleset.h"
+#include "AbstractRuleset.h"
 
 template<typename T, typename U>
-concept isRuleset = std::is_base_of<Ruleset<U>,T>::value;
+concept isRuleset = std::is_base_of<AbstractRuleset<U>,T>::value;
 
+
+typedef size_t RulesetId;
 
 template<ComparableType comparableType, isRuleset<comparableType> Ruleset>
 class RulesetDatabase {
 public:
 	RulesetDatabase() = default;
+    Ruleset& getGame(RulesetId id);
+    RulesetId createGameId(comparableType comparable);
+    Ruleset& createGame(comparableType comparable);
 
 private:
-	std::vector<std::shared_ptr<Ruleset>> database;
+	std::vector<std::shared_ptr<comparableType>> database;
+
+    RulesetId nextId = 0;
 };
 
 #endif //CGSYNCH_2_RULESETDATABASE_H

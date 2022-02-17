@@ -15,16 +15,12 @@ CGDatabase::CGDatabase() {
 }
 
 void CGDatabase::print(std::ostream &os) {
-    static const std::string open_bracket = "[";
-    static const std::string comma = ", ";
-    static const std::string backSpace = "\b";
-    static const std::string closing_bracket = "]";
-    os << open_bracket;
+    os << std::string("[");
     for (auto& game : existingGames) {
-        os << game->getDisplayString() << comma;
+        os << game->getDisplayString() << std::string(", ");
     }
-    os << backSpace << backSpace; // delete trailing comma and space
-    os << closing_bracket;
+    os << std::string("\b") << std::string("\b"); // delete trailing comma and space
+    os << std::string("]");
 }
 
 std::ostream& operator<<(std::ostream& os, CGDatabase database) {
