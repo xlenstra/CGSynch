@@ -11,6 +11,7 @@ CGDatabase::CGDatabase() {
 	        0
 		)
 	);
+//	savedIntegers[0] = 0;
 	existingGames.reserve(16);
 }
 
@@ -46,7 +47,21 @@ CombinatorialGame& CGDatabase::createGame(
     return getGame(createGameId(left, right));
 }
 
-
+CombinatorialGame& CGDatabase::getInteger(int value) {
+	if (value == 0) {
+		return getZero();
+	} else if (value > 0) {
+		CombinatorialGame& newGame = createGame({ getInteger(value-1).getId() },{});
+		newGame.copyCache({std::to_string(value), WinningPlayer::LEFT, newGame.getId(), -1ul, true });
+		return newGame;
+	} else if (value < 0) {
+		CombinatorialGame& newGame = createGame({},{ getInteger(value+1).getId() });
+		newGame.copyCache({std::to_string(value), WinningPlayer::RIGHT, newGame.getId(), -1ul, true});
+		return newGame;
+	} else {
+		throw(std::domain_error(std::to_string(value) + " is not a valid integer!"));
+	}
+}
 
 
 CGDatabase cgDatabase;

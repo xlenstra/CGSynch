@@ -18,5 +18,7 @@ add_executable(CGSynch_2
         CombinatorialRuleset/RulesetMath.cpp
         CombinatorialRuleset/AbstractRuleset.h
         CombinatorialRuleset/RulesetDatabase.h
-        CombinatorialRuleset/RulesetDatabase.cpp
+        CombinatorialRuleset/RulesetCherries.h
+        CombinatorialRuleset/RulesetCherries.cpp
+        CombinatorialRuleset/RulesetUtil.h
     )

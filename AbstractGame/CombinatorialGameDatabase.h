@@ -9,7 +9,9 @@
 
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 #include <memory>
+#include <boost/bimap.hpp>
 #include "CombinatorialGame.h"
 
 typedef size_t GameId;
@@ -23,14 +25,20 @@ public:
 
     GameId createGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
     CombinatorialGame& createGame(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
-    inline CombinatorialGame& getGame(GameId id) { return *existingGames.at(id); }
+    CombinatorialGame& getGame(GameId id) { return *existingGames.at(id); }
 
-    CombinatorialGame& getZero() { return getGame(0); }
+    CombinatorialGame& getZero() { return getGame(zeroId); }
+	CombinatorialGame& getInteger(int value);
+//	const std::unordered_map<GameId,int>& getSavedIntegers() { return savedIntegers; }
 
     const GameId zeroId = 0;
 
 private:
     std::vector<std::shared_ptr<CombinatorialGame>> existingGames;
+
+
+//	std::unordered_map<GameId,int> savedIntegers;
+//	boost::bimaps::bimap<GameId, int, boost::container::allocator<int>> savedIntegers;
 };
 std::ostream& operator<<(std::ostream& os, CGDatabase database);
 

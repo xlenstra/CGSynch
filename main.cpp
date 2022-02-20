@@ -3,6 +3,7 @@
 #include "AbstractGame/CombinatorialGameDatabase.h"
 #include "CombinatorialRuleset/RulesetMath.h"
 #include "CombinatorialRuleset/RulesetDatabase.h"
+#include "CombinatorialRuleset/RulesetCherries.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl << std::endl;
@@ -22,7 +23,23 @@ int main() {
 	CombinatorialGame& gameStar = CREATE_GAME({cgDatabase.zeroId}, {cgDatabase.zeroId});
 	std::cout << cgDatabase << std::endl;
 
-	RulesetDatabase<std::string, MathRuleset> positionDatabase;
+//	CombinatorialGame& game2 = CREATE_GAME({negativeIntegers[1]},{positiveIntegers[1]});
+
+
+//	RulesetCherries& rulesetCherries1 = createCherriesPosition("BB WW");
+//	rulesetCherries1.explore();
+//	RulesetCherries& leftCherries1 = cherriesDatabase->getGame(*rulesetCherries1.getLeftOptions().begin());
+//	leftCherries1.explore();
+//	RulesetCherries& leftLeftCherries1 = cherriesDatabase->getGame(*leftCherries1.getLeftOptions().begin());
+//	RulesetCherries& rulesetCherries2 = createCherriesPosition("WW BB");
+//	std::cout << *cherriesDatabase << std::endl;
+//	std::cout << leftLeftCherries1.getDisplayString() << std::endl;
+//	GameId abstractId = getAbstractFormId<CherriesPosition>(rulesetCherries1);
+//	std::cout << abstractId << std::endl;
+//	std::cout << GET_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
+//	std::cout << cgDatabase << std::endl;
+
+//	RulesetDatabase<std::string, MathRuleset> positionDatabase;
 
 
 //	CombinatorialGame& game = CREATE_GAME(

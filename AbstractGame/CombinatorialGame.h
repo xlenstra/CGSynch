@@ -9,7 +9,6 @@
 #include <string>
 #include <unordered_set>
 #include <compare>
-#include <boost/optional.hpp>
 #include "CombinatorialGameDatabase.h"
 #include "util.h"
 
@@ -27,8 +26,23 @@ enum class WinningPlayer {
 	NONE = -1,
 };
 
-std::ostream& operator<<(std::ostream &os, WinningPlayer winningPlayer);
+struct CGCacheBlock {
+	CGCacheBlock(
+		std::string displayString = "",
+		WinningPlayer cachedWinner = WinningPlayer::NONE,
+		GameId canonicalFormId = -1ul,
+		GameId negativeFormId = -1ul,
+		const std::optional<bool>& cachedIsInteger = std::optional<bool>{}
+	);
 
+	std::string displayString = "";
+	WinningPlayer cachedWinner = WinningPlayer::NONE;
+	GameId canonicalFormId = -1ul;
+	GameId negativeFormId = -1ul;
+	std::optional<bool> cachedIsInteger;
+};
+
+std::ostream& operator<<(std::ostream &os, WinningPlayer winningPlayer);
 
 class CombinatorialGame {
 public:
@@ -37,7 +51,7 @@ public:
     CombinatorialGame(std::unordered_set<GameId> leftOptions, std::unordered_set<GameId> rightOptions, GameId id);
 	CombinatorialGame(const CombinatorialGame& other);
 
-    void copyCache(const CombinatorialGame& other);
+    void copyCache(const CGCacheBlock& other);
 
 	std::string getDisplayString();
 
@@ -49,11 +63,11 @@ public:
 
 	CombinatorialGame& getCanonicalForm();
 	bool isInteger();
+	std::optional<int> getIntegerValue();
 
-
-	CombinatorialGame& operator-() const;
-	CombinatorialGame& operator+(const CombinatorialGame& other) const;
-	CombinatorialGame& operator-(const CombinatorialGame& other) const;
+	CombinatorialGame& operator-();
+	CombinatorialGame& operator+(CombinatorialGame& other);
+	CombinatorialGame& operator-(CombinatorialGame& other);
 	/** == means isomorphic, use `a \<=> b == 0` to test for equality in the combinatorial game sense. */
 	bool operator==(const CombinatorialGame& other) const;
 	std::partial_ordering operator<=>(const CombinatorialGame& other) const;
@@ -70,17 +84,10 @@ private:
     const size_t id;
 
 
-	// CACHE BLOCK
-		std::string displayString = "";
-		WinningPlayer cachedWinner = WinningPlayer::NONE;
-		GameId canonicalFormId = -1;
-		boost::optional<bool> cachedIsInteger;
-	//
-
+	CGCacheBlock cacheBlock;
 
 	CombinatorialGame& getSimplestAlreadyCalculatedForm() const;
 };
-
 
 
 

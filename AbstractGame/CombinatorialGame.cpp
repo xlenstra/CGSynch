@@ -7,6 +7,16 @@
 #include <iostream>
 #include "CombinatorialGame.h"
 
+CGCacheBlock::CGCacheBlock(
+	std::string displayString,
+	WinningPlayer cachedWinner,
+	GameId canonicalFormId,
+	GameId negativeFormId,
+	const std::optional<bool>& cachedIsInteger
+) :
+	displayString(std::move(displayString)), cachedWinner(cachedWinner), canonicalFormId(canonicalFormId),
+	negativeFormId(negativeFormId), cachedIsInteger(cachedIsInteger) {}
+
 
 std::ostream& operator<<(std::ostream& os, WinningPlayer winningPlayer) {
 	static const std::string LEFT = "LEFT";
@@ -37,12 +47,12 @@ CombinatorialGame::CombinatorialGame(const CombinatorialGame& other) :
     rightOptions(other.rightOptions),
     id(other.id)
 {
-	copyCache(other);
+	copyCache(other.cacheBlock);
 }
 
 
 WinningPlayer CombinatorialGame::getWinner() {
-	if (cachedWinner != WinningPlayer::NONE) return cachedWinner;
+	if (cacheBlock.cachedWinner != WinningPlayer::NONE) return cacheBlock.cachedWinner;
 	WinningPlayer winner;
 	if (rightOptions.empty() && leftOptions.empty()) {
 		winner = WinningPlayer::PREVIOUS;
@@ -68,12 +78,13 @@ WinningPlayer CombinatorialGame::getWinner() {
 		else if (rightHasWinningMove) winner = WinningPlayer::RIGHT;
 		else winner = WinningPlayer::PREVIOUS;
 	}
-	cachedWinner = winner;
+	cacheBlock.cachedWinner = winner;
 	return winner;
 }
 
-CombinatorialGame& CombinatorialGame::operator-() const {
+CombinatorialGame& CombinatorialGame::operator-() {
 	if (id == cgDatabase.zeroId) return cgDatabase.getZero();
+	if (cacheBlock.negativeFormId != -1ul) return GET_GAME(cacheBlock.negativeFormId);
 	std::unordered_set<GameId> newRightOptions {};
 	newRightOptions.reserve(leftOptions.size());
 	for (const auto& leftOption : leftOptions) {
@@ -84,12 +95,13 @@ CombinatorialGame& CombinatorialGame::operator-() const {
 	for (const auto& rightOption: rightOptions) {
 		newLeftOptions.insert((-GET_GAME(rightOption)).getId());
 	}
-    return CREATE_GAME(newLeftOptions, newRightOptions);
+	cacheBlock.negativeFormId = cgDatabase.createGameId(newLeftOptions, newRightOptions);
+	return GET_GAME(cacheBlock.negativeFormId);
 }
 
-CombinatorialGame& CombinatorialGame::operator+(const CombinatorialGame& other) const {
-	if (id == cgDatabase.zeroId) return GET_GAME(other.getId());
-	if (other.getId() == cgDatabase.zeroId) return GET_GAME(id);
+CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
+	if (id == cgDatabase.zeroId) return other;
+	if (other.getId() == cgDatabase.zeroId) return *this;
 	std::unordered_set<GameId> newLeftOptions {};
 	std::unordered_set<GameId> newRightOptions {};
 	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
@@ -109,8 +121,8 @@ CombinatorialGame& CombinatorialGame::operator+(const CombinatorialGame& other) 
     return CREATE_GAME(newLeftOptions, newRightOptions);
 }
 
-CombinatorialGame& CombinatorialGame::operator-(const CombinatorialGame& other) const {
-	if (other.getId() == cgDatabase.zeroId) return GET_GAME(id);
+CombinatorialGame& CombinatorialGame::operator-(CombinatorialGame& other) {
+	if (other.getId() == cgDatabase.zeroId) return *this;
 	if (id == cgDatabase.zeroId) return -other;
 	if (id == other.getId()) return cgDatabase.getZero();
 	std::unordered_set<GameId> newLeftOptions {};
@@ -139,7 +151,7 @@ bool CombinatorialGame::operator==(const CombinatorialGame& other) const {
 
 std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& other) const {
 	CombinatorialGame& leftGame = this->getSimplestAlreadyCalculatedForm();
-	CombinatorialGame& rightGame = this->getSimplestAlreadyCalculatedForm();
+	CombinatorialGame& rightGame = other.getSimplestAlreadyCalculatedForm();
 	GameId differenceGame;
 	bool swappedGames = false;
 	if (leftGame.getBirthday() < rightGame.getBirthday())
@@ -164,43 +176,41 @@ std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& ot
 			return std::partial_ordering::less;
 		case WinningPlayer::NONE:
 		default:
-			throw(std::domain_error("Invalid game: " + (*this-other).getDisplayString()));
+			throw(std::domain_error("Invalid game: " + (GET_GAME(differenceGame)).getDisplayString()));
 	}
 }
 
-void CombinatorialGame::copyCache(const CombinatorialGame& other) {
-	cachedWinner = std::max(other.cachedWinner, cachedWinner);
-	if (!displayString.empty())
-        displayString = other.displayString;
+void CombinatorialGame::copyCache(const CGCacheBlock& other) {
+	cacheBlock = other;
 }
 
 std::string CombinatorialGame::getDisplayString() {
 	if (id == cgDatabase.zeroId) {
-		displayString = "0";
-		return displayString;
+		cacheBlock.displayString = "0";
+		return cacheBlock.displayString;
 	}
 	if (isInteger()) {
 		if (rightOptions.empty()) {
-			displayString = std::to_string((int)getBirthday());
-			return displayString;
+			cacheBlock.displayString = std::to_string((int)getBirthday());
+			return cacheBlock.displayString;
 		} else if (leftOptions.empty()) {
-			displayString = std::to_string(-((int)getBirthday()));
-			return displayString;
+			cacheBlock.displayString = std::to_string(-((int)getBirthday()));
+			return cacheBlock.displayString;
 		}
 	}
-    if (!displayString.empty()) return displayString;
-    displayString = "{";
+    if (!cacheBlock.displayString.empty()) return cacheBlock.displayString;
+	cacheBlock.displayString = "{";
     for (const auto &leftId: leftOptions) {
-        displayString += GET_GAME(leftId).getDisplayString() + ",";
+	    cacheBlock.displayString += GET_GAME(leftId).getDisplayString() + ",";
     }
-    if (!leftOptions.empty()) displayString += "\b"; // remove trailing ,
-    displayString += "|";
+    if (!leftOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
+	cacheBlock.displayString += "|";
     for (const auto &rightId: rightOptions) {
-        displayString += GET_GAME(rightId).getDisplayString() + ",";
+	    cacheBlock.displayString += GET_GAME(rightId).getDisplayString() + ",";
     }
-    if (!rightOptions.empty()) displayString += "\b"; // remove trailing ,
-    displayString += "}";
-    return displayString;
+    if (!rightOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
+	cacheBlock.displayString += "}";
+    return cacheBlock.displayString;
 }
 
 size_t CombinatorialGame::getBirthday() {
@@ -216,9 +226,8 @@ size_t CombinatorialGame::getBirthday() {
 }
 
 CombinatorialGame& CombinatorialGame::getCanonicalForm() {
-	if (canonicalFormId != GameId(-1)) return GET_GAME(canonicalFormId);
+	if (cacheBlock.canonicalFormId != GameId(-1)) return GET_GAME(cacheBlock.canonicalFormId);
 	if (getWinner() == WinningPlayer::PREVIOUS) return GET_GAME(0);
-	std::cout << "Started calculation of canonical form of game " << id << std::endl;
 
 	std::unordered_set<GameId> newLeftOptions {};
 	std::unordered_set<GameId> newRightOptions {};
@@ -272,9 +281,6 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	std::unordered_set<GameId> finalLeftOptions {};
 	std::unordered_set<GameId> finalRightOptions {};
 	bool anyChangesWithReversibility = false;
-	if (id == 43) {
-		std::cout << "id=43" << std::endl;
-	}
 	for (const auto& leftId : undominatedLeftOptions) {
 		CombinatorialGame& leftOption = GET_GAME(leftId);
 		bool shouldAddLeftId = true;
@@ -310,32 +316,38 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 		// Whelp, more options were added, and so presumably more options to remove by domination or reversibility.
 		// Time to start over!
 		CombinatorialGame& newGame = CREATE_GAME(finalLeftOptions, finalRightOptions).getCanonicalForm();
-		canonicalFormId = newGame.getId();
-		std::cout << "Canonical form of game " << id << " is game " << canonicalFormId << "!" << std::endl;
+		cacheBlock.canonicalFormId = newGame.getId();
 		return newGame;
 	}
 
 	CombinatorialGame& newGame = CREATE_GAME(finalLeftOptions, finalRightOptions);
-	canonicalFormId = newGame.getId();
-	std::cout << "Canonical form of game " << id << " is game " << canonicalFormId << "!" << std::endl;
+	cacheBlock.canonicalFormId = newGame.getId();
 	return newGame;
 }
 
 CombinatorialGame& CombinatorialGame::getSimplestAlreadyCalculatedForm() const {
-	if (canonicalFormId != GameId(-1))
-		return GET_GAME(canonicalFormId);
+	if (cacheBlock.canonicalFormId != GameId(-1))
+		return GET_GAME(cacheBlock.canonicalFormId);
 	return GET_GAME(id);
 }
 
 bool CombinatorialGame::isInteger() {
 	if (id == cgDatabase.zeroId) return true;
-	if (cachedIsInteger) return cachedIsInteger.value();
-	cachedIsInteger = false;
+//	if (cgDatabase.getSavedIntegers().contains(id)) return true;
+	if (cacheBlock.cachedIsInteger) return cacheBlock.cachedIsInteger.value();
+	cacheBlock.cachedIsInteger = false;
 	if (rightOptions.empty() && leftOptions.size() == 1) {
-		cachedIsInteger = GET_GAME(*leftOptions.begin()).isInteger();
+		cacheBlock.cachedIsInteger = GET_GAME(*leftOptions.begin()).isInteger();
 	}
 	if (leftOptions.empty() && rightOptions.size() == 1) {
-		cachedIsInteger = GET_GAME(*rightOptions.begin()).isInteger();
+		cacheBlock.cachedIsInteger = GET_GAME(*rightOptions.begin()).isInteger();
 	}
-	return cachedIsInteger.value();
+	return cacheBlock.cachedIsInteger.value();
+}
+
+std::optional<int> CombinatorialGame::getIntegerValue() {
+	if (!isInteger())
+		return {};
+	int integerValue = (int)getBirthday();
+	return integerValue;
 }
