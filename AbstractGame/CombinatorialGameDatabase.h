@@ -7,27 +7,34 @@
 #define CGSYNCH_2_COMBINATORIALGAMEDATABASE_H
 
 
+//#include <boost/bimap.hpp>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
 #include <memory>
-#include <boost/bimap.hpp>
 #include "CombinatorialGame.h"
+#include "CombinatorialGameUtil.h"
 
-typedef size_t GameId;
-class CombinatorialGame;
-
+/** Class that implements a database for [Combinatorial Games].
+ * Each combinatorial game that is created, is saved inside this database.
+ * When a new game is created with the same left and right options as one that already exists,
+ * we instead return the existing one. That way, we don't have to do any calculation more than once.
+ * Also has very very basic support for generating integers
+ */
 class CGDatabase {
 public:
 	CGDatabase();
-//	~CGDatabase();
     void print(std::ostream& os);
 
-    GameId createGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
-    CombinatorialGame& createGame(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
-    CombinatorialGame& getGame(GameId id) { return *existingGames.at(id); }
+    /**
+     * Checks if a game with these options exists. If it does, it returns the ID of that game.
+     * If it doesn't, create such a game and then return the new ID.
+     */
+    GameId getGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
+    CombinatorialGame& getGame(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
+    CombinatorialGame& idToGame(GameId id) { return *existingGames.at(id); }
 
-    CombinatorialGame& getZero() { return getGame(zeroId); }
+    CombinatorialGame& getZero() { return idToGame(zeroId); }
 	CombinatorialGame& getInteger(int value);
 //	const std::unordered_map<GameId,int>& getSavedIntegers() { return savedIntegers; }
 
@@ -42,8 +49,8 @@ private:
 };
 std::ostream& operator<<(std::ostream& os, CGDatabase database);
 
-#define GET_GAME(gameId) (cgDatabase.getGame(gameId))
-#define CREATE_GAME(left, right) (cgDatabase.createGame(left, right))
+#define ID_TO_GAME(gameId) (cgDatabase.idToGame(gameId))
+#define GET_GAME(left, right) (cgDatabase.getGame(left, right))
 extern CGDatabase cgDatabase;
 
 

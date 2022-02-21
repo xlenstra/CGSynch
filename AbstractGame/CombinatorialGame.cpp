@@ -60,14 +60,14 @@ WinningPlayer CombinatorialGame::getWinner() {
 		bool leftHasWinningMove = false;
 		bool rightHasWinningMove = false;
 		for (const auto& gameId : leftOptions) {
-			WinningPlayer leftWinner = GET_GAME(gameId).getWinner();
+			WinningPlayer leftWinner = ID_TO_GAME(gameId).getWinner();
 			if (leftWinner == WinningPlayer::LEFT || leftWinner == WinningPlayer::PREVIOUS) {
 				leftHasWinningMove = true;
 				break;
 			}
 		}
 		for (const auto& gameId : rightOptions) {
-			WinningPlayer rightWinner = GET_GAME(gameId).getWinner();
+			WinningPlayer rightWinner = ID_TO_GAME(gameId).getWinner();
 			if (rightWinner == WinningPlayer::RIGHT || rightWinner == WinningPlayer::PREVIOUS) {
 				rightHasWinningMove = true;
 				break;
@@ -84,19 +84,19 @@ WinningPlayer CombinatorialGame::getWinner() {
 
 CombinatorialGame& CombinatorialGame::operator-() {
 	if (id == cgDatabase.zeroId) return cgDatabase.getZero();
-	if (cacheBlock.negativeFormId != -1ul) return GET_GAME(cacheBlock.negativeFormId);
+	if (cacheBlock.negativeFormId != -1ul) return ID_TO_GAME(cacheBlock.negativeFormId);
 	std::unordered_set<GameId> newRightOptions {};
 	newRightOptions.reserve(leftOptions.size());
 	for (const auto& leftOption : leftOptions) {
-		newRightOptions.insert((-GET_GAME(leftOption)).getId());
+		newRightOptions.insert((-ID_TO_GAME(leftOption)).getId());
 	}
 	std::unordered_set<GameId> newLeftOptions;
 	newLeftOptions.reserve(rightOptions.size());
 	for (const auto& rightOption: rightOptions) {
-		newLeftOptions.insert((-GET_GAME(rightOption)).getId());
+		newLeftOptions.insert((-ID_TO_GAME(rightOption)).getId());
 	}
-	cacheBlock.negativeFormId = cgDatabase.createGameId(newLeftOptions, newRightOptions);
-	return GET_GAME(cacheBlock.negativeFormId);
+	cacheBlock.negativeFormId = cgDatabase.getGameId(newLeftOptions, newRightOptions);
+	return ID_TO_GAME(cacheBlock.negativeFormId);
 }
 
 CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
@@ -107,18 +107,18 @@ CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
 	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
 	newRightOptions.reserve(rightOptions.size() + other.rightOptions.size());
 	for (const auto& leftOption : leftOptions) {
-		newLeftOptions.insert((GET_GAME(leftOption) + other).getId());
+		newLeftOptions.insert((ID_TO_GAME(leftOption) + other).getId());
 	}
 	for (const auto& leftOption : other.leftOptions) {
-		newLeftOptions.insert((*this + GET_GAME(leftOption)).getId());
+		newLeftOptions.insert((*this + ID_TO_GAME(leftOption)).getId());
 	}
 	for (const auto& rightOption: rightOptions) {
-		newRightOptions.insert((GET_GAME(rightOption) + other).getId());
+		newRightOptions.insert((ID_TO_GAME(rightOption) + other).getId());
 	}
 	for (const auto& rightOption: other.rightOptions) {
-		newRightOptions.insert((*this + GET_GAME(rightOption)).getId());
+		newRightOptions.insert((*this + ID_TO_GAME(rightOption)).getId());
 	}
-    return CREATE_GAME(newLeftOptions, newRightOptions);
+    return GET_GAME(newLeftOptions, newRightOptions);
 }
 
 CombinatorialGame& CombinatorialGame::operator-(CombinatorialGame& other) {
@@ -130,18 +130,18 @@ CombinatorialGame& CombinatorialGame::operator-(CombinatorialGame& other) {
 	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
 	newRightOptions.reserve(rightOptions.size() + other.rightOptions.size());
 	for (const auto& leftOption : leftOptions) {
-		newLeftOptions.insert((GET_GAME(leftOption) - other).getId());
+		newLeftOptions.insert((ID_TO_GAME(leftOption) - other).getId());
 	}
 	for (const auto& rightOption: other.rightOptions) {
-		newLeftOptions.insert((*this - GET_GAME(rightOption)).getId());
+		newLeftOptions.insert((*this - ID_TO_GAME(rightOption)).getId());
 	}
 	for (const auto& rightOption: rightOptions) {
-		newRightOptions.insert((GET_GAME(rightOption) - other).getId());
+		newRightOptions.insert((ID_TO_GAME(rightOption) - other).getId());
 	}
 	for (const auto& leftOption : other.leftOptions) {
-		newRightOptions.insert((*this - GET_GAME(leftOption)).getId());
+		newRightOptions.insert((*this - ID_TO_GAME(leftOption)).getId());
 	}
-	return CREATE_GAME(newLeftOptions, newRightOptions);
+	return GET_GAME(newLeftOptions, newRightOptions);
 }
 
 bool CombinatorialGame::operator==(const CombinatorialGame& other) const {
@@ -161,7 +161,7 @@ std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& ot
 		swappedGames = true;
 	}
 
-	switch (GET_GAME(differenceGame).getWinner()) {
+	switch (ID_TO_GAME(differenceGame).getWinner()) {
 		case WinningPlayer::LEFT:
 			if (swappedGames)
 				return std::partial_ordering::less;
@@ -176,7 +176,7 @@ std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& ot
 			return std::partial_ordering::less;
 		case WinningPlayer::NONE:
 		default:
-			throw(std::domain_error("Invalid game: " + (GET_GAME(differenceGame)).getDisplayString()));
+			throw(std::domain_error("Invalid game: " + (ID_TO_GAME(differenceGame)).getDisplayString()));
 	}
 }
 
@@ -201,12 +201,12 @@ std::string CombinatorialGame::getDisplayString() {
     if (!cacheBlock.displayString.empty()) return cacheBlock.displayString;
 	cacheBlock.displayString = "{";
     for (const auto &leftId: leftOptions) {
-	    cacheBlock.displayString += GET_GAME(leftId).getDisplayString() + ",";
+	    cacheBlock.displayString += ID_TO_GAME(leftId).getDisplayString() + ",";
     }
     if (!leftOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
 	cacheBlock.displayString += "|";
     for (const auto &rightId: rightOptions) {
-	    cacheBlock.displayString += GET_GAME(rightId).getDisplayString() + ",";
+	    cacheBlock.displayString += ID_TO_GAME(rightId).getDisplayString() + ",";
     }
     if (!rightOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
 	cacheBlock.displayString += "}";
@@ -217,26 +217,26 @@ size_t CombinatorialGame::getBirthday() {
     if (leftOptions.empty() && rightOptions.empty()) return 0;
     size_t maxFound = 0;
     for (const auto& leftId : leftOptions) {
-        maxFound = std::max(maxFound, GET_GAME(leftId).getBirthday());
+        maxFound = std::max(maxFound, ID_TO_GAME(leftId).getBirthday());
     }
     for (const auto& rightId: rightOptions) {
-        maxFound = std::max(maxFound, GET_GAME(rightId).getBirthday());
+        maxFound = std::max(maxFound, ID_TO_GAME(rightId).getBirthday());
     }
     return maxFound + 1;
 }
 
 CombinatorialGame& CombinatorialGame::getCanonicalForm() {
-	if (cacheBlock.canonicalFormId != GameId(-1)) return GET_GAME(cacheBlock.canonicalFormId);
-	if (getWinner() == WinningPlayer::PREVIOUS) return GET_GAME(0);
+	if (cacheBlock.canonicalFormId != GameId(-1)) return ID_TO_GAME(cacheBlock.canonicalFormId);
+	if (getWinner() == WinningPlayer::PREVIOUS) return ID_TO_GAME(0);
 
 	std::unordered_set<GameId> newLeftOptions {};
 	std::unordered_set<GameId> newRightOptions {};
 	// First we convert all our options to canonical form
 	for (const auto& leftId : leftOptions) {
-		newLeftOptions.insert(GET_GAME(leftId).getCanonicalForm().getId());
+		newLeftOptions.insert(ID_TO_GAME(leftId).getCanonicalForm().getId());
 	}
 	for (const auto& rightId : rightOptions) {
-		newRightOptions.insert(GET_GAME(rightId).getCanonicalForm().getId());
+		newRightOptions.insert(ID_TO_GAME(rightId).getCanonicalForm().getId());
 	}
 
 	// Then we delete any dominated positions
@@ -245,13 +245,13 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	for (const auto& leftId : newLeftOptions) {
 		bool shouldAdd = true;
 		for (const auto& otherLeftId : newLeftOptions) {
-			if (leftId != otherLeftId && GET_GAME(leftId) < GET_GAME(otherLeftId)) {
+			if (leftId != otherLeftId && ID_TO_GAME(leftId) < ID_TO_GAME(otherLeftId)) {
 				shouldAdd = false;
 				break;
 			}
 		}
 		for (const auto& alreadyAddedLeftId : undominatedLeftOptions) {
-			if (leftId != alreadyAddedLeftId && GET_GAME(alreadyAddedLeftId) <=> GET_GAME(leftId) == 0) {
+			if (leftId != alreadyAddedLeftId && ID_TO_GAME(alreadyAddedLeftId) <=> ID_TO_GAME(leftId) == 0) {
 				shouldAdd = false;
 				break;
 			}
@@ -262,13 +262,13 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	for (const auto& rightId : newRightOptions) {
 		bool shouldAdd = true;
 		for (const auto& otherRightId : newRightOptions) {
-			if (rightId != otherRightId && GET_GAME(rightId) > GET_GAME(otherRightId)) {
+			if (rightId != otherRightId && ID_TO_GAME(rightId) > ID_TO_GAME(otherRightId)) {
 				shouldAdd = false;
 				break;
 			}
 		}
 		for (const auto& alreadyAddedRightId : undominatedRightOptions) {
-			if (rightId != alreadyAddedRightId && GET_GAME(alreadyAddedRightId) <=> GET_GAME(rightId) == 0) {
+			if (rightId != alreadyAddedRightId && ID_TO_GAME(alreadyAddedRightId) <=> ID_TO_GAME(rightId) == 0) {
 				shouldAdd = false;
 				break;
 			}
@@ -282,10 +282,10 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	std::unordered_set<GameId> finalRightOptions {};
 	bool anyChangesWithReversibility = false;
 	for (const auto& leftId : undominatedLeftOptions) {
-		CombinatorialGame& leftOption = GET_GAME(leftId);
+		CombinatorialGame& leftOption = ID_TO_GAME(leftId);
 		bool shouldAddLeftId = true;
 		for (const auto& rightId : leftOption.getRightOptions()) {
-			CombinatorialGame& leftRightOption = GET_GAME(rightId);
+			CombinatorialGame& leftRightOption = ID_TO_GAME(rightId);
 			if (leftRightOption <= *this) {
 				anyChangesWithReversibility = true;
 				shouldAddLeftId = false;
@@ -297,10 +297,10 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 			finalLeftOptions.insert(leftId);
 	}
 	for (const auto rightId : undominatedRightOptions) {
-		CombinatorialGame& rightOption = GET_GAME(rightId);
+		CombinatorialGame& rightOption = ID_TO_GAME(rightId);
 		bool shouldAddRightId = true;
 		for (const auto& leftId : rightOption.getLeftOptions()) {
-			CombinatorialGame& rightLeftOption = GET_GAME(leftId);
+			CombinatorialGame& rightLeftOption = ID_TO_GAME(leftId);
 			if (rightLeftOption >= *this) {
 				anyChangesWithReversibility = true;
 				shouldAddRightId = false;
@@ -315,20 +315,20 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	if (anyChangesWithReversibility) {
 		// Whelp, more options were added, and so presumably more options to remove by domination or reversibility.
 		// Time to start over!
-		CombinatorialGame& newGame = CREATE_GAME(finalLeftOptions, finalRightOptions).getCanonicalForm();
+		CombinatorialGame& newGame = GET_GAME(finalLeftOptions, finalRightOptions).getCanonicalForm();
 		cacheBlock.canonicalFormId = newGame.getId();
 		return newGame;
 	}
 
-	CombinatorialGame& newGame = CREATE_GAME(finalLeftOptions, finalRightOptions);
+	CombinatorialGame& newGame = GET_GAME(finalLeftOptions, finalRightOptions);
 	cacheBlock.canonicalFormId = newGame.getId();
 	return newGame;
 }
 
 CombinatorialGame& CombinatorialGame::getSimplestAlreadyCalculatedForm() const {
 	if (cacheBlock.canonicalFormId != GameId(-1))
-		return GET_GAME(cacheBlock.canonicalFormId);
-	return GET_GAME(id);
+		return ID_TO_GAME(cacheBlock.canonicalFormId);
+	return ID_TO_GAME(id);
 }
 
 bool CombinatorialGame::isInteger() {
@@ -337,10 +337,10 @@ bool CombinatorialGame::isInteger() {
 	if (cacheBlock.cachedIsInteger) return cacheBlock.cachedIsInteger.value();
 	cacheBlock.cachedIsInteger = false;
 	if (rightOptions.empty() && leftOptions.size() == 1) {
-		cacheBlock.cachedIsInteger = GET_GAME(*leftOptions.begin()).isInteger();
+		cacheBlock.cachedIsInteger = ID_TO_GAME(*leftOptions.begin()).isInteger();
 	}
 	if (leftOptions.empty() && rightOptions.size() == 1) {
-		cacheBlock.cachedIsInteger = GET_GAME(*rightOptions.begin()).isInteger();
+		cacheBlock.cachedIsInteger = ID_TO_GAME(*rightOptions.begin()).isInteger();
 	}
 	return cacheBlock.cachedIsInteger.value();
 }

@@ -10,14 +10,10 @@
 #include <unordered_set>
 #include <compare>
 #include "CombinatorialGameDatabase.h"
+#include "CombinatorialGameUtil.h"
 #include "util.h"
 
-// Many of these functions are marked as 'const'. However, not all of them actually are.
-// 'const' only means the games themselves are not changed, but indirectly they may call
-// functions which cache more properties of this game.
-
-typedef size_t GameId;
-
+/** Player that wins a game */
 enum class WinningPlayer {
 	LEFT,
 	PREVIOUS,
@@ -25,7 +21,9 @@ enum class WinningPlayer {
 	RIGHT,
 	NONE = -1,
 };
+std::ostream& operator<<(std::ostream &os, WinningPlayer winningPlayer);
 
+/** The cached data of each game */
 struct CGCacheBlock {
 	CGCacheBlock(
 		std::string displayString = "",
@@ -42,8 +40,16 @@ struct CGCacheBlock {
 	std::optional<bool> cachedIsInteger;
 };
 
-std::ostream& operator<<(std::ostream &os, WinningPlayer winningPlayer);
-
+/** A node in the tree of abstract combinatorial games.
+ * Is as such a combinatorial game itself, with its left and right options saved in the class.
+ * Each of these is saved in the [cgDatabase], the only instance of the Combinatorial Game Database.
+ * This database also ensures that each game is only saved once, so all results calculated for one
+ * instance can also be used when that instance is created in another spot.
+ * To facilitate this, DO NOT create this using its constructor, but instead use [cgDatabase.getGame(left, right)].
+ *
+ * The game must receive the id's of its left and right children when constructed.
+ * As a result, this tree must be built from the ground up.
+ */
 class CombinatorialGame {
 public:
 
@@ -51,30 +57,44 @@ public:
     CombinatorialGame(std::unordered_set<GameId> leftOptions, std::unordered_set<GameId> rightOptions, GameId id);
 	CombinatorialGame(const CombinatorialGame& other);
 
+    /** Copies the cache (rarely useful, as each unique abstract game is initialized only once) */
     void copyCache(const CGCacheBlock& other);
 
+    /** Get a string representation of this game in mathematical notation. Not reversible. */
 	std::string getDisplayString();
 
+    /** Get the winner of this game */
 	WinningPlayer getWinner();
+    /** Get the birthday of this game */
     size_t getBirthday();
 
+    /** Get the id's of the left options of this game, which can be turned into games in the [cgDatabase] */
 	const std::unordered_set<GameId>& getLeftOptions() const { return leftOptions; }
+    /** Get the id's of the right options of this game, which can be turned into games in the [cgDatabase] */
 	const std::unordered_set<GameId>& getRightOptions() const { return rightOptions; }
 
+    /** Get the canonical, most simplified, form of this game */
 	CombinatorialGame& getCanonicalForm();
+    /** Is this game an integer */
 	bool isInteger();
+    /** Get the integer value of this game, or [std::optional<int>{}] if it isn't a game */
 	std::optional<int> getIntegerValue();
 
+    /** Get the negative of this game */
 	CombinatorialGame& operator-();
+    /** Get the disjunctive sum of this game and another */
 	CombinatorialGame& operator+(CombinatorialGame& other);
+    /** Get the disjunctive subtraction of this game and another */
 	CombinatorialGame& operator-(CombinatorialGame& other);
-	/** == means isomorphic, use `a \<=> b == 0` to test for equality in the combinatorial game sense. */
+	/** Get whether two games are isomorphic. Use [a \<=> b == 0] to test for equality in the combinatorial game sense. */
 	bool operator==(const CombinatorialGame& other) const;
+    /** Get the relative partial ordering of this game and another.
+     * For equality, use [a \<=>b == 0]; for incomparable use [a\<=> b == std::partial_ordering::incomparable]
+     */
 	std::partial_ordering operator<=>(const CombinatorialGame& other) const;
 
-	[[nodiscard]] size_t getId() const {
-		return id;
-	}
+    /** Gets the id of this game as saved in the [cgDatabase] */
+	[[nodiscard]] size_t getId() const { return id; }
 
 private:
 
@@ -86,6 +106,7 @@ private:
 
 	CGCacheBlock cacheBlock;
 
+    /** Returns the canonical form if it is already calculated; otherwise returns this */
 	CombinatorialGame& getSimplestAlreadyCalculatedForm() const;
 };
 

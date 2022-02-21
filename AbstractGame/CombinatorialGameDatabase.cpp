@@ -29,7 +29,7 @@ std::ostream& operator<<(std::ostream& os, CGDatabase database) {
     return os;
 }
 
-GameId CGDatabase::createGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right) {
+GameId CGDatabase::getGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right) {
     if (left.empty() && right.empty()) return zeroId;
     for (const auto& game : existingGames) {
         if (game->getLeftOptions() == left && game->getRightOptions() == right)
@@ -40,22 +40,22 @@ GameId CGDatabase::createGameId(const std::unordered_set<GameId>& left, const st
     return existingGames.size()-1;
 }
 
-CombinatorialGame& CGDatabase::createGame(
+CombinatorialGame& CGDatabase::getGame(
 	const std::unordered_set<GameId>& left,
 	const std::unordered_set<GameId>& right
 ) {
-    return getGame(createGameId(left, right));
+    return idToGame(getGameId(left, right));
 }
 
 CombinatorialGame& CGDatabase::getInteger(int value) {
 	if (value == 0) {
 		return getZero();
 	} else if (value > 0) {
-		CombinatorialGame& newGame = createGame({ getInteger(value-1).getId() },{});
+		CombinatorialGame& newGame = getGame({getInteger(value - 1).getId()}, {});
 		newGame.copyCache({std::to_string(value), WinningPlayer::LEFT, newGame.getId(), -1ul, true });
 		return newGame;
 	} else if (value < 0) {
-		CombinatorialGame& newGame = createGame({},{ getInteger(value+1).getId() });
+		CombinatorialGame& newGame = getGame({}, {getInteger(value + 1).getId()});
 		newGame.copyCache({std::to_string(value), WinningPlayer::RIGHT, newGame.getId(), -1ul, true});
 		return newGame;
 	} else {

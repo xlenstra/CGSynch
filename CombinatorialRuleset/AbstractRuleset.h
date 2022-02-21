@@ -64,7 +64,7 @@ GameId getAbstractFormId(ruleset position) {
 	for (const auto& rightPosition : position.getRightOptions()) {
 		rightOptions.insert(getAbstractFormId<comparable, ruleset>(database.getGame(rightPosition)));
 	}
-	return cgDatabase.createGameId(leftOptions, rightOptions);
+	return cgDatabase.getGameId(leftOptions, rightOptions);
 }
 
 

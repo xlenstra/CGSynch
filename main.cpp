@@ -12,15 +12,15 @@ int main() {
 	positiveIntegers.push_back(cgDatabase.zeroId);
 	positiveIntegers.resize(21);
 	for (int i = 1; i < 21; ++i) {
-		positiveIntegers.at(i) = cgDatabase.createGameId({positiveIntegers[i-1]},{});
+		positiveIntegers.at(i) = cgDatabase.getGameId({positiveIntegers[i - 1]}, {});
 	}
 	std::vector<GameId> negativeIntegers;
 	negativeIntegers.push_back(cgDatabase.zeroId);
 	negativeIntegers.resize(21);
 	for (int i = 1; i < 21; ++i) {
-		negativeIntegers.at(i) = cgDatabase.createGameId({}, {negativeIntegers.at(i-1)});
+		negativeIntegers.at(i) = cgDatabase.getGameId({}, {negativeIntegers.at(i - 1)});
 	}
-	CombinatorialGame& gameStar = CREATE_GAME({cgDatabase.zeroId}, {cgDatabase.zeroId});
+	CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
 	std::cout << cgDatabase << std::endl;
 
 //	CombinatorialGame& game2 = CREATE_GAME({negativeIntegers[1]},{positiveIntegers[1]});
