@@ -10,8 +10,8 @@
 CGCacheBlock::CGCacheBlock(
 	std::string displayString,
 	WinningPlayer cachedWinner,
-	GameId canonicalFormId,
-	GameId negativeFormId,
+	AbstractId canonicalFormId,
+	AbstractId negativeFormId,
 	const std::optional<bool>& cachedIsInteger
 ) :
 	displayString(std::move(displayString)), cachedWinner(cachedWinner), canonicalFormId(canonicalFormId),
@@ -36,9 +36,9 @@ std::ostream& operator<<(std::ostream& os, WinningPlayer winningPlayer) {
 
 
 CombinatorialGame::CombinatorialGame(
-    std::unordered_set<GameId> leftOptions,
-    std::unordered_set<GameId> rightOptions,
-    GameId id
+	std::unordered_set<AbstractId> leftOptions,
+	std::unordered_set<AbstractId> rightOptions,
+	AbstractId id
 ) : leftOptions(std::move(leftOptions)), rightOptions(std::move(rightOptions)), id(id) {}
 
 
@@ -85,12 +85,12 @@ WinningPlayer CombinatorialGame::getWinner() {
 CombinatorialGame& CombinatorialGame::operator-() {
 	if (id == cgDatabase.zeroId) return cgDatabase.getZero();
 	if (cacheBlock.negativeFormId != -1ul) return ID_TO_GAME(cacheBlock.negativeFormId);
-	std::unordered_set<GameId> newRightOptions {};
+	std::unordered_set<AbstractId> newRightOptions {};
 	newRightOptions.reserve(leftOptions.size());
 	for (const auto& leftOption : leftOptions) {
 		newRightOptions.insert((-ID_TO_GAME(leftOption)).getId());
 	}
-	std::unordered_set<GameId> newLeftOptions;
+	std::unordered_set<AbstractId> newLeftOptions;
 	newLeftOptions.reserve(rightOptions.size());
 	for (const auto& rightOption: rightOptions) {
 		newLeftOptions.insert((-ID_TO_GAME(rightOption)).getId());
@@ -102,8 +102,8 @@ CombinatorialGame& CombinatorialGame::operator-() {
 CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
 	if (id == cgDatabase.zeroId) return other;
 	if (other.getId() == cgDatabase.zeroId) return *this;
-	std::unordered_set<GameId> newLeftOptions {};
-	std::unordered_set<GameId> newRightOptions {};
+	std::unordered_set<AbstractId> newLeftOptions {};
+	std::unordered_set<AbstractId> newRightOptions {};
 	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
 	newRightOptions.reserve(rightOptions.size() + other.rightOptions.size());
 	for (const auto& leftOption : leftOptions) {
@@ -125,8 +125,8 @@ CombinatorialGame& CombinatorialGame::operator-(CombinatorialGame& other) {
 	if (other.getId() == cgDatabase.zeroId) return *this;
 	if (id == cgDatabase.zeroId) return -other;
 	if (id == other.getId()) return cgDatabase.getZero();
-	std::unordered_set<GameId> newLeftOptions {};
-	std::unordered_set<GameId> newRightOptions {};
+	std::unordered_set<AbstractId> newLeftOptions {};
+	std::unordered_set<AbstractId> newRightOptions {};
 	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
 	newRightOptions.reserve(rightOptions.size() + other.rightOptions.size());
 	for (const auto& leftOption : leftOptions) {
@@ -152,7 +152,7 @@ bool CombinatorialGame::operator==(const CombinatorialGame& other) const {
 std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& other) const {
 	CombinatorialGame& leftGame = this->getSimplestAlreadyCalculatedForm();
 	CombinatorialGame& rightGame = other.getSimplestAlreadyCalculatedForm();
-	GameId differenceGame;
+	AbstractId differenceGame;
 	bool swappedGames = false;
 	if (leftGame.getBirthday() < rightGame.getBirthday())
 		differenceGame = (leftGame - rightGame).getId();
@@ -226,11 +226,11 @@ size_t CombinatorialGame::getBirthday() {
 }
 
 CombinatorialGame& CombinatorialGame::getCanonicalForm() {
-	if (cacheBlock.canonicalFormId != GameId(-1)) return ID_TO_GAME(cacheBlock.canonicalFormId);
+	if (cacheBlock.canonicalFormId != AbstractId(-1)) return ID_TO_GAME(cacheBlock.canonicalFormId);
 	if (getWinner() == WinningPlayer::PREVIOUS) return ID_TO_GAME(0);
 
-	std::unordered_set<GameId> newLeftOptions {};
-	std::unordered_set<GameId> newRightOptions {};
+	std::unordered_set<AbstractId> newLeftOptions {};
+	std::unordered_set<AbstractId> newRightOptions {};
 	// First we convert all our options to canonical form
 	for (const auto& leftId : leftOptions) {
 		newLeftOptions.insert(ID_TO_GAME(leftId).getCanonicalForm().getId());
@@ -240,8 +240,8 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	}
 
 	// Then we delete any dominated positions
-	std::unordered_set<GameId> undominatedLeftOptions {};
-	std::unordered_set<GameId> undominatedRightOptions {};
+	std::unordered_set<AbstractId> undominatedLeftOptions {};
+	std::unordered_set<AbstractId> undominatedRightOptions {};
 	for (const auto& leftId : newLeftOptions) {
 		bool shouldAdd = true;
 		for (const auto& otherLeftId : newLeftOptions) {
@@ -278,8 +278,8 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	}
 
 	// Lastly, we do reversibility
-	std::unordered_set<GameId> finalLeftOptions {};
-	std::unordered_set<GameId> finalRightOptions {};
+	std::unordered_set<AbstractId> finalLeftOptions {};
+	std::unordered_set<AbstractId> finalRightOptions {};
 	bool anyChangesWithReversibility = false;
 	for (const auto& leftId : undominatedLeftOptions) {
 		CombinatorialGame& leftOption = ID_TO_GAME(leftId);
@@ -326,7 +326,7 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 }
 
 CombinatorialGame& CombinatorialGame::getSimplestAlreadyCalculatedForm() const {
-	if (cacheBlock.canonicalFormId != GameId(-1))
+	if (cacheBlock.canonicalFormId != AbstractId(-1))
 		return ID_TO_GAME(cacheBlock.canonicalFormId);
 	return ID_TO_GAME(id);
 }

@@ -14,11 +14,11 @@ add_executable(CGSynch_2
         AbstractGame/CombinatorialGameDatabase.cpp
         AbstractGame/CombinatorialGameDatabase.h
         AbstractGame/util.h
-        CombinatorialRuleset/RulesetMath.h
-        CombinatorialRuleset/RulesetMath.cpp
-        CombinatorialRuleset/AbstractRuleset.h
-        CombinatorialRuleset/RulesetDatabase.h
-        CombinatorialRuleset/RulesetCherries.h
-        CombinatorialRuleset/RulesetCherries.cpp
-        CombinatorialRuleset/RulesetUtil.h
+        CombinatorialGames/RulesetMath.h
+        CombinatorialGames/RulesetMath.cpp
+        CombinatorialGames/AbstractGame.h
+        CombinatorialGames/RulesetDatabase.h
+        CombinatorialGames/CherriesGame.h
+        CombinatorialGames/CherriesGame.cpp
+        CombinatorialGames/RulesetUtil.h
     )

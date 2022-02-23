@@ -6,8 +6,8 @@
 CGDatabase::CGDatabase() {
 	existingGames.emplace_back(
 		std::make_shared<CombinatorialGame>(
-			std::unordered_set<GameId>(),
-		    std::unordered_set<GameId>(),
+			std::unordered_set<AbstractId>(),
+		    std::unordered_set<AbstractId>(),
 	        0
 		)
 	);
@@ -29,7 +29,7 @@ std::ostream& operator<<(std::ostream& os, CGDatabase database) {
     return os;
 }
 
-GameId CGDatabase::getGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right) {
+AbstractId CGDatabase::getGameId(const std::unordered_set<AbstractId>& left, const std::unordered_set<AbstractId>& right) {
     if (left.empty() && right.empty()) return zeroId;
     for (const auto& game : existingGames) {
         if (game->getLeftOptions() == left && game->getRightOptions() == right)
@@ -41,8 +41,8 @@ GameId CGDatabase::getGameId(const std::unordered_set<GameId>& left, const std::
 }
 
 CombinatorialGame& CGDatabase::getGame(
-	const std::unordered_set<GameId>& left,
-	const std::unordered_set<GameId>& right
+	const std::unordered_set<AbstractId>& left,
+	const std::unordered_set<AbstractId>& right
 ) {
     return idToGame(getGameId(left, right));
 }

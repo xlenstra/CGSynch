@@ -6,7 +6,7 @@
 #define CGSYNCH_2_COMBINATORIALGAMEUTIL_H
 
 /** Id of a game in the database */
-typedef size_t GameId;
+typedef size_t AbstractId;
 
 // Forward declarations
 class CombinatorialGame;

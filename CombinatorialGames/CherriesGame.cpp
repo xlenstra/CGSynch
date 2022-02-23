@@ -2,17 +2,17 @@
 // Created by ardour on 18-02-22.
 //
 
-#include "RulesetCherries.h"
+#include "CherriesGame.h"
 
 #include <utility>
 
 // Initialize static member variables
-template<> std::shared_ptr<RulesetDatabase<CherriesPosition, RulesetCherries>> RulesetDatabase<CherriesPosition, RulesetCherries>::instance = nullptr;
-template<> std::vector<std::shared_ptr<RulesetCherries>> RulesetDatabase<CherriesPosition, RulesetCherries>::database = {};
-template<> std::unordered_map<CherriesPosition, RulesetId> RulesetDatabase<CherriesPosition, RulesetCherries>::transpositionTable = {};
+template<> std::shared_ptr<RulesetDatabase<CherriesPosition, CherriesGame>> RulesetDatabase<CherriesPosition, CherriesGame>::instance = nullptr;
+template<> std::vector<std::shared_ptr<CherriesGame>> RulesetDatabase<CherriesPosition, CherriesGame>::database = {};
+template<> std::unordered_map<CherriesPosition, GameId> RulesetDatabase<CherriesPosition, CherriesGame>::transpositionTable = {};
 // Get a global variable for the actual database
 // TODO: inline this
-std::shared_ptr<RulesetDatabase<CherriesPosition, RulesetCherries>> cherriesDatabase = RulesetDatabase<CherriesPosition, RulesetCherries>::getInstance();
+std::shared_ptr<RulesetDatabase<CherriesPosition, CherriesGame>> cherriesDatabase = RulesetDatabase<CherriesPosition, CherriesGame>::getInstance();
 
 std::ostream& operator<<(std::ostream& os, CherriesPosition position) {
 	static const std::string white = "W";
@@ -37,9 +37,9 @@ std::ostream& operator<<(std::ostream& os, CherriesPosition position) {
 	return os;
 }
 
-RulesetCherries::RulesetCherries(CherriesPosition position) : position(std::move(position)) {}
+CherriesGame::CherriesGame(CherriesPosition position) : position(std::move(position)) {}
 
-void RulesetCherries::explore() {
+void CherriesGame::explore() {
 	for (const auto& unconnectedLine : position) {
 		// Copy position
 		CherriesPosition copy = position;
@@ -51,9 +51,9 @@ void RulesetCherries::explore() {
 		if (!replacement.empty())
 			copy.insert(replacement);
 		if (unconnectedLine.front() == StoneColour::WHITE) {
-			leftOptions.insert(cherriesDatabase->createGameId(RulesetCherries(copy)));
+			leftOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(copy)));
 		} else {
-			rightOptions.insert(cherriesDatabase->createGameId(RulesetCherries(copy)));
+			rightOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(copy)));
 		}
 
 		replacement = unconnectedLine;
@@ -61,15 +61,15 @@ void RulesetCherries::explore() {
 		if (!replacement.empty())
 			secondCopy.insert(replacement);
 		if (unconnectedLine.back() == StoneColour::WHITE) {
-			leftOptions.insert(cherriesDatabase->createGameId(RulesetCherries(secondCopy)));
+			leftOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(secondCopy)));
 		} else {
-			rightOptions.insert(cherriesDatabase->createGameId(RulesetCherries(secondCopy)));
+			rightOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(secondCopy)));
 		}
 	}
 	explored = true;
 }
 
-std::unordered_set<CherriesPosition> RulesetCherries::getTranspositions() const {
+std::unordered_set<CherriesPosition> CherriesGame::getTranspositions() const {
 	std::unordered_set<CherriesPosition> transpositions;
 	std::unordered_set<size_t> sectionsToReverse;
 	size_t depth = 0;
@@ -77,7 +77,7 @@ std::unordered_set<CherriesPosition> RulesetCherries::getTranspositions() const 
 	return transpositions;
 }
 
-void RulesetCherries::addTranspositionsRecursively(std::unordered_set<CherriesPosition>& transpositions, std::unordered_set<size_t>& sectionsToReverse, const size_t& depth) const {
+void CherriesGame::addTranspositionsRecursively(std::unordered_set<CherriesPosition>& transpositions, std::unordered_set<size_t>& sectionsToReverse, const size_t& depth) const {
 	if (depth == position.size()) {
 		CherriesPosition transposition {};
 		int i = 0;
@@ -101,11 +101,11 @@ void RulesetCherries::addTranspositionsRecursively(std::unordered_set<CherriesPo
 	sectionsToReverse.erase(depth);
 }
 
-CherriesPosition RulesetCherries::getAnyTransposition() const {
+CherriesPosition CherriesGame::getAnyTransposition() const {
 	return position;
 }
 
-std::string RulesetCherries::getDisplayString() {
+std::string CherriesGame::getDisplayString() {
 	if (!displayString.empty()) return displayString;
 	if (position.empty()) return "";
 	for (const auto& component : position) {
@@ -128,7 +128,7 @@ std::string RulesetCherries::getDisplayString() {
 	return displayString;
 }
 
-RulesetCherries& createCherriesPosition(const std::string& inputString) {
+CherriesGame& createCherriesPosition(const std::string& inputString) {
 	std::istringstream input(inputString);
 	CherriesPosition position;
 	std::deque<StoneColour> component;
@@ -156,6 +156,6 @@ RulesetCherries& createCherriesPosition(const std::string& inputString) {
 		position.insert(component);
 	}
 
-	RulesetCherries ruleset = RulesetCherries(position);
-	return cherriesDatabase->createGame(ruleset);
+	CherriesGame ruleset = CherriesGame(position);
+	return cherriesDatabase->getOrInsertGame(ruleset);
 }

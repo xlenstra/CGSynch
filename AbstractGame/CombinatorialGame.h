@@ -28,15 +28,15 @@ struct CGCacheBlock {
 	CGCacheBlock(
 		std::string displayString = "",
 		WinningPlayer cachedWinner = WinningPlayer::NONE,
-		GameId canonicalFormId = -1ul,
-		GameId negativeFormId = -1ul,
+		AbstractId canonicalFormId = -1ul,
+		AbstractId negativeFormId = -1ul,
 		const std::optional<bool>& cachedIsInteger = std::optional<bool>{}
 	);
 
 	std::string displayString = "";
 	WinningPlayer cachedWinner = WinningPlayer::NONE;
-	GameId canonicalFormId = -1ul;
-	GameId negativeFormId = -1ul;
+	AbstractId canonicalFormId = -1ul;
+	AbstractId negativeFormId = -1ul;
 	std::optional<bool> cachedIsInteger;
 };
 
@@ -45,7 +45,7 @@ struct CGCacheBlock {
  * Each of these is saved in the [cgDatabase], the only instance of the Combinatorial Game Database.
  * This database also ensures that each game is only saved once, so all results calculated for one
  * instance can also be used when that instance is created in another spot.
- * To facilitate this, DO NOT create this using its constructor, but instead use [cgDatabase.getGame(left, right)].
+ * To facilitate this, DO NOT create this using its constructor, but instead use [cgDatabase.idToGame(left, right)].
  *
  * The game must receive the id's of its left and right children when constructed.
  * As a result, this tree must be built from the ground up.
@@ -53,8 +53,8 @@ struct CGCacheBlock {
 class CombinatorialGame {
 public:
 
-    // DO NOT USE THIS! Instead, use cgDatabase.createGame(leftOptions, rightOptions);
-    CombinatorialGame(std::unordered_set<GameId> leftOptions, std::unordered_set<GameId> rightOptions, GameId id);
+    // DO NOT USE THIS! Instead, use cgDatabase.getOrInsertGame(leftOptions, rightOptions);
+    CombinatorialGame(std::unordered_set<AbstractId> leftOptions, std::unordered_set<AbstractId> rightOptions, AbstractId id);
 	CombinatorialGame(const CombinatorialGame& other);
 
     /** Copies the cache (rarely useful, as each unique abstract game is initialized only once) */
@@ -69,9 +69,9 @@ public:
     size_t getBirthday();
 
     /** Get the id's of the left options of this game, which can be turned into games in the [cgDatabase] */
-	const std::unordered_set<GameId>& getLeftOptions() const { return leftOptions; }
+	const std::unordered_set<AbstractId>& getLeftOptions() const { return leftOptions; }
     /** Get the id's of the right options of this game, which can be turned into games in the [cgDatabase] */
-	const std::unordered_set<GameId>& getRightOptions() const { return rightOptions; }
+	const std::unordered_set<AbstractId>& getRightOptions() const { return rightOptions; }
 
     /** Get the canonical, most simplified, form of this game */
 	CombinatorialGame& getCanonicalForm();
@@ -98,9 +98,9 @@ public:
 
 private:
 
-	std::unordered_set<GameId> leftOptions;
-	std::unordered_set<GameId> rightOptions;
-//    std::unordered_set<GameId> parents;
+	std::unordered_set<AbstractId> leftOptions;
+	std::unordered_set<AbstractId> rightOptions;
+//    std::unordered_set<AbstractId> parents;
     const size_t id;
 
 

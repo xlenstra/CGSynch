@@ -1,20 +1,20 @@
 #include <iostream>
 #include "AbstractGame/CombinatorialGame.h"
 #include "AbstractGame/CombinatorialGameDatabase.h"
-#include "CombinatorialRuleset/RulesetMath.h"
-#include "CombinatorialRuleset/RulesetDatabase.h"
-#include "CombinatorialRuleset/RulesetCherries.h"
+#include "CombinatorialGames/RulesetMath.h"
+#include "CombinatorialGames/RulesetDatabase.h"
+#include "CombinatorialGames/CherriesGame.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl << std::endl;
 
-	std::vector<GameId> positiveIntegers;
+	std::vector<AbstractId> positiveIntegers;
 	positiveIntegers.push_back(cgDatabase.zeroId);
 	positiveIntegers.resize(21);
 	for (int i = 1; i < 21; ++i) {
 		positiveIntegers.at(i) = cgDatabase.getGameId({positiveIntegers[i - 1]}, {});
 	}
-	std::vector<GameId> negativeIntegers;
+	std::vector<AbstractId> negativeIntegers;
 	negativeIntegers.push_back(cgDatabase.zeroId);
 	negativeIntegers.resize(21);
 	for (int i = 1; i < 21; ++i) {
@@ -26,15 +26,15 @@ int main() {
 //	CombinatorialGame& game2 = CREATE_GAME({negativeIntegers[1]},{positiveIntegers[1]});
 
 
-//	RulesetCherries& rulesetCherries1 = createCherriesPosition("BB WW");
+//	CherriesGame& rulesetCherries1 = createCherriesPosition("BB WW");
 //	rulesetCherries1.explore();
-//	RulesetCherries& leftCherries1 = cherriesDatabase->getGame(*rulesetCherries1.getLeftOptions().begin());
+//	CherriesGame& leftCherries1 = cherriesDatabase->idToGame(*rulesetCherries1.getLeftOptions().begin());
 //	leftCherries1.explore();
-//	RulesetCherries& leftLeftCherries1 = cherriesDatabase->getGame(*leftCherries1.getLeftOptions().begin());
-//	RulesetCherries& rulesetCherries2 = createCherriesPosition("WW BB");
+//	CherriesGame& leftLeftCherries1 = cherriesDatabase->idToGame(*leftCherries1.getLeftOptions().begin());
+//	CherriesGame& rulesetCherries2 = createCherriesPosition("WW BB");
 //	std::cout << *cherriesDatabase << std::endl;
 //	std::cout << leftLeftCherries1.getDisplayString() << std::endl;
-//	GameId abstractId = getAbstractFormId<CherriesPosition>(rulesetCherries1);
+//	AbstractId abstractId = getAbstractFormId<CherriesPosition>(rulesetCherries1);
 //	std::cout << abstractId << std::endl;
 //	std::cout << GET_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
 //	std::cout << cgDatabase << std::endl;
@@ -47,7 +47,7 @@ int main() {
 //		{negativeIntegers[10]}
 //	);
 //
-//	CombinatorialGame& game2 = cgDatabase.createGame(
+//	CombinatorialGame& game2 = cgDatabase.getOrInsertGame(
 //		{game.getId(), positiveIntegers[2]},
 //		{positiveIntegers[1]}
 //	);

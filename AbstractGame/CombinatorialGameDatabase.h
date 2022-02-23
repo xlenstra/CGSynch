@@ -26,31 +26,42 @@ public:
 	CGDatabase();
     void print(std::ostream& os);
 
-    /**
-     * Checks if a game with these options exists. If it does, it returns the ID of that game.
-     * If it doesn't, create such a game and then return the new ID.
+    /** Checks if a game with these options exists. If it does, it returns the ID of that game.
+     * If it doesn't, it creates such a game and then return the new ID.
      */
-    GameId getGameId(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
-    CombinatorialGame& getGame(const std::unordered_set<GameId>& left, const std::unordered_set<GameId>& right);
-    CombinatorialGame& idToGame(GameId id) { return *existingGames.at(id); }
+    AbstractId getGameId(const std::unordered_set<AbstractId>& left, const std::unordered_set<AbstractId>& right);
+	/** Same as @getGameId, but returns a reference to the game instead of its ID.
+	 * That is, it checks if a game with the provided left and right options exists.
+	 * If it does, it returns a reference to that game.
+	 * Otherwise, it creates that game and returns the new ID.
+	 */
+    CombinatorialGame& getGame(const std::unordered_set<AbstractId>& left, const std::unordered_set<AbstractId>& right);
+	/** Get the game corresponding to a given ID */
+    CombinatorialGame& idToGame(AbstractId id) { return *existingGames.at(id); }
 
+	/** Get the game corresponding to 0, i.e., neither player has a move */
     CombinatorialGame& getZero() { return idToGame(zeroId); }
+	/** Get the game that is in canonical form and has integer value value */
 	CombinatorialGame& getInteger(int value);
-//	const std::unordered_map<GameId,int>& getSavedIntegers() { return savedIntegers; }
+//	const std::unordered_map<AbstractId,int>& getSavedIntegers() { return savedIntegers; }
 
-    const GameId zeroId = 0;
+	/** the id of the game corresponding to 0, in which neither player has a move */
+    const AbstractId zeroId = 0;
 
 private:
     std::vector<std::shared_ptr<CombinatorialGame>> existingGames;
 
 
-//	std::unordered_map<GameId,int> savedIntegers;
-//	boost::bimaps::bimap<GameId, int, boost::container::allocator<int>> savedIntegers;
+//	std::unordered_map<AbstractId,int> savedIntegers;
+//	boost::bimaps::bimap<AbstractId, int, boost::container::allocator<int>> savedIntegers;
 };
 std::ostream& operator<<(std::ostream& os, CGDatabase database);
 
-#define ID_TO_GAME(gameId) (cgDatabase.idToGame(gameId))
+/** Turns an abstract ID into a game */
+#define ID_TO_GAME(abstractId) (cgDatabase.idToGame(abstractId))
+/** Turns two sets of left and right options resp. into a game with these options */
 #define GET_GAME(left, right) (cgDatabase.getGame(left, right))
+/** The only database that may exist for abstract combinatorial games */
 extern CGDatabase cgDatabase;
 
 
