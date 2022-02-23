@@ -7,15 +7,16 @@
 #include <iostream>
 #include "CombinatorialGame.h"
 
-CGCacheBlock::CGCacheBlock(
-	std::string displayString,
-	WinningPlayer cachedWinner,
-	AbstractId canonicalFormId,
-	AbstractId negativeFormId,
-	const std::optional<bool>& cachedIsInteger
-) :
-	displayString(std::move(displayString)), cachedWinner(cachedWinner), canonicalFormId(canonicalFormId),
-	negativeFormId(negativeFormId), cachedIsInteger(cachedIsInteger) {}
+//CGCacheBlock::CGCacheBlock(
+//	std::string displayString,
+//	WinningPlayer cachedWinner,
+//	AbstractId canonicalFormId,
+//	AbstractId negativeFormId,
+//	const std::optional<bool>& cachedIsInteger,
+//	const std::optional<bool>& isNumber
+//) :
+//	displayString(std::move(displayString)), cachedWinner(cachedWinner), canonicalFormId(canonicalFormId),
+//	negativeFormId(negativeFormId), cachedIsInteger(cachedIsInteger), isNumber(isNumber) {}
 
 
 std::ostream& operator<<(std::ostream& os, WinningPlayer winningPlayer) {
@@ -43,11 +44,11 @@ CombinatorialGame::CombinatorialGame(
 
 
 CombinatorialGame::CombinatorialGame(const CombinatorialGame& other) :
-    leftOptions(other.leftOptions),
-    rightOptions(other.rightOptions),
-    id(other.id)
+	leftOptions(other.leftOptions),
+	rightOptions(other.rightOptions),
+	id(other.id)
 {
-	copyCache(other.cacheBlock);
+	setCache(other.cacheBlock);
 }
 
 
@@ -118,7 +119,7 @@ CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
 	for (const auto& rightOption: other.rightOptions) {
 		newRightOptions.insert((*this + ID_TO_GAME(rightOption)).getId());
 	}
-    return GET_GAME(newLeftOptions, newRightOptions);
+	return GET_GAME(newLeftOptions, newRightOptions);
 }
 
 CombinatorialGame& CombinatorialGame::operator-(CombinatorialGame& other) {
@@ -152,6 +153,10 @@ bool CombinatorialGame::operator==(const CombinatorialGame& other) const {
 std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& other) const {
 	CombinatorialGame& leftGame = this->getSimplestAlreadyCalculatedForm();
 	CombinatorialGame& rightGame = other.getSimplestAlreadyCalculatedForm();
+	// If we already know that this game is a number without doing additional calculations,
+	// just compare the numbers.
+	if (leftGame.cacheBlock.isNumber && leftGame.isNumber() && rightGame.cacheBlock.isNumber && rightGame.isNumber())
+		return leftGame.getNumberValue() <=> rightGame.getNumberValue();
 	AbstractId differenceGame;
 	bool swappedGames = false;
 	if (leftGame.getBirthday() < rightGame.getBirthday())
@@ -180,7 +185,7 @@ std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& ot
 	}
 }
 
-void CombinatorialGame::copyCache(const CGCacheBlock& other) {
+void CombinatorialGame::setCache(const CGCacheBlock& other) {
 	cacheBlock = other;
 }
 
@@ -189,40 +194,41 @@ std::string CombinatorialGame::getDisplayString() {
 		cacheBlock.displayString = "0";
 		return cacheBlock.displayString;
 	}
-	if (isInteger()) {
-		if (rightOptions.empty()) {
-			cacheBlock.displayString = std::to_string((int)getBirthday());
-			return cacheBlock.displayString;
-		} else if (leftOptions.empty()) {
-			cacheBlock.displayString = std::to_string(-((int)getBirthday()));
-			return cacheBlock.displayString;
+	if (isNumber()) {
+
+		DyadicRational numberValue = *getNumberValue();
+		if (numberValue.denominator == 1) {
+			cacheBlock.displayString = std::to_string(numberValue.numerator);
+		} else {
+			cacheBlock.displayString = std::to_string(numberValue.numerator) + "/" + std::to_string(numberValue.denominator);
 		}
+		return cacheBlock.displayString;
 	}
-    if (!cacheBlock.displayString.empty()) return cacheBlock.displayString;
+	if (!cacheBlock.displayString.empty()) return cacheBlock.displayString;
 	cacheBlock.displayString = "{";
-    for (const auto &leftId: leftOptions) {
-	    cacheBlock.displayString += ID_TO_GAME(leftId).getDisplayString() + ",";
-    }
-    if (!leftOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
+	for (const auto &leftId: leftOptions) {
+		cacheBlock.displayString += ID_TO_GAME(leftId).getDisplayString() + ",";
+	}
+	if (!leftOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
 	cacheBlock.displayString += "|";
-    for (const auto &rightId: rightOptions) {
-	    cacheBlock.displayString += ID_TO_GAME(rightId).getDisplayString() + ",";
-    }
-    if (!rightOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
+	for (const auto &rightId: rightOptions) {
+		cacheBlock.displayString += ID_TO_GAME(rightId).getDisplayString() + ",";
+	}
+	if (!rightOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
 	cacheBlock.displayString += "}";
-    return cacheBlock.displayString;
+	return cacheBlock.displayString;
 }
 
 size_t CombinatorialGame::getBirthday() {
-    if (leftOptions.empty() && rightOptions.empty()) return 0;
-    size_t maxFound = 0;
-    for (const auto& leftId : leftOptions) {
-        maxFound = std::max(maxFound, ID_TO_GAME(leftId).getBirthday());
-    }
-    for (const auto& rightId: rightOptions) {
-        maxFound = std::max(maxFound, ID_TO_GAME(rightId).getBirthday());
-    }
-    return maxFound + 1;
+	if (leftOptions.empty() && rightOptions.empty()) return 0;
+	size_t maxFound = 0;
+	for (const auto& leftId : leftOptions) {
+		maxFound = std::max(maxFound, ID_TO_GAME(leftId).getBirthday());
+	}
+	for (const auto& rightId: rightOptions) {
+		maxFound = std::max(maxFound, ID_TO_GAME(rightId).getBirthday());
+	}
+	return maxFound + 1;
 }
 
 CombinatorialGame& CombinatorialGame::getCanonicalForm() {
@@ -322,6 +328,7 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 
 	CombinatorialGame& newGame = GET_GAME(finalLeftOptions, finalRightOptions);
 	cacheBlock.canonicalFormId = newGame.getId();
+	newGame.cacheBlock.canonicalFormId = newGame.getId();
 	return newGame;
 }
 
@@ -331,23 +338,65 @@ CombinatorialGame& CombinatorialGame::getSimplestAlreadyCalculatedForm() const {
 	return ID_TO_GAME(id);
 }
 
-bool CombinatorialGame::isInteger() {
+bool CombinatorialGame::isCanonicalInteger() {
 	if (id == cgDatabase.zeroId) return true;
 //	if (cgDatabase.getSavedIntegers().contains(id)) return true;
-	if (cacheBlock.cachedIsInteger) return cacheBlock.cachedIsInteger.value();
-	cacheBlock.cachedIsInteger = false;
+	if (cacheBlock.isInteger) return cacheBlock.isInteger.value();
+	cacheBlock.isInteger = false;
 	if (rightOptions.empty() && leftOptions.size() == 1) {
-		cacheBlock.cachedIsInteger = ID_TO_GAME(*leftOptions.begin()).isInteger();
+		cacheBlock.isInteger = ID_TO_GAME(*leftOptions.begin()).isCanonicalInteger();
+	} else if (leftOptions.empty() && rightOptions.size() == 1) {
+		cacheBlock.isInteger = ID_TO_GAME(*rightOptions.begin()).isCanonicalInteger();
 	}
-	if (leftOptions.empty() && rightOptions.size() == 1) {
-		cacheBlock.cachedIsInteger = ID_TO_GAME(*rightOptions.begin()).isInteger();
-	}
-	return cacheBlock.cachedIsInteger.value();
+	return cacheBlock.isInteger.value();
 }
 
-std::optional<int> CombinatorialGame::getIntegerValue() {
-	if (!isInteger())
+bool CombinatorialGame::_isNumber() {
+	if (isCanonicalInteger()) return true;
+	if (!isInCanonicalForm()) return getCanonicalForm().isNumber();
+	// At this point we know we are in canonical form, and if we are a number, we're a rational
+	if (leftOptions.size() != 1) return false;
+	if (rightOptions.size() != 1) return false;
+	CombinatorialGame& leftGame = cgDatabase.idToGame(*leftOptions.begin());
+	if (!leftGame.isNumber()) return false;
+	CombinatorialGame& rightGame = cgDatabase.idToGame(*rightOptions.begin());
+	if (!rightGame.isNumber()) return false;
+	return leftGame < rightGame; // Simplest number theorem
+}
+
+bool CombinatorialGame::isInCanonicalForm() const {
+	return id == cacheBlock.canonicalFormId;
+}
+
+bool CombinatorialGame::isNumber() {
+	if (!cacheBlock.isNumber)
+		cacheBlock.isNumber = _isNumber();
+	return cacheBlock.isNumber.value();
+}
+
+std::optional<DyadicRational> CombinatorialGame::getNumberValue() {
+	if (cacheBlock.numberValue) return cacheBlock.numberValue;
+	if (!isInCanonicalForm()) {
+		cacheBlock.numberValue = getCanonicalForm().getNumberValue();
+		return cacheBlock.numberValue;
+	} else if (!isNumber()) {
 		return {};
-	int integerValue = (int)getBirthday();
-	return integerValue;
+	} else if (isCanonicalInteger()) {
+		if (*this == cgDatabase.getZeroGame()) {
+			cacheBlock.numberValue = DyadicRational(0, 1);
+		} else if (leftOptions.empty()) {
+			cacheBlock.numberValue = DyadicRational((int)-getBirthday(), 1);
+		} else {
+			cacheBlock.numberValue = DyadicRational((int) getBirthday(), 1);
+		}
+	} else {
+		// If we're not a canonical number, but we are in canonical form, that must mean we're a dyadic rational.
+		// Calculate our value using the simples number theorem.
+		auto& leftGame = ID_TO_GAME(*leftOptions.begin());
+		auto& rightGame = ID_TO_GAME(*rightOptions.begin());
+		auto leftNumber = *leftGame.getNumberValue();
+		auto rightNumber = *rightGame.getNumberValue();
+		cacheBlock.numberValue = getSimplestNumber(leftNumber, rightNumber);
+	}
+	return cacheBlock.numberValue;
 }

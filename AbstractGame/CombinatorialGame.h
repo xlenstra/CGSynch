@@ -12,7 +12,7 @@
 #include <vector>
 #include "CombinatorialGameDatabase.h"
 #include "CombinatorialGameUtil.h"
-#include "util.h"
+#include "DyadicRational.h"
 
 /** Player that wins a game */
 enum class WinningPlayer {
@@ -26,19 +26,22 @@ std::ostream& operator<<(std::ostream &os, WinningPlayer winningPlayer);
 
 /** The cached data of each game */
 struct CGCacheBlock {
-	CGCacheBlock(
-		std::string displayString = "",
-		WinningPlayer cachedWinner = WinningPlayer::NONE,
-		AbstractId canonicalFormId = -1ul,
-		AbstractId negativeFormId = -1ul,
-		const std::optional<bool>& cachedIsInteger = std::optional<bool>{}
-	);
+	//CGCacheBlock(
+	//	std::string displayString = "",
+	//	WinningPlayer cachedWinner = WinningPlayer::NONE,
+	//	AbstractId canonicalFormId = -1ul,
+	//	AbstractId negativeFormId = -1ul,
+	//	const std::optional<bool>& cachedIsInteger = std::optional<bool>{},
+    //    const std::optional<bool>& isNumber = std::optional<bool>{}
+	//);
 
 	std::string displayString = "";
 	WinningPlayer cachedWinner = WinningPlayer::NONE;
 	AbstractId canonicalFormId = -1ul;
 	AbstractId negativeFormId = -1ul;
-	std::optional<bool> cachedIsInteger;
+	std::optional<bool> isInteger = {};
+    std::optional<bool> isNumber = {};
+    std::optional<DyadicRational> numberValue = {};
 };
 
 /** A node in the tree of abstract combinatorial games.
@@ -58,8 +61,10 @@ public:
     CombinatorialGame(std::unordered_set<AbstractId> leftOptions, std::unordered_set<AbstractId> rightOptions, AbstractId id);
 	CombinatorialGame(const CombinatorialGame& other);
 
-    /** Copies the cache (rarely useful, as each unique abstract game is initialized only once) */
-    void copyCache(const CGCacheBlock& other);
+    /** Sets the cache of this game to something else.
+     * Potentially useful when these values can be computed more easily than using their definition
+     * */
+    void setCache(const CGCacheBlock& other);
 
     /** Get a string representation of this game in mathematical notation. Not reversible. */
 	std::string getDisplayString();
@@ -71,15 +76,21 @@ public:
 
     /** Get the id's of the left options of this game, which can be turned into games in the [cgDatabase] */
 	const std::unordered_set<AbstractId>& getLeftOptions() const { return leftOptions; }
-    /** Get the id's of the right options of this game, which can be turned into games in the [cgDatabase] */
+    /** Get the id's of the right options of this game, which can be turned into games in the <A NAME="cgDatabase"> cgDatabase</A> */
 	const std::unordered_set<AbstractId>& getRightOptions() const { return rightOptions; }
 
     /** Get the canonical, most simplified, form of this game */
 	CombinatorialGame& getCanonicalForm();
-    /** Is this game an integer */
-	bool isInteger();
-    /** Get the integer value of this game, or [std::optional<int>{}] if it isn't a game */
-	std::optional<int> getIntegerValue();
+    /** Returns whether this game is in canonical form */
+    bool isInCanonicalForm() const;
+    /** Is this game an integer in canonical form?
+     * Note that this function returns false if it's an integer in a different form (e.g. {1|3}).
+     */
+	bool isCanonicalInteger();
+    /** Is this game a number? */
+    bool isNumber();
+    /** Get the number value of this game, using the simplest number rule */
+    std::optional<DyadicRational> getNumberValue();
 
     /** Get the negative of this game */
 	CombinatorialGame& operator-();
@@ -109,6 +120,7 @@ private:
 
     /** Returns the canonical form if it is already calculated; otherwise returns this */
 	CombinatorialGame& getSimplestAlreadyCalculatedForm() const;
+    bool _isNumber();
 };
 
 

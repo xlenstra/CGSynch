@@ -4,15 +4,25 @@
 #include "CombinatorialGameDatabase.h"
 
 CGDatabase::CGDatabase() {
+    std::shared_ptr<CombinatorialGame> zeroGame = std::make_shared<CombinatorialGame>(
+        std::unordered_set<AbstractId>(),
+        std::unordered_set<AbstractId>(),
+        0
+    );
+    zeroGame->setCache({
+        "0",
+        WinningPlayer::PREVIOUS,
+        0,
+        0,
+        true,
+        true,
+        DyadicRational(0,1)
+    });
 	existingGames.emplace_back(
-		std::make_shared<CombinatorialGame>(
-			std::unordered_set<AbstractId>(),
-		    std::unordered_set<AbstractId>(),
-	        0
-		)
+		zeroGame
 	);
 //	savedIntegers[0] = 0;
-	existingGames.reserve(16);
+	existingGames.reserve(1024); // So we don't have to copy over a lot
 }
 
 void CGDatabase::print(std::ostream &os) {
@@ -52,11 +62,31 @@ CombinatorialGame& CGDatabase::getInteger(int value) {
 		return getZeroGame();
 	} else if (value > 0) {
 		CombinatorialGame& newGame = getGame({getInteger(value - 1).getId()}, {});
-		newGame.copyCache({std::to_string(value), WinningPlayer::LEFT, newGame.getId(), -1ul, true });
+        newGame.setCache(
+            {
+                std::to_string(value),
+                WinningPlayer::LEFT,
+                newGame.getId(),
+                -1ul,
+                true,
+                true,
+                DyadicRational(value, 1)
+            }
+        );
 		return newGame;
 	} else if (value < 0) {
 		CombinatorialGame& newGame = getGame({}, {getInteger(value + 1).getId()});
-		newGame.copyCache({std::to_string(value), WinningPlayer::RIGHT, newGame.getId(), -1ul, true});
+        newGame.setCache(
+            {
+                std::to_string(value),
+                WinningPlayer::RIGHT,
+                newGame.getId(),
+                -1ul,
+                true,
+                true,
+                DyadicRational(value, 1)
+            }
+        );
 		return newGame;
 	} else {
 		throw(std::domain_error(std::to_string(value) + " is not a valid integer!"));

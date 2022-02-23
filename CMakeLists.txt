@@ -7,18 +7,19 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
 
 add_executable(CGSynch_2
         main.cpp
-        AbstractGame/CombinatorialGame.cpp
-        AbstractGame/SynchronousGame.cpp
         AbstractGame/CombinatorialGame.h
+        AbstractGame/CombinatorialGame.cpp
         AbstractGame/SynchronousGame.h
-        AbstractGame/CombinatorialGameDatabase.cpp
+        AbstractGame/SynchronousGame.cpp
         AbstractGame/CombinatorialGameDatabase.h
-        AbstractGame/util.h
-        CombinatorialGames/RulesetMath.h
-        CombinatorialGames/RulesetMath.cpp
+        AbstractGame/CombinatorialGameDatabase.cpp
+        AbstractGame/DyadicRational.h
+        AbstractGame/DyadicRational.cpp
         CombinatorialGames/AbstractGame.h
         CombinatorialGames/GameDatabase.h
         CombinatorialGames/CherriesGame.h
         CombinatorialGames/CherriesGame.cpp
         CombinatorialGames/RulesetUtil.h
-    )
+        CombinatorialGames/RulesetMath.h
+        CombinatorialGames/RulesetMath.cpp
+        )

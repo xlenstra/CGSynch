@@ -59,6 +59,8 @@ private:
 //	std::unordered_map<AbstractId,int> savedIntegers;
 //	boost::bimaps::bimap<AbstractId, int, boost::container::allocator<int>> savedIntegers;
 };
+
+
 std::ostream& operator<<(std::ostream& os, CGDatabase database);
 
 /** Turns an abstract ID into a game */

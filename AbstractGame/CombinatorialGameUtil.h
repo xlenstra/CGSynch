@@ -12,5 +12,4 @@ typedef size_t AbstractId;
 class CombinatorialGame;
 class CGDatabase;
 
-
 #endif //CGSYNCH_2_COMBINATORIALGAMEUTIL_H
