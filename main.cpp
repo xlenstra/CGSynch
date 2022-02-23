@@ -2,7 +2,7 @@
 #include "AbstractGame/CombinatorialGame.h"
 #include "AbstractGame/CombinatorialGameDatabase.h"
 #include "CombinatorialGames/RulesetMath.h"
-#include "CombinatorialGames/RulesetDatabase.h"
+#include "CombinatorialGames/GameDatabase.h"
 #include "CombinatorialGames/CherriesGame.h"
 
 int main() {

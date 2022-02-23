@@ -8,7 +8,7 @@
 #include <concepts>
 #include "RulesetUtil.h"
 #include "../AbstractGame/CombinatorialGameDatabase.h"
-#include "RulesetDatabase.h"
+#include "GameDatabase.h"
 
 /** An abstract class for combinatorial games
  * Each of these classes is a node in a tree, with the left options and right options saved in the class
@@ -74,7 +74,7 @@ AbstractId getAbstractFormId(Game game) {
 	if (!game.hasBeenExplored()) game.explore();
 	std::unordered_set<AbstractId> leftOptions;
 	std::unordered_set<AbstractId> rightOptions;
-	RulesetDatabase<Position, Game>& database = *RulesetDatabase<Position, Game>::getInstance();
+	GameDatabase<Position, Game>& database = *GameDatabase<Position, Game>::getInstance();
 	for (const auto& leftPosition : game.getLeftOptions()) {
 		leftOptions.insert(getAbstractFormId<Position, Game>(database.idToGame(leftPosition)));
 	}

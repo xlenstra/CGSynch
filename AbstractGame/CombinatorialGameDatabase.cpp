@@ -49,7 +49,7 @@ CombinatorialGame& CGDatabase::getGame(
 
 CombinatorialGame& CGDatabase::getInteger(int value) {
 	if (value == 0) {
-		return getZero();
+		return getZeroGame();
 	} else if (value > 0) {
 		CombinatorialGame& newGame = getGame({getInteger(value - 1).getId()}, {});
 		newGame.copyCache({std::to_string(value), WinningPlayer::LEFT, newGame.getId(), -1ul, true });
@@ -61,6 +61,27 @@ CombinatorialGame& CGDatabase::getInteger(int value) {
 	} else {
 		throw(std::domain_error(std::to_string(value) + " is not a valid integer!"));
 	}
+}
+
+CombinatorialGame& CGDatabase::getDyadicRational(int numerator, int denominator) {
+    if (denominator == 0)
+        throw(std::domain_error("0 is not a power of 2!"));
+    if (denominator < 0)
+        throw(std::domain_error(std::to_string(denominator) + " is a negative number, and thus not allowed as a denominator!"));
+    if (!std::has_single_bit((unsigned)denominator)) // bit magic
+        throw(std::domain_error(std::to_string(denominator) + " is not a power of 2!"));
+    return idToGame(_getDyadicRational(numerator, denominator));
+}
+
+AbstractId CGDatabase::_getDyadicRational(int numerator, int denominator) {
+    if (denominator == 1)
+        return getInteger(numerator).getId();
+    if (numerator % 2 == 0)
+        return _getDyadicRational(numerator/2, denominator/2);
+    return getGameId(
+        { _getDyadicRational((numerator-1)/2,denominator/2) },
+        { _getDyadicRational((numerator+1)/2,denominator/2) }
+    );
 }
 
 

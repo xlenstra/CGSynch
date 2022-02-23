@@ -2,8 +2,8 @@
 // Created by ardour on 15-02-22.
 //
 
-#ifndef CGSYNCH_2_RULESETDATABASE_H
-#define CGSYNCH_2_RULESETDATABASE_H
+#ifndef CGSYNCH_2_GAMEDATABASE_H
+#define CGSYNCH_2_GAMEDATABASE_H
 
 #include <unordered_set>
 
@@ -21,10 +21,10 @@
  * A ptr to this instance is returned by [RulesetDatabase<>::getInstance()]
  */
 template<isPosition Position, isGame<Position> Game>
-class RulesetDatabase {
+class GameDatabase {
 public:
 	/** Return the one and only instance with these templates */
-	static std::shared_ptr<RulesetDatabase<Position, Game>> getInstance();
+	static std::shared_ptr<GameDatabase<Position, Game>> getInstance();
 
 	/** Turns an id into a game */
     static Game& idToGame(GameId id);
@@ -37,10 +37,11 @@ public:
 	 */
 	static Game& getOrInsertGame(Game& ruleset);
 
-//	static GameId isKnownTransposition(Position transposition);
+    /** Returns the ID of the game this position is a known transposition of, or -1 if it is unknown */
+	static GameId isKnownTransposition(Position transposition);
 
-
-	friend std::ostream& operator<<(std::ostream& os, RulesetDatabase<Position, Game> database) {
+    /** PRINT */
+	friend std::ostream& operator<<(std::ostream& os, GameDatabase<Position, Game> database) {
 		if (database.database.empty()) {
 			os << "[]";
 			return os;
@@ -55,8 +56,8 @@ public:
 
 
 private:
-	static std::shared_ptr<RulesetDatabase<Position, Game>> instance;
-	RulesetDatabase() = default;
+	static std::shared_ptr<GameDatabase<Position, Game>> instance;
+	GameDatabase() = default;
 
 	static std::vector<std::shared_ptr<Game>> database;
 	static std::unordered_map<Position, GameId> transpositionTable;
@@ -69,19 +70,19 @@ private:
 
 
 template<isPosition comparableType, isGame<comparableType> Ruleset>
-std::shared_ptr<RulesetDatabase<comparableType, Ruleset>> RulesetDatabase<comparableType, Ruleset>::getInstance() {
+std::shared_ptr<GameDatabase<comparableType, Ruleset>> GameDatabase<comparableType, Ruleset>::getInstance() {
 	if (instance) return instance;
-	instance = std::make_shared<RulesetDatabase<comparableType, Ruleset>>(RulesetDatabase<comparableType, Ruleset>());
+	instance = std::make_shared<GameDatabase<comparableType, Ruleset>>(GameDatabase<comparableType, Ruleset>());
 	return instance;
 }
 
 template<isPosition comparableType, isGame<comparableType> Ruleset>
-Ruleset& RulesetDatabase<comparableType, Ruleset>::idToGame(GameId id) {
+Ruleset& GameDatabase<comparableType, Ruleset>::idToGame(GameId id) {
 	return *(database.at(id));
 }
 
 template<isPosition comparableType, isGame<comparableType> Ruleset>
-GameId RulesetDatabase<comparableType, Ruleset>::getOrInsertGameId(const Ruleset& ruleset) {
+GameId GameDatabase<comparableType, Ruleset>::getOrInsertGameId(const Ruleset& ruleset) {
 	// Get any transposition of the position
 	const comparableType firstTransposition = ruleset.getAnyTransposition();
 	if (transpositionTable.contains(firstTransposition))
@@ -97,16 +98,16 @@ GameId RulesetDatabase<comparableType, Ruleset>::getOrInsertGameId(const Ruleset
 }
 
 template<isPosition comparableType, isGame<comparableType> Ruleset>
-Ruleset& RulesetDatabase<comparableType, Ruleset>::getOrInsertGame(Ruleset& ruleset) {
+Ruleset& GameDatabase<comparableType, Ruleset>::getOrInsertGame(Ruleset& ruleset) {
 	return idToGame(getOrInsertGameId(ruleset));
 }
 
 template<isPosition comparableType, isGame<comparableType> Ruleset>
-GameId RulesetDatabase<comparableType, Ruleset>::isKnownTransposition(comparableType transposition) {
+GameId GameDatabase<comparableType, Ruleset>::isKnownTransposition(comparableType transposition) {
 	if (transpositionTable.contains(transposition))
 		return transpositionTable[transposition];
 	return -1;
 }
 
 
-#endif //CGSYNCH_2_RULESETDATABASE_H
+#endif //CGSYNCH_2_GAMEDATABASE_H

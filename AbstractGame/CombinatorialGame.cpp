@@ -83,7 +83,7 @@ WinningPlayer CombinatorialGame::getWinner() {
 }
 
 CombinatorialGame& CombinatorialGame::operator-() {
-	if (id == cgDatabase.zeroId) return cgDatabase.getZero();
+	if (id == cgDatabase.zeroId) return cgDatabase.getZeroGame();
 	if (cacheBlock.negativeFormId != -1ul) return ID_TO_GAME(cacheBlock.negativeFormId);
 	std::unordered_set<AbstractId> newRightOptions {};
 	newRightOptions.reserve(leftOptions.size());
@@ -124,7 +124,7 @@ CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
 CombinatorialGame& CombinatorialGame::operator-(CombinatorialGame& other) {
 	if (other.getId() == cgDatabase.zeroId) return *this;
 	if (id == cgDatabase.zeroId) return -other;
-	if (id == other.getId()) return cgDatabase.getZero();
+	if (id == other.getId()) return cgDatabase.getZeroGame();
 	std::unordered_set<AbstractId> newLeftOptions {};
 	std::unordered_set<AbstractId> newRightOptions {};
 	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());

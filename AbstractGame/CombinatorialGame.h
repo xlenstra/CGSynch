@@ -5,10 +5,11 @@
 #ifndef CGSYNCH_2_COMBINATORIALGAME_H
 #define CGSYNCH_2_COMBINATORIALGAME_H
 
-#include <vector>
+#include <compare>
+#include <optional>
 #include <string>
 #include <unordered_set>
-#include <compare>
+#include <vector>
 #include "CombinatorialGameDatabase.h"
 #include "CombinatorialGameUtil.h"
 #include "util.h"

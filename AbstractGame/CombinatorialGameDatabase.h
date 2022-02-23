@@ -30,7 +30,7 @@ public:
      * If it doesn't, it creates such a game and then return the new ID.
      */
     AbstractId getGameId(const std::unordered_set<AbstractId>& left, const std::unordered_set<AbstractId>& right);
-	/** Same as @getGameId, but returns a reference to the game instead of its ID.
+	/** Same as <code><em>getGameId</em></code>, but returns a reference to the game instead of its ID.
 	 * That is, it checks if a game with the provided left and right options exists.
 	 * If it does, it returns a reference to that game.
 	 * Otherwise, it creates that game and returns the new ID.
@@ -40,16 +40,20 @@ public:
     CombinatorialGame& idToGame(AbstractId id) { return *existingGames.at(id); }
 
 	/** Get the game corresponding to 0, i.e., neither player has a move */
-    CombinatorialGame& getZero() { return idToGame(zeroId); }
-	/** Get the game that is in canonical form and has integer value value */
+    CombinatorialGame& getZeroGame() { return idToGame(zeroId); }
+	/** Get the game that is in canonical form and has integer value equal to <code><em>value</em></code> */
 	CombinatorialGame& getInteger(int value);
 //	const std::unordered_map<AbstractId,int>& getSavedIntegers() { return savedIntegers; }
+    /** Gets the game in canoncial form that has dyadic rational value equal to <code><em>numerator/denominator</em></code> */
+    CombinatorialGame& getDyadicRational(int numerator, int denominator);
 
 	/** the id of the game corresponding to 0, in which neither player has a move */
     const AbstractId zeroId = 0;
 
 private:
     std::vector<std::shared_ptr<CombinatorialGame>> existingGames;
+
+    AbstractId _getDyadicRational(int numerator, int denominator);
 
 
 //	std::unordered_map<AbstractId,int> savedIntegers;

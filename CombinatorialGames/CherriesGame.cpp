@@ -7,12 +7,12 @@
 #include <utility>
 
 // Initialize static member variables
-template<> std::shared_ptr<RulesetDatabase<CherriesPosition, CherriesGame>> RulesetDatabase<CherriesPosition, CherriesGame>::instance = nullptr;
-template<> std::vector<std::shared_ptr<CherriesGame>> RulesetDatabase<CherriesPosition, CherriesGame>::database = {};
-template<> std::unordered_map<CherriesPosition, GameId> RulesetDatabase<CherriesPosition, CherriesGame>::transpositionTable = {};
+template<> std::shared_ptr<GameDatabase<CherriesPosition, CherriesGame>> GameDatabase<CherriesPosition, CherriesGame>::instance = nullptr;
+template<> std::vector<std::shared_ptr<CherriesGame>> GameDatabase<CherriesPosition, CherriesGame>::database = {};
+template<> std::unordered_map<CherriesPosition, GameId> GameDatabase<CherriesPosition, CherriesGame>::transpositionTable = {};
 // Get a global variable for the actual database
 // TODO: inline this
-std::shared_ptr<RulesetDatabase<CherriesPosition, CherriesGame>> cherriesDatabase = RulesetDatabase<CherriesPosition, CherriesGame>::getInstance();
+std::shared_ptr<GameDatabase<CherriesPosition, CherriesGame>> cherriesDatabase = GameDatabase<CherriesPosition, CherriesGame>::getInstance();
 
 std::ostream& operator<<(std::ostream& os, CherriesPosition position) {
 	static const std::string white = "W";

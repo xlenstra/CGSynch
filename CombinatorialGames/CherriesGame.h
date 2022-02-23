@@ -63,6 +63,6 @@ private:
 
 CherriesGame& createCherriesPosition(const std::string& inputString);
 
-extern std::shared_ptr<RulesetDatabase<CherriesPosition, CherriesGame>> cherriesDatabase;
+extern std::shared_ptr<GameDatabase<CherriesPosition, CherriesGame>> cherriesDatabase;
 
 #endif //CGSYNCH_2_CHERRIESGAME_H
