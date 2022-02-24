@@ -11,7 +11,7 @@ int main() {
 	CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
 	std::cout << cgDatabase << std::endl;
 
-    CombinatorialGame& game2 = cgDatabase.getDyadicRational(513,1024);
+    //CombinatorialGame& game2 = cgDatabase.getDyadicRational(513,1024);
 	//for (int denominator = 1; denominator < 2048; denominator *= 2) {
 	//	std::cout << "Checking denominator " << denominator << "..." << std::endl;
 	//	for (int numerator = 1; numerator < denominator; numerator += 2) {
@@ -26,18 +26,18 @@ int main() {
 //	CombinatorialGame& game2 = CREATE_GAME({negativeIntegers[1]},{positiveIntegers[1]});
 
 
-//	CherriesGame& rulesetCherries1 = createCherriesPosition("BB WW");
+	CherriesGame& rulesetCherries1 = createCherriesPosition("BBWBBW BWWWB W");
 //	rulesetCherries1.explore();
 //	CherriesGame& leftCherries1 = cherriesDatabase->idToGame(*rulesetCherries1.getLeftOptions().begin());
 //	leftCherries1.explore();
 //	CherriesGame& leftLeftCherries1 = cherriesDatabase->idToGame(*leftCherries1.getLeftOptions().begin());
 //	CherriesGame& rulesetCherries2 = createCherriesPosition("WW BB");
-//	std::cout << *cherriesDatabase << std::endl;
-//	std::cout << leftLeftCherries1.getDisplayString() << std::endl;
-//	AbstractId abstractId = getAbstractFormId<CherriesPosition>(rulesetCherries1);
-//	std::cout << abstractId << std::endl;
-//	std::cout << GET_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
-//	std::cout << cgDatabase << std::endl;
+	std::cout << *cherriesDatabase << std::endl;
+	std::cout << rulesetCherries1.getDisplayString() << std::endl;
+	AbstractId abstractId = getAbstractFormId<CherriesPosition>(rulesetCherries1);
+	std::cout << abstractId << std::endl;
+	std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
+	std::cout << cgDatabase << std::endl;
 
 //	RulesetDatabase<std::string, MathRuleset> positionDatabase;
 
@@ -54,11 +54,11 @@ int main() {
 //
 //
 //
-    std::cout << game2.getWinner() << std::endl;
-	std::cout << game2.getBirthday() << std::endl;
-	std::cout << game2.getDisplayString() << std::endl;
-    std::cout << game2.getCanonicalForm().getDisplayString() << std::endl;
-    std::cout << cgDatabase << std::endl;
+//    std::cout << game2.getWinner() << std::endl;
+//	std::cout << game2.getBirthday() << std::endl;
+//	std::cout << game2.getDisplayString() << std::endl;
+//    std::cout << game2.getCanonicalForm().getDisplayString() << std::endl;
+//    std::cout << cgDatabase << std::endl;
 
 	return 0;
 }

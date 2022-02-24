@@ -45,6 +45,12 @@ public:
 	virtual AbstractId getAbstractForm() { return abstractForm; }
 	/** Set the abstract form of this game */
 	virtual void setAbstractForm(AbstractId id) { abstractForm = id; }
+	/** Can be overriden to give an alternative way to calculate the abstract ID of a position.
+	 *  If it returns false, the normal recursive exploration approach will be used.
+	 *  If it returns true, that will be skipped. This function must then set <code>abstractForm</code> themselves.
+	 *  Is automatically called in <code>getAbstractFormId()</code>.
+	 */
+	virtual bool tryToDetermineAbstractForm() { return false; }
 
 	//virtual void determineAbstractForm() { getAbstractFormId<Position, AbstractGame>(this); }
 
@@ -78,6 +84,7 @@ std::unordered_set<GameId> AbstractGame<comparable>::getRightOptions() {
 template<isPosition Position, isGame<Position> Game>
 AbstractId getAbstractFormId(Game& game) {
 	if (game.getAbstractForm() != -1) return game.getAbstractForm();
+	//if (game.tryToDetermineAbstractForm()) return game.getAbstractForm();
 	if (!game.hasBeenExplored()) game.explore();
 	std::unordered_set<AbstractId> leftOptions;
 	std::unordered_set<AbstractId> rightOptions;

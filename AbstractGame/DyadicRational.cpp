@@ -47,12 +47,32 @@ DyadicRational DyadicRational::operator-(const DyadicRational& other) const {
     return *this + (-other);
 }
 
+void DyadicRational::operator+=(const DyadicRational& other) {
+	DyadicRational sum = *this + other;
+	numerator = sum.numerator;
+	denominator = sum.denominator;
+}
+
+void DyadicRational::operator-=(const DyadicRational& other) {
+	DyadicRational difference = *this - other;
+	numerator = difference.numerator;
+	denominator = difference.denominator;
+}
+
 DyadicRational DyadicRational::operator+(const int& other) const {
     return DyadicRational(numerator + other * denominator, denominator).simplify();
 }
 
 DyadicRational DyadicRational::operator-(const int& other) const {
     return *this + (-other);
+}
+
+void DyadicRational::operator+=(const int& other) {
+	numerator += other * denominator;
+}
+
+void DyadicRational::operator-=(const int& other) {
+	*this += -other;
 }
 
 std::strong_ordering DyadicRational::operator<=>(const DyadicRational& other) const {

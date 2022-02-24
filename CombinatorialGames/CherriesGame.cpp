@@ -14,7 +14,7 @@ template<> std::unordered_map<CherriesPosition, GameId> GameDatabase<CherriesPos
 // TODO: inline this
 std::shared_ptr<GameDatabase<CherriesPosition, CherriesGame>> cherriesDatabase = GameDatabase<CherriesPosition, CherriesGame>::getInstance();
 
-std::ostream& operator<<(std::ostream& os, CherriesPosition position) {
+std::ostream& operator<<(std::ostream& os, const CherriesPosition& position) {
 	static const std::string white = "W";
 	static const std::string black = "B";
 	static const std::string none = " ";
@@ -50,7 +50,7 @@ void CherriesGame::explore() {
 		replacement.pop_front();
 		if (!replacement.empty())
 			copy.insert(replacement);
-		if (unconnectedLine.front() == StoneColour::WHITE) {
+		if (unconnectedLine.front() == StoneColour::BLACK) {
 			leftOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(copy)));
 		} else {
 			rightOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(copy)));
@@ -60,7 +60,7 @@ void CherriesGame::explore() {
 		replacement.pop_back();
 		if (!replacement.empty())
 			secondCopy.insert(replacement);
-		if (unconnectedLine.back() == StoneColour::WHITE) {
+		if (unconnectedLine.back() == StoneColour::BLACK) {
 			leftOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(secondCopy)));
 		} else {
 			rightOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(secondCopy)));
@@ -127,6 +127,71 @@ std::string CherriesGame::getDisplayString() {
 	displayString += "\b";
 	return displayString;
 }
+
+// Source: Mark van den Bergh, accessed via a paper written by Thomas de Mol I received from Walter Kosters.
+bool CherriesGame::tryToDetermineAbstractForm() {
+	// It turns out the value of each cherries game is an integer.
+	// We get it, by summing the values of each segment of the position.
+	int value = 0;
+	for (const auto& segment : position) {
+		// Simple base cases
+		const int segmentSize = (int) segment.size();
+		if (segmentSize == 0) continue; // ????
+		// If no white stones in this segment:
+		if (std::find(segment.begin(), segment.end(), StoneColour::WHITE) == segment.end()) {
+			value += segmentSize;
+			continue;
+		// If no black stones in this segment:
+		} else if (std::find(segment.begin(), segment.end(), StoneColour::BLACK) == segment.end()) {
+			value -= segmentSize;
+			continue;
+		}
+		// value = l(m-1) + r(n-1) + (l+r)/2 + (x+y)/2
+		// Where x,y,l,r \in {-1, +1} and m,n > 0
+		// For exact values, see the paper.
+		StoneColour firstBlockColour = segment[0]; // l
+		StoneColour lastBlockColour = segment[segmentSize-1]; // r
+		int firstBlockSize; // m
+		int lastBlockSize;  // n
+		for (int i = 0; i < segmentSize; ++i) {
+			if (segment[i] != firstBlockColour) {
+				firstBlockSize = i;
+				break;
+			}
+		}
+		for (int i = segmentSize-1; i >= 0; --i) {
+			if (segment[i] != lastBlockColour) {
+				lastBlockSize = segmentSize-1-i;
+				break;
+			}
+		}
+		StoneColour firstLargeBlockColour = StoneColour::NONE; // x
+		StoneColour lastLargeBlockColour = StoneColour::NONE; // y
+		for (int i = 1; i < segmentSize; ++i) {
+			if (segment[i] == segment[i-1]) {
+				firstLargeBlockColour = segment[i];
+				break;
+			}
+		}
+		for (int i = segmentSize-2; i >= 0; --i) {
+			if (segment[i] == segment[i+1]) {
+				lastLargeBlockColour = segment[i];
+				break;
+			}
+		}
+		value += (
+			(int)firstBlockColour * (firstBlockSize - 1)
+			+ (int)lastBlockColour * (lastBlockSize - 1)
+			+ ((int)firstBlockColour + (int)lastBlockColour)/2
+			+ ((int)firstLargeBlockColour + (int)lastLargeBlockColour)/2
+		);
+	}
+	abstractForm = cgDatabase.getInteger(value).getId();
+	return true;
+}
+
+
+
 
 CherriesGame& createCherriesPosition(const std::string& inputString) {
 	std::istringstream input(inputString);

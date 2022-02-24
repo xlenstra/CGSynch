@@ -12,23 +12,25 @@
 
 /** Colours of the stones in a position of the game Cherries */
 enum class StoneColour {
-	WHITE,
-	BLACK,
-	NONE,
+	BLACK = 1,
+	WHITE = -1,
+	NONE = 0,
 };
 
-/** Position in a game of cherries */
-typedef std::unordered_multiset<std::deque<StoneColour>> CherriesPosition;
-std::ostream& operator<<(std::ostream& os, CherriesPosition position);
+/** Position in a game of cherries.
+ * Cannot be unordered as we need the segments to be ordered identically for the hash function to work.
+ */
+typedef std::multiset<std::deque<StoneColour>> CherriesPosition;
+std::ostream& operator<<(std::ostream& os, const CherriesPosition& position);
 
 // Required to make a hashMap from transposed CherriesPositions to actual positions
 namespace std {
-	template<>
-	struct hash<std::deque<StoneColour>> {
-		size_t operator()(const std::deque<StoneColour>& component) const {
-			return boost::hash_range(component.begin(), component.end());
-		}
-	};
+	//template<>
+	//struct hash<std::deque<StoneColour>> {
+	//	size_t operator()(const std::deque<StoneColour>& component) const {
+	//		return boost::hash_range(component.begin(), component.end());
+	//	}
+	//};
 	template<>
 	struct hash<CherriesPosition> {
 		size_t operator()(const CherriesPosition& position) const {
@@ -53,6 +55,7 @@ public:
 	CherriesPosition getAnyTransposition() const override;
 	std::unordered_set<CherriesPosition> getTranspositions() const override;
 //	GameId getIdOrInsertIntoDatabase() override;
+	bool tryToDetermineAbstractForm() override;
 
 private:
 	void addTranspositionsRecursively(std::unordered_set<CherriesPosition>& transposition, std::unordered_set<size_t>& sectionsToReverse, const size_t& depth) const;

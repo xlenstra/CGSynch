@@ -20,8 +20,12 @@ public:
     DyadicRational operator-() const;
     DyadicRational operator+(const DyadicRational& other) const;
     DyadicRational operator-(const DyadicRational& other) const;
+	void operator+=(const DyadicRational& other);
+	void operator-=(const DyadicRational& other);
     DyadicRational operator+(const int& other) const;
     DyadicRational operator-(const int& other) const;
+	void operator +=(const int& other);
+	void operator -=(const int& other);
     std::strong_ordering operator<=>(const DyadicRational& other) const;
     bool operator==(const DyadicRational& other) const;
     std::strong_ordering operator<=>(const int& other) const;
