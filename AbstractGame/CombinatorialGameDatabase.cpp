@@ -12,6 +12,7 @@ CGDatabase::CGDatabase() {
     zeroGame->setCache({
         "0",
         WinningPlayer::PREVIOUS,
+		0,
         0,
         0,
         true,
@@ -66,6 +67,7 @@ CombinatorialGame& CGDatabase::getInteger(int value) {
             {
                 std::to_string(value),
                 WinningPlayer::LEFT,
+				value,
                 newGame.getId(),
                 -1ul,
                 true,
@@ -80,6 +82,7 @@ CombinatorialGame& CGDatabase::getInteger(int value) {
             {
                 std::to_string(value),
                 WinningPlayer::RIGHT,
+				-value,
                 newGame.getId(),
                 -1ul,
                 true,

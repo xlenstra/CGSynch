@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 #include <bit>
+#include <iostream>
 #include "DyadicRational.h"
 
 DyadicRational::DyadicRational(int numerator, int denominator) : numerator(numerator), denominator(denominator) {
@@ -116,6 +117,7 @@ std::optional<DyadicRational> getSimplestNumber(const DyadicRational& left, cons
         }
         return bestGuess;
     }
-    throw(std::domain_error("Invalid combination of left and right dyadic rational passed to getSimplestNumber!"));
+	std::cerr << "DOMAIN ERROR! Invalid combination of left and right dyadic rational passed to getSimplestNumber!" << std::endl;
+    return std::optional<DyadicRational>();
 }
 

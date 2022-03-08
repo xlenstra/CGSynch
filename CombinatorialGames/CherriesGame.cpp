@@ -5,6 +5,7 @@
 #include "CherriesGame.h"
 
 #include <utility>
+#include <iostream>
 
 // Initialize static member variables
 template<> std::shared_ptr<GameDatabase<CherriesPosition, CherriesGame>> GameDatabase<CherriesPosition, CherriesGame>::instance = nullptr;
@@ -40,10 +41,14 @@ std::ostream& operator<<(std::ostream& os, const CherriesPosition& position) {
 CherriesGame::CherriesGame(CherriesPosition position) : position(std::move(position)) {}
 
 void CherriesGame::explore() {
-	for (const auto& unconnectedLine : position) {
+	for (auto it = position.begin(); it != position.end(); ++it) {
+		const auto& unconnectedLine = *it;
 		// Copy position
 		CherriesPosition copy = position;
-		copy.erase(unconnectedLine);
+		auto elementToRemove = copy.begin();
+		auto distance = std::distance(position.begin(), it);
+		std::advance(elementToRemove, distance);
+		copy.erase(elementToRemove);
 		CherriesPosition secondCopy = copy;
 
 		std::deque<StoneColour> replacement = unconnectedLine;

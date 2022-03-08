@@ -11,6 +11,12 @@ int main() {
 	CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
 	std::cout << cgDatabase << std::endl;
 
+	CherriesGame& cherriesPosition = createCherriesPosition("BBWBBW BWWWB W");
+	std::cout << cherriesPosition.getDisplayString() << std::endl;
+	AbstractId abstractId = getAbstractFormId<CherriesPosition>(cherriesPosition);
+	std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
+
+
     //CombinatorialGame& game2 = cgDatabase.getDyadicRational(513,1024);
 	//for (int denominator = 1; denominator < 2048; denominator *= 2) {
 	//	std::cout << "Checking denominator " << denominator << "..." << std::endl;
@@ -26,18 +32,16 @@ int main() {
 //	CombinatorialGame& game2 = CREATE_GAME({negativeIntegers[1]},{positiveIntegers[1]});
 
 
-	CherriesGame& rulesetCherries1 = createCherriesPosition("BBWBBW BWWWB W");
-//	rulesetCherries1.explore();
-//	CherriesGame& leftCherries1 = cherriesDatabase->idToGame(*rulesetCherries1.getLeftOptions().begin());
+
+//	cherriesPosition.explore();
+//	CherriesGame& leftCherries1 = cherriesDatabase->idToGame(*cherriesPosition.getLeftOptions().begin());
 //	leftCherries1.explore();
 //	CherriesGame& leftLeftCherries1 = cherriesDatabase->idToGame(*leftCherries1.getLeftOptions().begin());
 //	CherriesGame& rulesetCherries2 = createCherriesPosition("WW BB");
-	std::cout << *cherriesDatabase << std::endl;
-	std::cout << rulesetCherries1.getDisplayString() << std::endl;
-	AbstractId abstractId = getAbstractFormId<CherriesPosition>(rulesetCherries1);
-	std::cout << abstractId << std::endl;
-	std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
-	std::cout << cgDatabase << std::endl;
+//	std::cout << *cherriesDatabase << std::endl;
+//	std::cout << abstractId << std::endl;
+
+//	std::cout << cgDatabase << std::endl;
 
 //	RulesetDatabase<std::string, MathRuleset> positionDatabase;
 
