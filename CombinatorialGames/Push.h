@@ -22,7 +22,7 @@ private:
 	PushShovePosition position;
 };
 
-Push& createCherriesPosition(const std::string& inputString);
+Push& createPushPosition(const std::string& inputString);
 
 extern std::shared_ptr<GameDatabase<PushShovePosition, Push>> pushDatabase;
 

@@ -13,7 +13,11 @@ template<> std::unordered_map<PushShovePosition, GameId> GameDatabase<PushShoveP
 std::shared_ptr<GameDatabase<PushShovePosition, Push>> pushDatabase = GameDatabase<PushShovePosition, Push>::getInstance();
 
 
-Push::Push(PushShovePosition position) : position(position) {}
+Push::Push(PushShovePosition position) : position(position) {
+	while (*position.end() == StoneColour::NONE) {
+		position.pop_back();
+	}
+}
 
 std::string Push::getDisplayString() {
 	if (!displayString.empty()) return displayString;
@@ -32,9 +36,7 @@ std::string Push::getDisplayString() {
 			default:
 				break;
 		}
-		displayString += " ";
 	}
-	displayString += "\b";
 	return displayString;
 }
 
@@ -47,6 +49,49 @@ std::unordered_set<PushShovePosition> Push::getTranspositions() const {
 }
 
 void Push::explore() {
-	//size_t
+	int lastEmptySquareIndex = 0;
+	auto lastEmptySquareIt = position.begin();
+	auto currentSquareIt = position.begin();
+	// We loop from left to right, and every time we find any piece, we try every move with it.
+	for (size_t i = 0; i < position.size(); ++i) {
+		if (*currentSquareIt != StoneColour::NONE) {
+			PushShovePosition positionCopy = position;
+			// Copy the part from the second square to the current square, but one tile to the left.
+			std::copy(lastEmptySquareIt+1, currentSquareIt+1, positionCopy.begin() + lastEmptySquareIndex);
+			positionCopy[i] = StoneColour::NONE;
+			if (*currentSquareIt == StoneColour::BLACK || *currentSquareIt == StoneColour::BLUE) {
+				leftOptions.insert(pushDatabase->getOrInsertGameId(Push(positionCopy)));
+			} else {
+				rightOptions.insert(pushDatabase->getOrInsertGameId(Push(positionCopy)));
+			}
+		} else {
+			lastEmptySquareIt = currentSquareIt;
+			lastEmptySquareIndex = (int)i;
+		}
+
+		++currentSquareIt;
+	}
+	explored = true;
 }
 
+
+Push& createPushPosition(const std::string& inputString) {
+	PushShovePosition position;
+	for (const auto& character : inputString) {
+		switch(character) {
+			case 'B':
+				position.push_back(StoneColour::BLUE);
+				break;
+			case 'R':
+			case 'W':
+				position.push_back(StoneColour::RED);
+				break;
+			case ' ':
+				position.push_back(StoneColour::NONE);
+			default:
+				break;
+		}
+	}
+	Push potentialGame = Push(position);
+	return pushDatabase->getOrInsertGame(potentialGame);
+}

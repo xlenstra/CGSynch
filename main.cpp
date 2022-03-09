@@ -5,6 +5,7 @@
 #include "CombinatorialGames/GameDatabase.h"
 #include "CombinatorialGames/Cherries.h"
 #include "CombinatorialGames/StackCherries.h"
+#include "CombinatorialGames/Push.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl << std::endl;
@@ -12,9 +13,17 @@ int main() {
 	//CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
 
 
-	StackCherriesGame& cherriesPosition = createStackCherriesPosition("BWWWWWW");
-	std::cout << cherriesPosition.getDisplayString() << std::endl;
-	AbstractId abstractId = getAbstractFormId<StackCherriesPosition>(cherriesPosition);
+	//StackCherriesGame& cherriesPosition = createStackCherriesPosition("BWWWWWW");
+	//std::cout << cherriesPosition.getDisplayString() << std::endl;
+	//AbstractId abstractId = getAbstractFormId<StackCherriesPosition>(cherriesPosition);
+	//std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
+	//std::cout << cgDatabase << std::endl;
+
+	Push& pushPosition = createPushPosition("RRB");
+	std::cout << pushPosition.getDisplayString() << std::endl;
+	AbstractId abstractId = getAbstractFormId<PushShovePosition>(pushPosition);
+	std::cout << (int)abstractId << std::endl;
+	std::cout << ID_TO_GAME(abstractId)/*.getCanonicalForm()*/.getDisplayString() << std::endl;
 	std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
 	std::cout << cgDatabase << std::endl;
 
