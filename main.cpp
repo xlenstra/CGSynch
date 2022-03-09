@@ -6,6 +6,7 @@
 #include "CombinatorialGames/Cherries.h"
 #include "CombinatorialGames/StackCherries.h"
 #include "CombinatorialGames/Push.h"
+#include "CombinatorialGames/Shove.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl << std::endl;
@@ -19,7 +20,7 @@ int main() {
 	//std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
 	//std::cout << cgDatabase << std::endl;
 
-	Push& pushPosition = createPushPosition("RRB");
+	Shove& pushPosition = createShovePosition("RRB");
 	std::cout << pushPosition.getDisplayString() << std::endl;
 	AbstractId abstractId = getAbstractFormId<PushShovePosition>(pushPosition);
 	std::cout << (int)abstractId << std::endl;

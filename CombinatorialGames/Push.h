@@ -10,7 +10,7 @@
 
 class Push : public AbstractGame<PushShovePosition> {
 public:
-	explicit Push(PushShovePosition position);
+	explicit Push(PushShovePosition  position);
 	Push(const Push& other) = default;
 
 	std::string getDisplayString() override;

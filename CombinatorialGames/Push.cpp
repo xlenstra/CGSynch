@@ -4,6 +4,8 @@
 
 #include "Push.h"
 
+#include <utility>
+
 // Initialize static member variables
 template<> std::shared_ptr<GameDatabase<PushShovePosition, Push>> GameDatabase<PushShovePosition, Push>::instance = nullptr;
 template<> std::vector<std::shared_ptr<Push>> GameDatabase<PushShovePosition, Push>::database = {};
@@ -13,9 +15,9 @@ template<> std::unordered_map<PushShovePosition, GameId> GameDatabase<PushShoveP
 std::shared_ptr<GameDatabase<PushShovePosition, Push>> pushDatabase = GameDatabase<PushShovePosition, Push>::getInstance();
 
 
-Push::Push(PushShovePosition position) : position(position) {
-	while (*position.end() == StoneColour::NONE) {
-		position.pop_back();
+Push::Push(PushShovePosition position) : position(std::move(position)) {
+	while (!this->position.empty() && this->position.back() == StoneColour::NONE) {
+		this->position.pop_back();
 	}
 }
 
