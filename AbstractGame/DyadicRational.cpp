@@ -114,10 +114,13 @@ std::optional<DyadicRational> getSimplestNumber(const DyadicRational& left, cons
         DyadicRational bestGuess = right.roundToZero()-1;
         while (bestGuess <= left) {
             bestGuess = DyadicRational(bestGuess.numerator*2+1, bestGuess.denominator*2);
+			while (bestGuess >= right) {
+				bestGuess = DyadicRational(bestGuess.numerator*2-1, bestGuess.denominator*2);
+			}
         }
         return bestGuess;
     }
 	std::cerr << "DOMAIN ERROR! Invalid combination of left and right dyadic rational passed to getSimplestNumber!" << std::endl;
-    return std::optional<DyadicRational>();
+    return {};
 }
 

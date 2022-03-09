@@ -42,7 +42,7 @@ public:
 	virtual void explore() = 0;
 
 	/** Returns the id of the abstract form of this game, or -1 if it has not been calculated yet */
-	virtual AbstractId getAbstractForm() { return abstractForm; }
+	AbstractId getAbstractForm() { return abstractForm; }
 	/** Set the abstract form of this game */
 	virtual void setAbstractForm(AbstractId id) { abstractForm = id; }
 	/** Can be overriden to give an alternative way to calculate the abstract ID of a position.
@@ -84,7 +84,7 @@ std::unordered_set<GameId> AbstractGame<comparable>::getRightOptions() {
 template<isPosition Position, isGame<Position> Game>
 AbstractId getAbstractFormId(Game& game) {
 	if (game.getAbstractForm() != -1) return game.getAbstractForm();
-//	if (game.tryToDetermineAbstractForm()) return game.getAbstractForm();
+	//if (game.tryToDetermineAbstractForm()) return game.getAbstractForm();
 	if (!game.hasBeenExplored()) game.explore();
 	std::unordered_set<AbstractId> leftOptions;
 	std::unordered_set<AbstractId> rightOptions;

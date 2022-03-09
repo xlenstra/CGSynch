@@ -17,9 +17,17 @@ add_executable(CGSynch_2
         AbstractGame/DyadicRational.cpp
         CombinatorialGames/AbstractGame.h
         CombinatorialGames/GameDatabase.h
-        CombinatorialGames/CherriesGame.h
-        CombinatorialGames/CherriesGame.cpp
         CombinatorialGames/RulesetUtil.h
+        CombinatorialGames/CherriesUtil.h
+        CombinatorialGames/CherriesUtil.cpp
+        CombinatorialGames/Cherries.h
+        CombinatorialGames/Cherries.cpp
+        CombinatorialGames/StackCherries.h
+        CombinatorialGames/StackCherries.cpp
+        CombinatorialGames/PushShoveUtil.h
+        CombinatorialGames/PushShoveUtil.cpp
+        CombinatorialGames/Push.h
+        CombinatorialGames/Push.cpp
         CombinatorialGames/RulesetMath.h
         CombinatorialGames/RulesetMath.cpp
         )

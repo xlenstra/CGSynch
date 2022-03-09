@@ -3,19 +3,20 @@
 #include "AbstractGame/CombinatorialGameDatabase.h"
 #include "CombinatorialGames/RulesetMath.h"
 #include "CombinatorialGames/GameDatabase.h"
-#include "CombinatorialGames/CherriesGame.h"
+#include "CombinatorialGames/Cherries.h"
+#include "CombinatorialGames/StackCherries.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl << std::endl;
 
-	CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
-	std::cout << cgDatabase << std::endl;
+	//CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
 
-	CherriesGame& cherriesPosition = createCherriesPosition("BBWBBW BWWWB W");
+
+	StackCherriesGame& cherriesPosition = createStackCherriesPosition("BWWWWWW");
 	std::cout << cherriesPosition.getDisplayString() << std::endl;
-	AbstractId abstractId = getAbstractFormId<CherriesPosition>(cherriesPosition);
+	AbstractId abstractId = getAbstractFormId<StackCherriesPosition>(cherriesPosition);
 	std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
-
+	std::cout << cgDatabase << std::endl;
 
     //CombinatorialGame& game2 = cgDatabase.getDyadicRational(513,1024);
 	//for (int denominator = 1; denominator < 2048; denominator *= 2) {

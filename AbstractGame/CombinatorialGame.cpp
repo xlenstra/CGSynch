@@ -323,11 +323,11 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() {
 	}
 
 	// Check for simplest number theorem
-	if (leftOptions.size() == 1 && rightOptions.size() == 1 && ID_TO_GAME(*leftOptions.begin()).isNumber() && ID_TO_GAME(*rightOptions.begin()).isNumber()) {
+	if (undominatedLeftOptions.size() == 1 && undominatedRightOptions.size() == 1 && ID_TO_GAME(*undominatedLeftOptions.begin()).isNumber() && ID_TO_GAME(*undominatedRightOptions.begin()).isNumber()) {
 		std::optional<DyadicRational> number =
 			getSimplestNumber(
-				*ID_TO_GAME(*leftOptions.begin()).getNumberValue(),
-				*ID_TO_GAME(*leftOptions.begin()).getNumberValue()
+				*ID_TO_GAME(*undominatedLeftOptions.begin()).getNumberValue(),
+				*ID_TO_GAME(*undominatedRightOptions.begin()).getNumberValue()
 			);
 		if (number) {
 			CombinatorialGame& newGame = cgDatabase.getDyadicRational(number->numerator, number->denominator);
@@ -420,7 +420,9 @@ bool CombinatorialGame::_isNumber() {
 	return leftGame < rightGame; // Simplest number theorem
 }
 
-bool CombinatorialGame::isInCanonicalForm() const {
+bool CombinatorialGame::isInCanonicalForm() {
+	if (cacheBlock.canonicalFormId == -1ul)
+		getCanonicalForm();
 	return id == cacheBlock.canonicalFormId;
 }
 
@@ -458,7 +460,6 @@ std::optional<DyadicRational> CombinatorialGame::getNumberValue() {
 }
 
 bool CombinatorialGame::isCanonicalNumber() {
-	if (isCanonicalInteger()) return true;
 	return isInCanonicalForm() && isNumber(); // isNumber() calls isInCanonicalForm(), so checking that first is faster
 }
 

@@ -86,7 +86,7 @@ public:
     /** Get the canonical, most simplified, form of this game */
 	CombinatorialGame& getCanonicalForm();
     /** Returns whether this game is in canonical form */
-    bool isInCanonicalForm() const;
+    bool isInCanonicalForm();
     /** Is this game an integer in canonical form?
      * Note that this function returns false if it's an integer in a different form (e.g. {1|3}).
      */
