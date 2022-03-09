@@ -94,9 +94,11 @@ std::string CherriesGame::getDisplayString() {
 		for (const auto& character : component) {
 			switch (character) {
 				case StoneColour::WHITE:
+				case StoneColour::RED:
 					displayString += "W";
 					break;
 				case StoneColour::BLACK:
+				case StoneColour::BLUE:
 					displayString += "B";
 					break;
 				case StoneColour::NONE:

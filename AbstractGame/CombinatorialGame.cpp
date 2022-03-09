@@ -463,9 +463,9 @@ bool CombinatorialGame::isCanonicalNumber() {
 	return isInCanonicalForm() && isNumber(); // isNumber() calls isInCanonicalForm(), so checking that first is faster
 }
 
-void CombinatorialGame::copyCacheToCanonicalForm() const {
-	if (cacheBlock.canonicalFormId == -1)
-		throw(std::underflow_error("Copying cache to not yet determined canonical form!"));
-	CombinatorialGame& canonicalForm = ID_TO_GAME(cacheBlock.canonicalFormId);
-
-}
+//void CombinatorialGame::copyCacheToCanonicalForm() const {
+//	if (cacheBlock.canonicalFormId == -1ul)
+//		throw(std::underflow_error("Copying cache to not yet determined canonical form!"));
+//	CombinatorialGame& canonicalForm = ID_TO_GAME(cacheBlock.canonicalFormId);
+//
+//}

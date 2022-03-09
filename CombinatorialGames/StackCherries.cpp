@@ -15,29 +15,6 @@ template<> std::unordered_map<StackCherriesPosition, GameId> GameDatabase<StackC
 // TODO: inline this
 std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherriesGame>> stackCherriesDatabase = GameDatabase<StackCherriesPosition, StackCherriesGame>::getInstance();
 
-std::ostream& operator<<(std::ostream& os, const StackCherriesPosition& position) {
-	static const std::string white = "W";
-	static const std::string black = "B";
-	static const std::string none = " ";
-	for (const auto& unconnectedLine : position) {
-		for (const auto& stone : unconnectedLine) {
-			switch (stone) {
-				case StoneColour::WHITE:
-					os << white;
-					break;
-				case StoneColour::BLACK:
-					os << black;
-					break;
-				case StoneColour::NONE:
-				default:
-					break;
-			}
-		}
-		os << none;
-	}
-	return os;
-}
-
 StackCherriesGame::StackCherriesGame(StackCherriesPosition position) : position(std::move(position)) {}
 
 void StackCherriesGame::explore() {
@@ -78,9 +55,11 @@ std::string StackCherriesGame::getDisplayString() {
 		for (const auto& character : component) {
 			switch (character) {
 				case StoneColour::WHITE:
+				case StoneColour::RED:
 					displayString += "W";
 					break;
 				case StoneColour::BLACK:
+				case StoneColour::BLUE:
 					displayString += "B";
 					break;
 				case StoneColour::NONE:

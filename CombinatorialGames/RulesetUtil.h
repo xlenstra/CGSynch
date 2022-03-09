@@ -46,14 +46,7 @@ enum class StoneColour {
 	NONE = 0,
 };
 
-std::ostream& operator<<(std::ostream& os, const StoneColour& stone) {
-	switch (stone) {
-		case StoneColour::BLACK: os << "B"; break;
-		case StoneColour::BLUE : os << "B"; break;
-		case StoneColour::WHITE: os << "W"; break;
-		case StoneColour::RED  : os << "R"; break;
-		case StoneColour::NONE : os << " "; break;
-	}
-	return os;
-}
+std::ostream& operator<<(std::ostream& os, const StoneColour& stone);
+
+
 #endif //CGSYNCH_2_RULESETUTIL_H

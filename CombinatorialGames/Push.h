@@ -24,7 +24,7 @@ private:
 
 Push& createCherriesPosition(const std::string& inputString);
 
-extern std::shared_ptr<GameDatabase<PushShovePosition, Push>> cherriesDatabase;
+extern std::shared_ptr<GameDatabase<PushShovePosition, Push>> pushDatabase;
 
 
 #endif //CGSYNCH_2_PUSH_H

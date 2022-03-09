@@ -18,6 +18,7 @@ add_executable(CGSynch_2
         CombinatorialGames/AbstractGame.h
         CombinatorialGames/GameDatabase.h
         CombinatorialGames/RulesetUtil.h
+        CombinatorialGames/RulesetUtil.cpp
         CombinatorialGames/CherriesUtil.h
         CombinatorialGames/CherriesUtil.cpp
         CombinatorialGames/Cherries.h

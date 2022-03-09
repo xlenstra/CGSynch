@@ -10,7 +10,7 @@ template<> std::vector<std::shared_ptr<Push>> GameDatabase<PushShovePosition, Pu
 template<> std::unordered_map<PushShovePosition, GameId> GameDatabase<PushShovePosition, Push>::transpositionTable = {};
 // Get a global variable for the actual database
 // TODO: inline this
-std::shared_ptr<GameDatabase<PushShovePosition, Push>> cherriesDatabase = GameDatabase<PushShovePosition, Push>::getInstance();
+std::shared_ptr<GameDatabase<PushShovePosition, Push>> pushDatabase = GameDatabase<PushShovePosition, Push>::getInstance();
 
 
 Push::Push(PushShovePosition position) : position(position) {}
@@ -28,6 +28,8 @@ std::string Push::getDisplayString() {
 				break;
 			case StoneColour::NONE:
 				displayString += " ";
+				break;
+			default:
 				break;
 		}
 		displayString += " ";
