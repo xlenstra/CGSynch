@@ -3,10 +3,10 @@
 #include "AbstractGame/CombinatorialGameDatabase.h"
 #include "CombinatorialGames/RulesetMath.h"
 #include "CombinatorialGames/GameDatabase.h"
-#include "CombinatorialGames/Cherries.h"
-#include "CombinatorialGames/StackCherries.h"
-#include "CombinatorialGames/Push.h"
-#include "CombinatorialGames/Shove.h"
+#include "CombinatorialGames/Cherries/Cherries.h"
+#include "CombinatorialGames/Cherries/StackCherries.h"
+#include "Push-Shove/Push.h"
+#include "Push-Shove/Shove.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl << std::endl;

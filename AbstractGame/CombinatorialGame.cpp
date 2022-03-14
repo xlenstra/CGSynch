@@ -52,7 +52,7 @@ CombinatorialGame::CombinatorialGame(const CombinatorialGame& other) :
 }
 
 
-WinningPlayer CombinatorialGame::getWinner() {
+WinningPlayer CombinatorialGame::getWinner() const {
 	if (cacheBlock.cachedWinner != WinningPlayer::NONE) return cacheBlock.cachedWinner;
 	WinningPlayer winner;
 	if (rightOptions.empty() && leftOptions.empty()) {
@@ -83,7 +83,7 @@ WinningPlayer CombinatorialGame::getWinner() {
 	return winner;
 }
 
-CombinatorialGame& CombinatorialGame::operator-() {
+CombinatorialGame& CombinatorialGame::operator-() const {
 	if (id == cgDatabase.zeroId) return cgDatabase.getZeroGame();
 	if (cacheBlock.negativeFormId != -1ul) return ID_TO_GAME(cacheBlock.negativeFormId);
 	std::unordered_set<AbstractId> newRightOptions {};
@@ -100,9 +100,9 @@ CombinatorialGame& CombinatorialGame::operator-() {
 	return ID_TO_GAME(cacheBlock.negativeFormId);
 }
 
-CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
-	if (id == cgDatabase.zeroId) return other;
-	if (other.getId() == cgDatabase.zeroId) return *this;
+CombinatorialGame& CombinatorialGame::operator+(const CombinatorialGame& other) const {
+	if (id == cgDatabase.zeroId) return cgDatabase.idToGame(other.getId());
+	if (other.getId() == cgDatabase.zeroId) return cgDatabase.idToGame(id);
 	if (other.getId() == cacheBlock.negativeFormId) return cgDatabase.getZeroGame();
 	if (cacheBlock.additionCache.contains(other.getId()))
 		return ID_TO_GAME(cacheBlock.additionCache[other.getId()]);
@@ -127,8 +127,8 @@ CombinatorialGame& CombinatorialGame::operator+(CombinatorialGame& other) {
 	return newGame;
 }
 
-CombinatorialGame& CombinatorialGame::operator-(CombinatorialGame& other) {
-	if (other.getId() == cgDatabase.zeroId) return *this;
+CombinatorialGame& CombinatorialGame::operator-(const CombinatorialGame& other) const {
+	if (other.getId() == cgDatabase.zeroId) return cgDatabase.idToGame(id);
 	if (id == cgDatabase.zeroId) return -other;
 	if (id == other.getId()) return cgDatabase.getZeroGame();
 	if (cacheBlock.subtractionCache.contains(other.getId()))
@@ -159,7 +159,7 @@ bool CombinatorialGame::operator==(const CombinatorialGame& other) const {
 }
 
 
-std::partial_ordering CombinatorialGame::operator<=>(CombinatorialGame& other) {
+std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& other) const {
 	CombinatorialGame& leftGame = this->getSimplestAlreadyCalculatedForm();
 	CombinatorialGame& rightGame = other.getSimplestAlreadyCalculatedForm();
 	if (leftGame.cacheBlock.compareCache.contains(rightGame.getId()))
@@ -226,7 +226,7 @@ void CombinatorialGame::setCache(const CGCacheBlock& other) {
 	cacheBlock = other;
 }
 
-std::string CombinatorialGame::getDisplayString() {
+std::string CombinatorialGame::getDisplayString() const {
 	if (id == cgDatabase.zeroId) {
 		cacheBlock.displayString = "0";
 		return cacheBlock.displayString;
@@ -256,7 +256,7 @@ std::string CombinatorialGame::getDisplayString() {
 	return cacheBlock.displayString;
 }
 
-size_t CombinatorialGame::getBirthday() {
+size_t CombinatorialGame::getBirthday() const {
 	if (leftOptions.empty() && rightOptions.empty()) return 0;
 	if (cacheBlock.birthDay) return *cacheBlock.birthDay;
 	size_t maxFound = 0;
@@ -270,7 +270,7 @@ size_t CombinatorialGame::getBirthday() {
 	return *cacheBlock.birthDay;
 }
 
-CombinatorialGame& CombinatorialGame::getCanonicalForm() {
+CombinatorialGame& CombinatorialGame::getCanonicalForm() const {
 	if (cacheBlock.canonicalFormId != AbstractId(-1)) return ID_TO_GAME(cacheBlock.canonicalFormId);
 	if (getWinner() == WinningPlayer::PREVIOUS) return ID_TO_GAME(0);
 
@@ -394,7 +394,7 @@ CombinatorialGame& CombinatorialGame::getSimplestAlreadyCalculatedForm() const {
 	return ID_TO_GAME(id);
 }
 
-bool CombinatorialGame::isCanonicalInteger() {
+bool CombinatorialGame::isCanonicalInteger() const {
 	if (id == cgDatabase.zeroId) return true;
 //	if (cgDatabase.getSavedIntegers().contains(id)) return true;
 	if (cacheBlock.isInteger) return cacheBlock.isInteger.value();
@@ -407,7 +407,7 @@ bool CombinatorialGame::isCanonicalInteger() {
 	return cacheBlock.isInteger.value();
 }
 
-bool CombinatorialGame::_isNumber() {
+bool CombinatorialGame::_isNumber() const {
 	if (isCanonicalInteger()) return true;
 	if (!isInCanonicalForm()) return getCanonicalForm().isNumber();
 	// At this point we know we are in canonical form, and if we are a number, we're a rational
@@ -420,19 +420,19 @@ bool CombinatorialGame::_isNumber() {
 	return leftGame < rightGame; // Simplest number theorem
 }
 
-bool CombinatorialGame::isInCanonicalForm() {
+bool CombinatorialGame::isInCanonicalForm() const {
 	if (cacheBlock.canonicalFormId == -1ul)
 		getCanonicalForm();
 	return id == cacheBlock.canonicalFormId;
 }
 
-bool CombinatorialGame::isNumber() {
+bool CombinatorialGame::isNumber() const {
 	if (!cacheBlock.isNumber)
 		cacheBlock.isNumber = _isNumber();
 	return cacheBlock.isNumber.value();
 }
 
-std::optional<DyadicRational> CombinatorialGame::getNumberValue() {
+std::optional<DyadicRational> CombinatorialGame::getNumberValue() const {
 	if (cacheBlock.numberValue) return cacheBlock.numberValue;
 	if (!isInCanonicalForm()) {
 		cacheBlock.numberValue = getCanonicalForm().getNumberValue();
@@ -459,7 +459,7 @@ std::optional<DyadicRational> CombinatorialGame::getNumberValue() {
 	return cacheBlock.numberValue;
 }
 
-bool CombinatorialGame::isCanonicalNumber() {
+bool CombinatorialGame::isCanonicalNumber() const {
 	return isInCanonicalForm() && isNumber(); // isNumber() calls isInCanonicalForm(), so checking that first is faster
 }
 

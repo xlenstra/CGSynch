@@ -71,12 +71,12 @@ public:
     void setCache(const CGCacheBlock& other);
 
     /** Get a string representation of this game in mathematical notation. Not reversible. */
-	std::string getDisplayString();
+	std::string getDisplayString() const;
 
     /** Get the winner of this game */
-	WinningPlayer getWinner();
+	WinningPlayer getWinner() const;
     /** Get the birthday of this game */
-    size_t getBirthday();
+    size_t getBirthday() const;
 
     /** Get the id's of the left options of this game, which can be turned into games in the [cgDatabase] */
 	const std::unordered_set<AbstractId>& getLeftOptions() const { return leftOptions; }
@@ -84,30 +84,30 @@ public:
 	const std::unordered_set<AbstractId>& getRightOptions() const { return rightOptions; }
 
     /** Get the canonical, most simplified, form of this game */
-	CombinatorialGame& getCanonicalForm();
+	CombinatorialGame& getCanonicalForm() const;
     /** Returns whether this game is in canonical form */
-    bool isInCanonicalForm();
+    bool isInCanonicalForm() const;
     /** Is this game an integer in canonical form?
      * Note that this function returns false if it's an integer in a different form (e.g. {1|3}).
      */
-	bool isCanonicalInteger();
+	bool isCanonicalInteger() const;
     /** Is this game a number? */
-    bool isNumber();
+    bool isNumber() const;
     /** Get the number value of this game, using the simplest number rule */
-    std::optional<DyadicRational> getNumberValue();
+    std::optional<DyadicRational> getNumberValue() const;
 
     /** Get the negative of this game */
-	CombinatorialGame& operator-();
+	CombinatorialGame& operator-() const;
     /** Get the disjunctive sum of this game and another */
-	CombinatorialGame& operator+(CombinatorialGame& other);
+	CombinatorialGame& operator+(const CombinatorialGame& other) const;
     /** Get the disjunctive subtraction of this game and another */
-	CombinatorialGame& operator-(CombinatorialGame& other);
+	CombinatorialGame& operator-(const CombinatorialGame& other) const;
 	/** Get whether two games are isomorphic. Use [a \<=> b == 0] to test for equality in the combinatorial game sense. */
 	bool operator==(const CombinatorialGame& other) const;
     /** Get the relative partial ordering of this game and another.
      * For equality, use [a \<=>b == 0]; for incomparable use [a\<=> b == std::partial_ordering::incomparable]
      */
-	std::partial_ordering operator<=>(CombinatorialGame& other);
+	std::partial_ordering operator<=>(const CombinatorialGame& other) const;
 
     /** Gets the id of this game as saved in the [cgDatabase] */
 	[[nodiscard]] size_t getId() const { return id; }
@@ -119,16 +119,16 @@ private:
 //    std::unordered_set<AbstractId> parents;
     const size_t id;
 
-
-	CGCacheBlock cacheBlock;
+	/** Only caches results, so does not change the data structure */
+	mutable CGCacheBlock cacheBlock;
 
     /** Returns the canonical form if it is already calculated; otherwise returns this */
 	CombinatorialGame& getSimplestAlreadyCalculatedForm() const;
-    bool _isNumber();
+    bool _isNumber() const;
 
 	void copyCacheToCanonicalForm() const;
 
-	bool isCanonicalNumber();
+	bool isCanonicalNumber() const;
 };
 
 

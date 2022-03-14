@@ -7,7 +7,7 @@
 
 #include <functional>
 
-#include "AbstractGame.h"
+#include "../AbstractGame.h"
 #include "CherriesUtil.h"
 
 

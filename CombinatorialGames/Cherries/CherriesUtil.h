@@ -7,7 +7,7 @@
 
 #include <boost/functional/hash/hash.hpp>
 
-#include "RulesetUtil.h"
+#include "../RulesetUtil.h"
 
 /** Position in a game of cherries.
  * Cannot be unordered as we need the segments to be ordered identically for the hash function to work.

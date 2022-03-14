@@ -8,7 +8,7 @@
 #include <functional>
 #include <boost/functional/hash/hash.hpp>
 
-#include "AbstractGame.h"
+#include "../AbstractGame.h"
 #include "CherriesUtil.h"
 
 /** Position in a game of cherries.

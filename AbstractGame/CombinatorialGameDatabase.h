@@ -24,7 +24,8 @@
 class CGDatabase {
 public:
 	CGDatabase();
-    void print(std::ostream& os);
+	CGDatabase(const CGDatabase& other) = delete;
+    void print(std::ostream& os) const;
 
     /** Checks if a game with these options exists. If it does, it returns the ID of that game.
      * If it doesn't, it creates such a game and then return the new ID.
@@ -51,7 +52,7 @@ public:
     const AbstractId zeroId = 0;
 
 private:
-    std::vector<std::shared_ptr<CombinatorialGame>> existingGames;
+    std::vector<std::unique_ptr<CombinatorialGame>> existingGames;
 
     AbstractId _getDyadicRational(int numerator, int denominator);
 
@@ -61,7 +62,7 @@ private:
 };
 
 
-std::ostream& operator<<(std::ostream& os, CGDatabase database);
+std::ostream& operator<<(std::ostream& os, const CGDatabase& database);
 
 /** Turns an abstract ID into a game */
 #define ID_TO_GAME(abstractId) (cgDatabase.idToGame(abstractId))

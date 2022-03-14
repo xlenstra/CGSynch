@@ -4,12 +4,14 @@
 #include "CombinatorialGameDatabase.h"
 
 CGDatabase::CGDatabase() {
-    std::shared_ptr<CombinatorialGame> zeroGame = std::make_shared<CombinatorialGame>(
-        std::unordered_set<AbstractId>(),
-        std::unordered_set<AbstractId>(),
-        0
-    );
-    zeroGame->setCache({
+	existingGames.emplace_back(
+		std::make_unique<CombinatorialGame>(
+			std::unordered_set<AbstractId>(),
+			std::unordered_set<AbstractId>(),
+			0
+		)
+	);
+    existingGames.back()->setCache({
         "0",
         WinningPlayer::PREVIOUS,
 		0,
@@ -19,14 +21,10 @@ CGDatabase::CGDatabase() {
         true,
         DyadicRational(0,1)
     });
-	existingGames.emplace_back(
-		zeroGame
-	);
-//	savedIntegers[0] = 0;
 	existingGames.reserve(1024); // So we don't have to copy over a lot
 }
 
-void CGDatabase::print(std::ostream &os) {
+void CGDatabase::print(std::ostream &os) const {
     os << std::string("[");
     for (auto& game : existingGames) {
         os << game->getDisplayString() << std::string(", ");
@@ -35,7 +33,7 @@ void CGDatabase::print(std::ostream &os) {
     os << std::string("]");
 }
 
-std::ostream& operator<<(std::ostream& os, CGDatabase database) {
+std::ostream& operator<<(std::ostream& os, const CGDatabase& database) {
     database.print(os);
     return os;
 }
@@ -47,7 +45,7 @@ AbstractId CGDatabase::getGameId(const std::unordered_set<AbstractId>& left, con
 			return game->getId();
     }
 
-    existingGames.emplace_back(std::make_shared<CombinatorialGame>(left, right, existingGames.size()));
+    existingGames.emplace_back(std::make_unique<CombinatorialGame>(left, right, existingGames.size()));
     return existingGames.size()-1;
 }
 
