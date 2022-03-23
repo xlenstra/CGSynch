@@ -4,13 +4,13 @@
 
 #include "RulesetUtil.h"
 
-std::ostream& operator<<(std::ostream& os, const StoneColour& stone){
+std::ostream& operator<<(std::ostream& os, const PieceColour& stone){
 	switch (stone) {
-		case StoneColour::BLACK: os << "B"; break;
-		case StoneColour::BLUE : os << "B"; break;
-		case StoneColour::WHITE: os << "W"; break;
-		case StoneColour::RED  : os << "R"; break;
-		case StoneColour::NONE : os << " "; break;
+		case PieceColour::BLACK: os << "B"; break;
+		case PieceColour::BLUE : os << "B"; break;
+		case PieceColour::WHITE: os << "W"; break;
+		case PieceColour::RED  : os << "R"; break;
+		case PieceColour::NONE : os << " "; break;
 	}
 return os;
 }

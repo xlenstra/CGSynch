@@ -38,7 +38,7 @@ concept isGame = std::is_base_of<AbstractGame<U>,T>::value;
 
 
 /** Colours of the stones in a position of a game*/
-enum class StoneColour {
+enum class PieceColour {
 	BLACK = 1,
 	BLUE = 2,
 	WHITE = -1,
@@ -46,7 +46,7 @@ enum class StoneColour {
 	NONE = 0,
 };
 
-std::ostream& operator<<(std::ostream& os, const StoneColour& stone);
+std::ostream& operator<<(std::ostream& os, const PieceColour& stone);
 
 
 #endif //CGSYNCH_2_RULESETUTIL_H

@@ -12,7 +12,7 @@
 /** Position in a game of cherries.
  * Cannot be unordered as we need the segments to be ordered identically for the hash function to work.
  */
-typedef std::multiset<std::deque<StoneColour>> CherriesPosition;
+typedef std::multiset<std::deque<PieceColour>> CherriesPosition;
 std::ostream& operator<<(std::ostream& os, const CherriesPosition& position);
 
 // Required to make a hashMap from transposed CherriesPositions to actual positions

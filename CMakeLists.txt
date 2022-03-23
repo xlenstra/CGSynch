@@ -21,4 +21,5 @@ add_executable(CGSynch_2
         CombinatorialGames/Push-Shove/Push.cpp
         CombinatorialGames/Push-Shove/Shove.cpp
         CombinatorialGames/RulesetMath.cpp
-        )
+        CombinatorialGames/Hackenbush/Graph.cpp
+    )

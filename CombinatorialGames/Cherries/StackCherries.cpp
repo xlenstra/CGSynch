@@ -27,11 +27,11 @@ void StackCherriesGame::explore() {
 		std::advance(elementToRemove, distance);
 		copy.erase(elementToRemove);
 
-		std::deque<StoneColour> replacement = unconnectedLine;
+		std::deque<PieceColour> replacement = unconnectedLine;
 		replacement.pop_front();
 		if (!replacement.empty())
 			copy.insert(replacement);
-		if (unconnectedLine.front() == StoneColour::BLACK) {
+		if (unconnectedLine.front() == PieceColour::BLACK) {
 			leftOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherriesGame(copy)));
 		} else {
 			rightOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherriesGame(copy)));
@@ -54,15 +54,15 @@ std::string StackCherriesGame::getDisplayString() {
 	for (const auto& component : position) {
 		for (const auto& character : component) {
 			switch (character) {
-				case StoneColour::WHITE:
-				case StoneColour::RED:
+				case PieceColour::WHITE:
+				case PieceColour::RED:
 					displayString += "W";
 					break;
-				case StoneColour::BLACK:
-				case StoneColour::BLUE:
+				case PieceColour::BLACK:
+				case PieceColour::BLUE:
 					displayString += "B";
 					break;
-				case StoneColour::NONE:
+				case PieceColour::NONE:
 					displayString += " ";
 					break;
 			}
@@ -77,21 +77,21 @@ std::string StackCherriesGame::getDisplayString() {
 StackCherriesGame& createStackCherriesPosition(const std::string& inputString) {
 	std::istringstream input(inputString);
 	StackCherriesPosition position;
-	std::deque<StoneColour> component;
+	std::deque<PieceColour> component;
 	for (const auto& character : inputString) {
 		switch (character) {
 			case 'W':
 			case 'w':
-				component.push_back(StoneColour::WHITE);
+				component.push_back(PieceColour::WHITE);
 				break;
 			case 'B':
 			case 'b':
-				component.push_back(StoneColour::BLACK);
+				component.push_back(PieceColour::BLACK);
 				break;
 			case ' ':
 				if (!component.empty()) {
 					position.insert(component);
-					component = std::deque<StoneColour>();
+					component = std::deque<PieceColour>();
 				}
 				break;
 			default:

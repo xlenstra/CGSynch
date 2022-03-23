@@ -28,11 +28,11 @@ void CherriesGame::explore() {
 		copy.erase(elementToRemove);
 		CherriesPosition secondCopy = copy;
 
-		std::deque<StoneColour> replacement = unconnectedLine;
+		std::deque<PieceColour> replacement = unconnectedLine;
 		replacement.pop_front();
 		if (!replacement.empty())
 			copy.insert(replacement);
-		if (unconnectedLine.front() == StoneColour::BLACK) {
+		if (unconnectedLine.front() == PieceColour::BLACK) {
 			leftOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(copy)));
 		} else {
 			rightOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(copy)));
@@ -42,7 +42,7 @@ void CherriesGame::explore() {
 		replacement.pop_back();
 		if (!replacement.empty())
 			secondCopy.insert(replacement);
-		if (unconnectedLine.back() == StoneColour::BLACK) {
+		if (unconnectedLine.back() == PieceColour::BLACK) {
 			leftOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(secondCopy)));
 		} else {
 			rightOptions.insert(cherriesDatabase->getOrInsertGameId(CherriesGame(secondCopy)));
@@ -65,7 +65,7 @@ void CherriesGame::addTranspositionsRecursively(std::unordered_set<CherriesPosit
 		int i = 0;
 		for (const auto& component : position) {
 			if (sectionsToReverse.contains(i)) {
-				std::deque<StoneColour> reversedComponent = component;
+				std::deque<PieceColour> reversedComponent = component;
 				std::reverse(reversedComponent.begin(), reversedComponent.end());
 				transposition.insert(reversedComponent);
 			} else {
@@ -93,15 +93,15 @@ std::string CherriesGame::getDisplayString() {
 	for (const auto& component : position) {
 		for (const auto& character : component) {
 			switch (character) {
-				case StoneColour::WHITE:
-				case StoneColour::RED:
+				case PieceColour::WHITE:
+				case PieceColour::RED:
 					displayString += "W";
 					break;
-				case StoneColour::BLACK:
-				case StoneColour::BLUE:
+				case PieceColour::BLACK:
+				case PieceColour::BLUE:
 					displayString += "B";
 					break;
-				case StoneColour::NONE:
+				case PieceColour::NONE:
 					displayString += " ";
 					break;
 			}
@@ -122,19 +122,19 @@ bool CherriesGame::tryToDetermineAbstractForm() {
 		const int segmentSize = (int) segment.size();
 		if (segmentSize == 0) continue; // ????
 		// If no white stones in this segment:
-		if (std::find(segment.begin(), segment.end(), StoneColour::WHITE) == segment.end()) {
+		if (std::find(segment.begin(), segment.end(), PieceColour::WHITE) == segment.end()) {
 			value += segmentSize;
 			continue;
 		// If no black stones in this segment:
-		} else if (std::find(segment.begin(), segment.end(), StoneColour::BLACK) == segment.end()) {
+		} else if (std::find(segment.begin(), segment.end(), PieceColour::BLACK) == segment.end()) {
 			value -= segmentSize;
 			continue;
 		}
 		// value = l(m-1) + r(n-1) + (l+r)/2 + (x+y)/2
 		// Where x,y,l,r \in {-1, +1} and m,n > 0
 		// For exact values, see the paper.
-		StoneColour firstBlockColour = segment[0]; // l
-		StoneColour lastBlockColour = segment[segmentSize-1]; // r
+		PieceColour firstBlockColour = segment[0]; // l
+		PieceColour lastBlockColour = segment[segmentSize - 1]; // r
 		int firstBlockSize; // m
 		int lastBlockSize;  // n
 		for (int i = 0; i < segmentSize; ++i) {
@@ -149,8 +149,8 @@ bool CherriesGame::tryToDetermineAbstractForm() {
 				break;
 			}
 		}
-		StoneColour firstLargeBlockColour = StoneColour::NONE; // x
-		StoneColour lastLargeBlockColour = StoneColour::NONE; // y
+		PieceColour firstLargeBlockColour = PieceColour::NONE; // x
+		PieceColour lastLargeBlockColour = PieceColour::NONE; // y
 		for (int i = 1; i < segmentSize; ++i) {
 			if (segment[i] == segment[i-1]) {
 				firstLargeBlockColour = segment[i];
@@ -180,21 +180,21 @@ bool CherriesGame::tryToDetermineAbstractForm() {
 CherriesGame& createCherriesPosition(const std::string& inputString) {
 	std::istringstream input(inputString);
 	CherriesPosition position;
-	std::deque<StoneColour> component;
+	std::deque<PieceColour> component;
 	for (const auto& character : inputString) {
 		switch (character) {
 			case 'W':
 			case 'w':
-				component.push_back(StoneColour::WHITE);
+				component.push_back(PieceColour::WHITE);
 				break;
 			case 'B':
 			case 'b':
-				component.push_back(StoneColour::BLACK);
+				component.push_back(PieceColour::BLACK);
 				break;
 			case ' ':
 				if (!component.empty()) {
 					position.insert(component);
-					component = std::deque<StoneColour>();
+					component = std::deque<PieceColour>();
 				}
 				break;
 			default:

@@ -10,7 +10,7 @@
 
 #include "RulesetUtil.h"
 
-typedef std::vector<StoneColour> PushShovePosition;
+typedef std::vector<PieceColour> PushShovePosition;
 std::ostream& operator<<(std::ostream& os, const PushShovePosition& position);
 
 // Required to make a hashMap from transposed PushShovePositions to actual positions

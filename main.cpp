@@ -23,9 +23,12 @@ int main() {
 	Shove& pushPosition = createShovePosition("RRB");
 	std::cout << pushPosition.getDisplayString() << std::endl;
 	AbstractId abstractId = getAbstractFormId<PushShovePosition>(pushPosition);
+//	CherriesGame& cherriesPosition = createCherriesPosition("BBWBBW BWWWB WBB WBBWW WWWW");
+//	AbstractId abstractId = getAbstractFormId<CherriesPosition>(cherriesPosition);
+//	std::cout << cherriesPosition.getDisplayString() << std::endl;
 	std::cout << (int)abstractId << std::endl;
-	std::cout << ID_TO_GAME(abstractId)/*.getCanonicalForm()*/.getDisplayString() << std::endl;
 	std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
+	std::cout << ID_TO_GAME(abstractId)/*.getCanonicalForm()*/.getDisplayString() << std::endl;
 	std::cout << cgDatabase << std::endl;
 
     //CombinatorialGame& game2 = cgDatabase.getDyadicRational(513,1024);

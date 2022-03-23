@@ -1,0 +1,3 @@
+Hackenbush graphs can be converted to a boolean LP and solved that way
+https://stanford.edu/~boyd/papers/pdf/graph_isom.pdf
+

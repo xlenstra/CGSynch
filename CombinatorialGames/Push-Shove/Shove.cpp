@@ -15,7 +15,7 @@ template<> std::unordered_map<PushShovePosition, GameId> GameDatabase<PushShoveP
 std::shared_ptr<GameDatabase<PushShovePosition, Shove>> shoveDatabase = GameDatabase<PushShovePosition, Shove>::getInstance();
 
 Shove::Shove(PushShovePosition position) : position(std::move(position)) {
-	while (!this->position.empty() && this->position.back() == StoneColour::NONE) {
+	while (!this->position.empty() && this->position.back() == PieceColour::NONE) {
 		this->position.pop_back();
 	}
 }
@@ -25,13 +25,13 @@ std::string Shove::getDisplayString() {
 	if (position.empty()) return "";
 	for (const auto& square : position) {
 		switch (square) {
-			case StoneColour::RED:
+			case PieceColour::RED:
 				displayString += "R";
 				break;
-			case StoneColour::BLUE:
+			case PieceColour::BLUE:
 				displayString += "B";
 				break;
-			case StoneColour::NONE:
+			case PieceColour::NONE:
 				displayString += " ";
 				break;
 			default:
@@ -52,13 +52,13 @@ std::unordered_set<PushShovePosition> Shove::getTranspositions() const {
 void Shove::explore() {
 	auto currentSquareIt = position.begin();
 	for (size_t i = 0; i < position.size(); ++i) {
-		if (*currentSquareIt == StoneColour::NONE) continue;
+		if (*currentSquareIt == PieceColour::NONE) continue;
 
 		PushShovePosition positionCopy = position;
 		// Copy the part from the second square to the current square, but one tile to the left.
 		std::copy(position.begin()+1, currentSquareIt+1, positionCopy.begin());
-		positionCopy[i] = StoneColour::NONE;
-		if (*currentSquareIt == StoneColour::BLACK || *currentSquareIt == StoneColour::BLUE) {
+		positionCopy[i] = PieceColour::NONE;
+		if (*currentSquareIt == PieceColour::BLACK || *currentSquareIt == PieceColour::BLUE) {
 			leftOptions.insert(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
 		} else {
 			rightOptions.insert(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
@@ -75,14 +75,14 @@ Shove& createShovePosition(const std::string& inputString) {
 	for (const auto& character : inputString) {
 		switch(character) {
 			case 'B':
-				position.push_back(StoneColour::BLUE);
+				position.push_back(PieceColour::BLUE);
 				break;
 			case 'R':
 			case 'W':
-				position.push_back(StoneColour::RED);
+				position.push_back(PieceColour::RED);
 				break;
 			case ' ':
-				position.push_back(StoneColour::NONE);
+				position.push_back(PieceColour::NONE);
 			default:
 				break;
 		}
