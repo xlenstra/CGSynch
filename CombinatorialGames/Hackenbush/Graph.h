@@ -11,28 +11,31 @@
 
 #include "RulesetUtil.h"
 
-typedef size_t nodeId;
+typedef size_t NodeId;
 
 namespace std {
 	template<>
-	struct hash<std::pair<PieceColour,nodeId>> {
-		size_t operator()(const std::pair<PieceColour,nodeId>& pair) const {
+	struct hash<std::pair<PieceColour,NodeId>> {
+		size_t operator()(const std::pair<PieceColour,NodeId>& pair) const {
 			size_t seed = 0;
 			boost::hash_combine(seed, boost::hash<PieceColour>()(pair.first));
-			boost::hash_combine(seed, boost::hash<nodeId>()(pair.second));
+			boost::hash_combine(seed, boost::hash<NodeId>()(pair.second));
 			return seed;
 		}
 	};
 }
 
 struct Vertex {
-	std::unordered_set<std::pair<PieceColour,nodeId>> reachableNodes;
-	nodeId ID = -1ul;
-
 	Vertex(const Vertex& other) = default;
 
 	size_t getDegree() const { return reachableNodes.size(); }
 	std::pair<size_t, size_t> getEdgeColourCounts() const;
+	[[nodiscard]] std::unordered_set<NodeId> getNodesReachableViaColour(const PieceColour& colour) const;
+
+	void addEdge(PieceColour colour, NodeId otherNode);
+
+	std::unordered_set<std::pair<PieceColour,NodeId>> reachableNodes;
+	NodeId ID = -1ul;
 };
 
 class Graph {
@@ -41,6 +44,9 @@ public:
 	Graph(const Graph& other) = default;
 
 	[[nodiscard]] const Vertex& getGround() const { return nodeList[0]; }
+
+	void addNode(NodeId);
+	void addEdge(NodeId from, NodeId to, PieceColour edgeColour);
 
 	/** Checks if two graphs are isomorphic.
 	 * Returns `true` or `false` if they are or are not,

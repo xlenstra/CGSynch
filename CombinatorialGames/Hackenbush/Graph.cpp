@@ -24,6 +24,20 @@ std::pair<size_t, size_t> Vertex::getEdgeColourCounts() const {
 	return { blueEdges, redEdges };
 }
 
+std::unordered_set<NodeId> Vertex::getNodesReachableViaColour(const PieceColour& colour) const {
+	std::unordered_set<NodeId> nodes;
+	for (const auto& [edgeColour, id] : reachableNodes) {
+		if (edgeColour == colour) {
+			nodes.insert(id);
+		}
+	}
+	return nodes;
+}
+
+void Vertex::addEdge(PieceColour colour, NodeId otherNode) {
+	reachableNodes.insert(std::make_pair(colour, otherNode));
+}
+
 
 Graph::Graph() {}
 
@@ -50,6 +64,13 @@ std::multiset<size_t> Graph::getDegrees() const {
 }
 
 bool Graph::backtrackingCheckIsomorphic(const Graph& other) const {
+	// Plan: create tree-with-back-edges from this graph using DFS from the ground
+	// Use backtracking to try to match nodes of the other graph to this tree
+	// Constraints:
+	//  - New nodes must be connected via the right colour
+	//  - Back-edges must have the correct colour
+	//  - node ID must be unused
+	// If possible: isomorphic, otherwise not.
 	return false;
 }
 
@@ -61,4 +82,19 @@ std::pair<size_t, size_t> Graph::getAllEdgeColours() const {
 		edgeColours.second += colours.second;
 	}
 	return edgeColours;
+}
+
+void Graph::addNode(NodeId nodeId) {
+	if (nodeId > nodeList.size()) {
+		nodeList.resize(nodeId);
+	}
+	nodeList[nodeId].ID = nodeId;
+}
+
+void Graph::addEdge(NodeId from, NodeId to, PieceColour edgeColour) {
+	if (from > nodeList.size() || to > nodeList.size()) {
+		throw(std::domain_error("Edge added to non-existent node"));
+	}
+	nodeList[from].addEdge(edgeColour, to);
+	nodeList[to].addEdge(edgeColour, from);
 }
