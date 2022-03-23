@@ -6,7 +6,8 @@
 #define CGSYNCH_2_GRAPH_H
 
 #include <unordered_set>
-#include <boost/container_hash/hash.hpp>
+#include <boost/functional/hash.hpp>
+#include <optional>
 
 #include "RulesetUtil.h"
 
@@ -29,14 +30,31 @@ struct Vertex {
 	nodeId ID = -1ul;
 
 	Vertex(const Vertex& other) = default;
+
+	size_t getDegree() const { return reachableNodes.size(); }
+	std::pair<size_t, size_t> getEdgeColourCounts() const;
 };
 
 class Graph {
 public:
 	Graph();
 	Graph(const Graph& other) = default;
+
+	[[nodiscard]] const Vertex& getGround() const { return nodeList[0]; }
+
+	/** Checks if two graphs are isomorphic.
+	 * Returns `true` or `false` if they are or are not,
+	 * or std::optional(); if checking whether they are isomorphic would take too long.
+	 */
+	[[nodiscard]] std::optional<bool> isIsomorphicWith(const Graph& other) const;
+
 private:
-	std::vector<Vertex> adjacencyList;
+	/** Get degrees of all nodes in the graph */
+	[[nodiscard]] std::multiset<size_t> getDegrees() const;
+	[[nodiscard]] std::pair<size_t, size_t> getAllEdgeColours() const;
+	[[nodiscard]] bool backtrackingCheckIsomorphic(const Graph& other) const;
+
+	std::vector<Vertex> nodeList;
 };
 
 #endif //CGSYNCH_2_GRAPH_H

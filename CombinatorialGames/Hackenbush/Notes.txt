@@ -1,3 +1,5 @@
 Hackenbush graphs can be converted to a boolean LP and solved that way
 https://stanford.edu/~boyd/papers/pdf/graph_isom.pdf
 
+Canonical labelling for graphs
+http://users.cecs.anu.edu.au/%7Ebdm/nauty/
