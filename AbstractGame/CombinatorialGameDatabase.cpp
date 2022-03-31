@@ -115,5 +115,9 @@ AbstractId CGDatabase::_getDyadicRational(int numerator, int denominator) {
     );
 }
 
+CombinatorialGame& CGDatabase::getDyadicRational(const DyadicRational& dyadicRational) {
+	return getDyadicRational(dyadicRational.numerator, dyadicRational.denominator);
+}
+
 
 CGDatabase cgDatabase;

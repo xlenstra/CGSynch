@@ -46,6 +46,8 @@ enum class PieceColour {
 	NONE = 0,
 };
 
+int pieceColourToSign(const PieceColour& piece);
+
 std::ostream& operator<<(std::ostream& os, const PieceColour& stone);
 
 

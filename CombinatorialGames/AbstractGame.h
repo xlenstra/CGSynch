@@ -85,7 +85,6 @@ template<isPosition Position, isGame<Position> Game>
 AbstractId getAbstractFormId(Game& game) {
 	if (game.getAbstractForm() != -1ul) return game.getAbstractForm();
 	if (game.tryToDetermineAbstractForm()) return game.getAbstractForm();
-	if (!game.hasBeenExplored()) game.explore();
 	std::unordered_set<AbstractId> leftOptions;
 	std::unordered_set<AbstractId> rightOptions;
 	GameDatabase<Position, Game>& database = *GameDatabase<Position, Game>::getInstance();

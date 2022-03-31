@@ -15,6 +15,7 @@ public:
 	PushShovePosition getAnyTransposition() const override;
 	std::unordered_set<PushShovePosition> getTranspositions() const override;
 	void explore() override;
+	bool tryToDetermineAbstractForm() override;
 
 private:
 	PushShovePosition position;

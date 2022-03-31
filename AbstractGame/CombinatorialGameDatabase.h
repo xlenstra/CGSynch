@@ -14,6 +14,7 @@
 #include <memory>
 #include "CombinatorialGame.h"
 #include "CombinatorialGameUtil.h"
+#include "DyadicRational.h"
 
 /** Class that implements a database for [Combinatorial Games].
  * Each combinatorial game that is created, is saved inside this database.
@@ -47,6 +48,8 @@ public:
 //	const std::unordered_map<AbstractId,int>& getSavedIntegers() { return savedIntegers; }
     /** Gets the game in canoncial form that has dyadic rational value equal to <code><em>numerator/denominator</em></code> */
     CombinatorialGame& getDyadicRational(int numerator, int denominator);
+	CombinatorialGame& getDyadicRational(const DyadicRational& dyadicRational);
+
 
 	/** the id of the game corresponding to 0, in which neither player has a move */
     const AbstractId zeroId = 0;

@@ -330,7 +330,7 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() const {
 				*ID_TO_GAME(*undominatedRightOptions.begin()).getNumberValue()
 			);
 		if (number) {
-			CombinatorialGame& newGame = cgDatabase.getDyadicRational(number->numerator, number->denominator);
+			CombinatorialGame& newGame = cgDatabase.getDyadicRational(*number);
 			cacheBlock.canonicalFormId = newGame.getId();
 			newGame.cacheBlock.canonicalFormId = newGame.getId();
 			return newGame;

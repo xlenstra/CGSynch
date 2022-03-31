@@ -12,7 +12,7 @@ DyadicRational::DyadicRational(int numerator, int denominator) : numerator(numer
         throw(std::domain_error("All dyadic rationals must have a power of 2 as their base!"));
 }
 
-DyadicRational::DyadicRational(int integer) : DyadicRational(integer, 1) {}
+DyadicRational::DyadicRational(int value) : DyadicRational(value, 1) {}
 
 
 DyadicRational::DyadicRational(const DyadicRational& other) {

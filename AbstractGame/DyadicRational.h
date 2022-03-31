@@ -9,7 +9,7 @@
 
 class DyadicRational {
 public:
-    int numerator;
+	int numerator;
     int denominator;
     DyadicRational() = delete;
     DyadicRational(int numerator, int denominator);

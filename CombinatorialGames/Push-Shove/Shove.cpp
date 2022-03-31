@@ -2,9 +2,10 @@
 // Created by s1935534 on 09/03/2022.
 //
 
-#include "Shove.h"
-
 #include <utility>
+#include <ranges>
+
+#include "Shove.h"
 
 // Initialize static member variables
 template<> std::shared_ptr<GameDatabase<PushShovePosition, Shove>> GameDatabase<PushShovePosition, Shove>::instance = nullptr;
@@ -26,9 +27,11 @@ std::string Shove::getDisplayString() {
 	for (const auto& square : position) {
 		switch (square) {
 			case PieceColour::RED:
+			case PieceColour::WHITE:
 				displayString += "R";
 				break;
 			case PieceColour::BLUE:
+			case PieceColour::BLACK:
 				displayString += "B";
 				break;
 			case PieceColour::NONE:
@@ -52,7 +55,10 @@ std::unordered_set<PushShovePosition> Shove::getTranspositions() const {
 void Shove::explore() {
 	auto currentSquareIt = position.begin();
 	for (size_t i = 0; i < position.size(); ++i) {
-		if (*currentSquareIt == PieceColour::NONE) continue;
+		if (*currentSquareIt == PieceColour::NONE) {
+			++currentSquareIt;
+			continue;
+		}
 
 		PushShovePosition positionCopy = position;
 		// Copy the part from the second square to the current square, but one tile to the left.
@@ -67,6 +73,56 @@ void Shove::explore() {
 		++currentSquareIt;
 	}
 	explored = true;
+}
+
+// Source: LIP
+bool Shove::tryToDetermineAbstractForm() {
+	DyadicRational gameValue = DyadicRational(0);
+	PushShovePosition simplifiedPosition = position;
+	PushShovePosition positionWithoutEmpties;
+	std::copy_if(
+		position.begin(),
+		position.end(),
+		std::back_inserter(positionWithoutEmpties),
+		[] (const auto& piece) { return piece != PieceColour::NONE; }
+	);
+	// First check if we only have a single piece; then the value is just the board size.
+	if (positionWithoutEmpties.size() == 1) {
+		gameValue += pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
+		abstractForm = cgDatabase.getDyadicRational(gameValue).getId();
+		return true;
+	}
+
+	// Remove all pieces from the end with equal colours, and add the value of these pieces together.
+	while (positionWithoutEmpties[positionWithoutEmpties.size()-1] == positionWithoutEmpties[positionWithoutEmpties.size()-2]) {
+		gameValue += pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
+		positionWithoutEmpties.pop_back();
+		simplifiedPosition.pop_back();
+		while (simplifiedPosition.back() == PieceColour::NONE) {
+			simplifiedPosition.pop_back();
+		}
+		// If all pieces are the same size, we're done.
+		if (positionWithoutEmpties.size() < 2) {
+			gameValue += pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
+			abstractForm = cgDatabase.getDyadicRational(gameValue).getId();
+			return true;
+		}
+	}
+
+	// So now we have ended with two pieces of different colour. Next, we use the general formula.
+	int denominator = 1; // r
+	while (!positionWithoutEmpties.empty()) {
+		int numerator = pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
+		gameValue += DyadicRational(numerator, denominator);
+		positionWithoutEmpties.pop_back();
+		simplifiedPosition.pop_back();
+		while (simplifiedPosition.back() == PieceColour::NONE) {
+			simplifiedPosition.pop_back();
+		}
+		denominator *= 2;
+	}
+	abstractForm = cgDatabase.getDyadicRational(gameValue).getId();
+	return true;
 }
 
 

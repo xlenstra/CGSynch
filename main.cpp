@@ -20,7 +20,7 @@ int main() {
 	//std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
 	//std::cout << cgDatabase << std::endl;
 
-	Shove& pushPosition = createShovePosition("RRB");
+	Shove& pushPosition = createShovePosition("BB  RR");
 	std::cout << pushPosition.getDisplayString() << std::endl;
 	AbstractId abstractId = getAbstractFormId<PushShovePosition>(pushPosition);
 //	CherriesGame& cherriesPosition = createCherriesPosition("BBWBBW BWWWB WBB WBBWW WWWW");
