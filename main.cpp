@@ -1,4 +1,5 @@
 #include <iostream>
+#include <Spirit/SpiritParser.h>
 #include "AbstractGame/CombinatorialGame.h"
 #include "AbstractGame/CombinatorialGameDatabase.h"
 #include "CombinatorialGames/RulesetMath.h"
@@ -23,7 +24,8 @@ int main() {
 		userInput = tolower(userInput);
 		switch (userInput) {
 			case 'a':
-				alternatingUI.main();
+				//alternatingUI.main();
+				parseStringMain();
 				break;
 			case 's':
 				std::cout << "Not implemented yet. Sorry :(" << std::endl;

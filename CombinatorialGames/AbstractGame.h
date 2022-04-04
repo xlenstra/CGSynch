@@ -52,6 +52,11 @@ public:
 	 */
 	virtual bool tryToDetermineAbstractForm() { return false; }
 
+	/** Sets the ID of this game in the corresponding database */
+	void setId(GameId id) { rulesetId = id; }
+
+	GameId getId() const { return rulesetId; }
+
 	//virtual void determineAbstractForm() { getAbstractFormId<Position, AbstractGame>(this); }
 
 protected:

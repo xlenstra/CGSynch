@@ -18,7 +18,7 @@
  * This makes it possible not to have to do calculations more than once.
  *
  * This class is a singleton; of each templated version there exists only one instance.
- * A ptr to this instance is returned by [RulesetDatabase<>::getInstance()]
+ * A ptr to this instance is returned by [RulesetDatabase\<\>::getInstance()]
  */
 template<isPosition Position, isGame<Position> Game>
 class GameDatabase {
@@ -91,6 +91,7 @@ GameId GameDatabase<comparableType, Ruleset>::getOrInsertGameId(const Ruleset& r
 	// It's not in the known transpositions database, so add it and all its transpositions
 	database.emplace_back(std::make_shared<Ruleset>(ruleset));
 	GameId id = database.size() - 1;
+	database.back()->setId(id);
 	for (const auto& transposition : ruleset.getTranspositions()) {
 		transpositionTable[transposition] = id;
 	}
