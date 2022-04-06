@@ -12,7 +12,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <memory>
-#include "CombinatorialGame.h"
+//#include "CombinatorialGame.h"
 #include "CombinatorialGameUtil.h"
 #include "DyadicRational.h"
 
@@ -24,7 +24,7 @@
  */
 class CGDatabase {
 public:
-	CGDatabase();
+	static CGDatabase& getInstance() { return instance; };
 	CGDatabase(const CGDatabase& other) = delete;
     void print(std::ostream& os) const;
 
@@ -55,11 +55,12 @@ public:
     const AbstractId zeroId = 0;
 
 private:
+	CGDatabase();
     std::vector<std::unique_ptr<CombinatorialGame>> existingGames;
 
     AbstractId _getDyadicRational(int numerator, int denominator);
 
-
+	static CGDatabase instance;
 //	std::unordered_map<AbstractId,int> savedIntegers;
 //	boost::bimaps::bimap<AbstractId, int, boost::container::allocator<int>> savedIntegers;
 };
@@ -68,11 +69,9 @@ private:
 std::ostream& operator<<(std::ostream& os, const CGDatabase& database);
 
 /** Turns an abstract ID into a game */
-#define ID_TO_GAME(abstractId) (cgDatabase.idToGame(abstractId))
+#define ID_TO_GAME(abstractId) (CGDatabase::getInstance().idToGame(abstractId))
 /** Turns two sets of left and right options resp. into a game with these options */
-#define GET_GAME(left, right) (cgDatabase.getGame(left, right))
-/** The only database that may exist for abstract combinatorial games */
-extern CGDatabase cgDatabase;
+#define GET_GAME(left, right) (CGDatabase::getInstance().getGame(left, right))
 
 
 

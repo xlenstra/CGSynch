@@ -8,16 +8,16 @@
 #include <iostream>
 
 // Initialize static member variables
-template<> std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherriesGame>> GameDatabase<StackCherriesPosition, StackCherriesGame>::instance = nullptr;
-template<> std::vector<std::shared_ptr<StackCherriesGame>> GameDatabase<StackCherriesPosition, StackCherriesGame>::database = {};
-template<> std::unordered_map<StackCherriesPosition, GameId> GameDatabase<StackCherriesPosition, StackCherriesGame>::transpositionTable = {};
+template<> std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherries>> GameDatabase<StackCherriesPosition, StackCherries>::instance = nullptr;
+template<> std::vector<std::shared_ptr<StackCherries>> GameDatabase<StackCherriesPosition, StackCherries>::database = {};
+template<> std::unordered_map<StackCherriesPosition, GameId> GameDatabase<StackCherriesPosition, StackCherries>::transpositionTable = {};
 // Get a global variable for the actual database
 // TODO: inline this
-std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherriesGame>> stackCherriesDatabase = GameDatabase<StackCherriesPosition, StackCherriesGame>::getInstance();
+std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherries>> stackCherriesDatabase = GameDatabase<StackCherriesPosition, StackCherries>::getInstance();
 
-StackCherriesGame::StackCherriesGame(StackCherriesPosition position) : position(std::move(position)) {}
+StackCherries::StackCherries(StackCherriesPosition position) : position(std::move(position)) {}
 
-void StackCherriesGame::explore() {
+void StackCherries::explore() {
 	for (auto it = position.begin(); it != position.end(); ++it) {
 		const auto& unconnectedLine = *it;
 		// Copy position
@@ -31,41 +31,29 @@ void StackCherriesGame::explore() {
 		replacement.pop_front();
 		if (!replacement.empty())
 			copy.insert(replacement);
-		if (unconnectedLine.front() == PieceColour::BLACK) {
-			leftOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherriesGame(copy)));
+		if (unconnectedLine.front() == PieceColour::BLUE) {
+			leftOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherries(copy)));
 		} else {
-			rightOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherriesGame(copy)));
+			rightOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherries(copy)));
 		}
 	}
 	explored = true;
 }
 
-std::unordered_set<StackCherriesPosition> StackCherriesGame::getTranspositions() const {
+std::unordered_set<StackCherriesPosition> StackCherries::getTranspositions() const {
 	return {position};
 }
 
-StackCherriesPosition StackCherriesGame::getAnyTransposition() const {
+StackCherriesPosition StackCherries::getAnyTransposition() const {
 	return position;
 }
 
-std::string StackCherriesGame::getDisplayString() {
+std::string StackCherries::getDisplayString() {
 	if (!displayString.empty()) return displayString;
 	if (position.empty()) return "";
 	for (const auto& component : position) {
 		for (const auto& character : component) {
-			switch (character) {
-				case PieceColour::WHITE:
-				case PieceColour::RED:
-					displayString += "W";
-					break;
-				case PieceColour::BLACK:
-				case PieceColour::BLUE:
-					displayString += "B";
-					break;
-				case PieceColour::NONE:
-					displayString += " ";
-					break;
-			}
+			displayString += pieceColourToChar(character);
 		}
 		displayString += " ";
 	}
@@ -74,34 +62,25 @@ std::string StackCherriesGame::getDisplayString() {
 }
 
 
-StackCherriesGame& createStackCherriesPosition(const std::string& inputString) {
+StackCherries& createStackCherriesPosition(const std::string& inputString) {
 	std::istringstream input(inputString);
 	StackCherriesPosition position;
 	std::deque<PieceColour> component;
 	for (const auto& character : inputString) {
-		switch (character) {
-			case 'W':
-			case 'w':
-				component.push_back(PieceColour::WHITE);
-				break;
-			case 'B':
-			case 'b':
-				component.push_back(PieceColour::BLACK);
-				break;
-			case ' ':
-				if (!component.empty()) {
-					position.insert(component);
-					component = std::deque<PieceColour>();
-				}
-				break;
-			default:
-				break;
+		PieceColour colourToAdd = charToPieceColour(character);
+		if (colourToAdd == PieceColour::NONE) {
+			if (!component.empty()) {
+				position.insert(component);
+				component = std::deque<PieceColour>();
+			}
+		} else {
+			component.push_back(colourToAdd);
 		}
 	}
 	if (!component.empty()) {
 		position.insert(component);
 	}
 
-	StackCherriesGame ruleset = StackCherriesGame(position);
+	StackCherries ruleset = StackCherries(position);
 	return stackCherriesDatabase->getOrInsertGame(ruleset);
 }

@@ -1,0 +1,12 @@
+//
+// Created by ardour on 25-03-22.
+//
+
+#ifndef CGSYNCH_2_HACKENBUSHUTIL_H
+#define CGSYNCH_2_HACKENBUSHUTIL_H
+
+#include "Graph.h"
+
+typedef Graph HackenbushPosition;
+
+#endif //CGSYNCH_2_HACKENBUSHUTIL_H

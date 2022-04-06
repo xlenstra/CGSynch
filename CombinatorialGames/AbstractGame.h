@@ -99,7 +99,7 @@ AbstractId getAbstractFormId(Game& game) {
 	for (const auto& rightPosition : game.getRightOptions()) {
 		rightOptions.insert(getAbstractFormId<Position, Game>(database.idToGame(rightPosition)));
 	}
-	game.setAbstractForm(cgDatabase.getGameId(leftOptions, rightOptions));
+	game.setAbstractForm(CGDatabase::getInstance().getGameId(leftOptions, rightOptions));
 	return game.getAbstractForm();
 }
 

@@ -40,14 +40,14 @@ int main() {
 				running = false;
 				break;
 			default:
-				std::cout << "Unknown option '" << userInput << "'" << std::endl << "Press 'h' for help.";
+				std::cout << "Unknown option '" << userInput << "'" << std::endl << "Press 'h' for help." << std::endl;
 		}
 	};
 
 	//CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
 
 
-	//StackCherriesGame& cherriesPosition = createStackCherriesPosition("BWWWWWW");
+	//StackCherries& cherriesPosition = createStackCherriesPosition("BWWWWWW");
 	//std::cout << cherriesPosition.getDisplayString() << std::endl;
 	//AbstractId abstractId = getAbstractFormId<StackCherriesPosition>(cherriesPosition);
 	//std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;
@@ -56,7 +56,7 @@ int main() {
 //	Shove& pushPosition = createShovePosition("BB  RR");
 //	std::cout << pushPosition.getDisplayString() << std::endl;
 //	AbstractId abstractId = getAbstractFormId<PushShovePosition>(pushPosition);
-////	CherriesGame& cherriesPosition = createCherriesPosition("BBWBBW BWWWB WBB WBBWW WWWW");
+////	Cherries& cherriesPosition = createCherriesPosition("BBWBBW BWWWB WBB WBBWW WWWW");
 ////	AbstractId abstractId = getAbstractFormId<CherriesPosition>(cherriesPosition);
 ////	std::cout << cherriesPosition.getDisplayString() << std::endl;
 //	std::cout << (int)abstractId << std::endl;
@@ -81,10 +81,10 @@ int main() {
 
 
 //	cherriesPosition.explore();
-//	CherriesGame& leftCherries1 = cherriesDatabase->idToGame(*cherriesPosition.getLeftOptions().begin());
+//	Cherries& leftCherries1 = cherriesDatabase->idToGame(*cherriesPosition.getLeftOptions().begin());
 //	leftCherries1.explore();
-//	CherriesGame& leftLeftCherries1 = cherriesDatabase->idToGame(*leftCherries1.getLeftOptions().begin());
-//	CherriesGame& rulesetCherries2 = createCherriesPosition("WW BB");
+//	Cherries& leftLeftCherries1 = cherriesDatabase->idToGame(*leftCherries1.getLeftOptions().begin());
+//	Cherries& rulesetCherries2 = createCherriesPosition("WW BB");
 //	std::cout << *cherriesDatabase << std::endl;
 //	std::cout << abstractId << std::endl;
 

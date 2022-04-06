@@ -6,6 +6,7 @@
 #include <ranges>
 
 #include "Shove.h"
+#include "CombinatorialGame.h"
 
 // Initialize static member variables
 template<> std::shared_ptr<GameDatabase<PushShovePosition, Shove>> GameDatabase<PushShovePosition, Shove>::instance = nullptr;
@@ -25,21 +26,7 @@ std::string Shove::getDisplayString() {
 	if (!displayString.empty()) return displayString;
 	if (position.empty()) return "";
 	for (const auto& square : position) {
-		switch (square) {
-			case PieceColour::RED:
-			case PieceColour::WHITE:
-				displayString += "R";
-				break;
-			case PieceColour::BLUE:
-			case PieceColour::BLACK:
-				displayString += "B";
-				break;
-			case PieceColour::NONE:
-				displayString += " ";
-				break;
-			default:
-				break;
-		}
+		displayString += pieceColourToChar(square);
 	}
 	return displayString;
 }
@@ -64,7 +51,7 @@ void Shove::explore() {
 		// Copy the part from the second square to the current square, but one tile to the left.
 		std::copy(position.begin()+1, currentSquareIt+1, positionCopy.begin());
 		positionCopy[i] = PieceColour::NONE;
-		if (*currentSquareIt == PieceColour::BLACK || *currentSquareIt == PieceColour::BLUE) {
+		if (*currentSquareIt == PieceColour::BLUE) {
 			leftOptions.insert(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
 		} else {
 			rightOptions.insert(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
@@ -89,7 +76,7 @@ bool Shove::tryToDetermineAbstractForm() {
 	// First check if we only have a single piece; then the value is just the board size.
 	if (positionWithoutEmpties.size() == 1) {
 		gameValue += pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
-		abstractForm = cgDatabase.getDyadicRational(gameValue).getId();
+		abstractForm = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
 		return true;
 	}
 
@@ -104,7 +91,7 @@ bool Shove::tryToDetermineAbstractForm() {
 		// If all pieces are the same size, we're done.
 		if (positionWithoutEmpties.size() < 2) {
 			gameValue += pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
-			abstractForm = cgDatabase.getDyadicRational(gameValue).getId();
+			abstractForm = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
 			return true;
 		}
 	}
@@ -121,7 +108,7 @@ bool Shove::tryToDetermineAbstractForm() {
 		}
 		denominator *= 2;
 	}
-	abstractForm = cgDatabase.getDyadicRational(gameValue).getId();
+	abstractForm = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
 	return true;
 }
 
@@ -129,19 +116,7 @@ bool Shove::tryToDetermineAbstractForm() {
 Shove& createShovePosition(const std::string& inputString) {
 	PushShovePosition position;
 	for (const auto& character : inputString) {
-		switch(character) {
-			case 'B':
-				position.push_back(PieceColour::BLUE);
-				break;
-			case 'R':
-			case 'W':
-				position.push_back(PieceColour::RED);
-				break;
-			case ' ':
-				position.push_back(PieceColour::NONE);
-			default:
-				break;
-		}
+		position.push_back(charToPieceColour(character));
 	}
 	Shove potentialGame = Shove(position);
 	return shoveDatabase->getOrInsertGame(potentialGame);

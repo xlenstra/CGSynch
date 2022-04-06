@@ -2,6 +2,9 @@
 //// Created by ardour on 08-02-22.
 ////
 #include "CombinatorialGameDatabase.h"
+#include "CombinatorialGame.h"
+
+CGDatabase CGDatabase::instance = CGDatabase();
 
 CGDatabase::CGDatabase() {
 	existingGames.emplace_back(
@@ -118,6 +121,3 @@ AbstractId CGDatabase::_getDyadicRational(int numerator, int denominator) {
 CombinatorialGame& CGDatabase::getDyadicRational(const DyadicRational& dyadicRational) {
 	return getDyadicRational(dyadicRational.numerator, dyadicRational.denominator);
 }
-
-
-CGDatabase cgDatabase;

@@ -5,40 +5,143 @@
 #include <iostream>
 
 #include "SpiritParser.h"
+#include "Push-Shove/Push.h"
+#include "Cherries/Cherries.h"
+#include "Cherries/StackCherries.h"
+#include "CombinatorialGame.h"
 
 namespace x3 = boost::spirit::x3;
 
 namespace parser {
+	CGDatabase& localCGDatabase = CGDatabase::getInstance();
+
 	using x3::char_;
-	using x3::lexeme;
+	using x3::no_skip;
 	using x3::lit;
+	using x3::blank;
 	using x3::_attr;
 	using x3::_val;
 
+	CombinatorialGame& idToGame(AbstractId id) { return localCGDatabase.idToGame(id); }
+
+
 	auto addLetter = [](auto& ctx) { _val(ctx) += _attr(ctx); };
-	const x3::rule<class quotedString, std::string> quotedString = "readString";
-	const auto quotedString_def = lexeme['\"' >> *(char_[addLetter] - '\"') >> '\"'];
-	BOOST_SPIRIT_DEFINE(quotedString);
+	auto copy = [](auto& ctx) { _val(ctx) = _attr(ctx); };
 
 	auto createShoveGame = [](auto& ctx) {
-		_val(ctx) = getAbstractFormId<PushShovePosition, Shove>(createShovePosition(_attr(ctx)));
+		_val(ctx) = &(createShovePosition(_attr(ctx)));
 	};
-	const x3::rule<class shoveGame, AbstractId> shoveGame = "shoveGame";
-	const auto shoveGame_def = lit("Shove") >> '(' >> quotedString[createShoveGame] >> ')';
-	BOOST_SPIRIT_DEFINE(shoveGame);
+	auto createPushGame = [](auto& ctx) {
+		_val(ctx) = &(createPushPosition(_attr(ctx)));
+	};
 
+	auto pushShoveToAbstract = [](auto& ctx) {
+		_val(ctx) = getAbstractFormId<PushShovePosition>(*_attr(ctx));
+	};
+
+
+	auto createCherriesGame = [](auto& ctx) {
+		_val(ctx) = &(createCherriesPosition(_attr(ctx)));
+	};
+	auto createStackCherriesGame = [](auto& ctx) {
+		_val(ctx) = &(createStackCherriesPosition(_attr(ctx)));
+	};
+
+	auto cherriesToAbstract = [](auto& ctx) {
+		_val(ctx) = getAbstractFormId<CherriesPosition>(*_attr(ctx));
+	};
+
+	auto addAbstractGame = [](auto& ctx) {
+		_val(ctx) = (idToGame(_val(ctx)) + idToGame(_attr(ctx))).getId();
+	};
+	auto abstractGetDisplay = [](auto& ctx) {
+		_val(ctx) = idToGame(_attr(ctx)).getDisplayString();
+	};
+	auto abstractGetCanonicalForm = [](auto& ctx) {
+		_val(ctx) = idToGame(_attr(ctx)).getCanonicalForm().getId();
+	};
+
+
+
+	const x3::rule<class quotedString, std::string> quotedString = "readString";
+	const x3::rule<class string, std::string> string = "string";
+
+	const x3::rule<class shoveGame, Shove*> shoveGame = "shoveGame";
+	const x3::rule<class pushGame, Push*> pushGame = "pushGame";
+	const x3::rule<class pushGame, Cherries*> cherriesGame = "cherriesGame";
+	const x3::rule<class pushGame, StackCherries*> stackCherriesGame = "stackCherriesGame";
+
+	const x3::rule<class abstractGame, AbstractId> abstractGame = "abstractGame";
+	const x3::rule<class abstractGamePrime, AbstractId> abstractGamePrime = "abstractGamePrime";
+	const x3::rule<class abstractGameTerminal, AbstractId> abstractGameTerminal = "abstractGameTerminal";
+
+	const x3::rule<class outputString, std::string> outputString = "outputString";
+
+
+	const auto quotedString_def = x3::lexeme['\"' >> *(~x3::char_("\""))[addLetter] >> '\"'];
+	const auto string_def = quotedString[copy] | x3::lexeme[*x3::char_("a-zA-Z0-9_")[addLetter]];
+
+	const auto shoveGame_def = lit("Shove") >> '(' >> string[createShoveGame] >> ')';
+	const auto pushGame_def = lit("Push") >> '(' >> string[createPushGame] >> ')';
+	const auto cherriesGame_def = lit("Cherries") >> '(' >> string[createCherriesGame] >> ')';
+	const auto stackCherriesGame_def = lit("StackCherries") >> '(' >> string[createStackCherriesGame] >> ')';
+
+	// Split to remove left recursion, causing out of stack crashes.
+	// The `Terminal` should contain things that aren't left-recursive.
+	// The `Prime` should contain things that are left-recursive.
+	const auto abstractGame_def = abstractGameTerminal >> abstractGamePrime;
+
+	const auto abstractGamePrime_def =
+		(
+			("+" >> abstractGamePrime[addAbstractGame])
+			| lit(".CanonicalForm()")
+		) >> abstractGamePrime
+		| x3::eps
+	;
+
+	const auto abstractGameTerminal_def =
+		shoveGame[pushShoveToAbstract]
+		| pushGame[pushShoveToAbstract]
+		| cherriesGame[cherriesToAbstract]
+		| stackCherriesGame[cherriesToAbstract]
+		| '(' >> abstractGame >> ')'
+	;
+
+	const auto outputString_def =
+		(
+//			abstractGame[abstractGetDisplay]
+//			| (abstractGame[abstractGetDisplay] >> lit(".DisplayString()"))
+//			|
+			string
+		) >> x3::eoi
+	;
+
+	BOOST_SPIRIT_DEFINE(quotedString, string, shoveGame, pushGame, cherriesGame, stackCherriesGame)
+	BOOST_SPIRIT_DEFINE(abstractGame);
+	BOOST_SPIRIT_DEFINE(abstractGameTerminal);
+	BOOST_SPIRIT_DEFINE(abstractGamePrime);
+	BOOST_SPIRIT_DEFINE(outputString);
 }
 
-void parseStringMain() {
-	std::string input;
-	std::cin >> input;
-	auto first = input.begin();
-	auto last = input.end();
 
-	AbstractId output;
-	bool r = parse(first, last, parser::shoveGame, output);
-	std::cout << "Parsing successful? " << r << std::endl;
-	if (r) {
-		std::cout << ". Result: " << cgDatabase.idToGame(output).getDisplayString() << std::endl;
+
+void parseStringMain() {
+	std::cout << "Enter a command." << std::endl;
+	while (true) {
+		std::string input;
+		std::cin >> input;
+		if (input == "q" || input == "quit") return;
+
+		auto first = input.begin();
+		auto last = input.end();
+
+		std::string output;
+		bool r = parse(first, last, parser::outputString, output);
+		std::cout << "Parsing successful? " << r << "." << std::endl;
+		if (!r) continue;
+		r = (first == last);
+		std::cout << "Input fully parsed? " << r << "." << std::endl;
+//		if (!r) continue;
+		std::cout << "Result: " << output << std::endl;
 	}
 }

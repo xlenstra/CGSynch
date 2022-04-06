@@ -22,10 +22,10 @@ typedef CherriesPosition StackCherriesPosition;
  * and the ID of the abstract game with these left and right positions.
  * It can be visualised as a node in a tree, where the left and right
  */
-class StackCherriesGame : public AbstractGame<StackCherriesPosition> {
+class StackCherries : public AbstractGame<StackCherriesPosition> {
 public:
-	explicit StackCherriesGame(StackCherriesPosition position);
-	StackCherriesGame(const StackCherriesGame& ruleset) = default;
+	explicit StackCherries(StackCherriesPosition position);
+	StackCherries(const StackCherries& ruleset) = default;
 
 	std::string getDisplayString() override;
 
@@ -38,8 +38,8 @@ private:
 	StackCherriesPosition position;
 };
 
-StackCherriesGame& createStackCherriesPosition(const std::string& inputString);
+StackCherries& createStackCherriesPosition(const std::string& inputString);
 
-extern std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherriesGame>> stackCherriesDatabase;
+extern std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherries>> stackCherriesDatabase;
 
 #endif //CGSYNCH_2_STACKCHERRIES_H

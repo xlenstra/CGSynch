@@ -6,24 +6,42 @@
 
 int pieceColourToSign(const PieceColour& piece) {
 	switch (piece) {
-		case PieceColour::BLACK:
-		case PieceColour::BLUE:
-			return 1;
-		case PieceColour::WHITE:
-		case PieceColour::RED:
-			return -1;
-		case PieceColour::NONE:
-			return 0;
+		case PieceColour::BLUE: return 1;
+		case PieceColour::RED: return -1;
+		case PieceColour::NONE: return 0;
 	}
 }
 
-std::ostream& operator<<(std::ostream& os, const PieceColour& stone){
-	switch (stone) {
-		case PieceColour::BLACK: os << "B"; break;
-		case PieceColour::BLUE : os << "B"; break;
-		case PieceColour::WHITE: os << "W"; break;
-		case PieceColour::RED  : os << "R"; break;
-		case PieceColour::NONE : os << " "; break;
+
+char pieceColourToChar(const PieceColour& piece) {
+	switch (piece) {
+		case PieceColour::BLUE : return 'B';
+		case PieceColour::RED  : return 'R';
+		case PieceColour::NONE : return '_';
 	}
-return os;
+}
+
+PieceColour charToPieceColour(const char& input) {
+	switch (input) {
+		case 'B':
+		case 'b':
+			return PieceColour::BLUE;
+		case 'R':
+		case 'r':
+		case 'W':
+		case 'w':
+			return PieceColour::RED;
+		case ' ':
+		case '_':
+		case '\t':
+			return PieceColour::NONE;
+		default:
+			throw std::logic_error("Invalid character in input");
+	}
+}
+
+
+std::ostream& operator<<(std::ostream& os, const PieceColour& stone){
+	os << pieceColourToChar(stone);
+	return os;
 }

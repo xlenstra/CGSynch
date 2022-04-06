@@ -129,6 +129,8 @@ private:
 	void copyCacheToCanonicalForm() const;
 
 	bool isCanonicalNumber() const;
+
+	CGDatabase& cgDatabase = CGDatabase::getInstance();
 };
 
 

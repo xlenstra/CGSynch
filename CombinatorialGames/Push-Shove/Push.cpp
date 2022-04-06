@@ -25,19 +25,7 @@ std::string Push::getDisplayString() {
 	if (!displayString.empty()) return displayString;
 	if (position.empty()) return "";
 	for (const auto& square : position) {
-		switch (square) {
-			case PieceColour::RED:
-				displayString += "R";
-				break;
-			case PieceColour::BLUE:
-				displayString += "B";
-				break;
-			case PieceColour::NONE:
-				displayString += " ";
-				break;
-			default:
-				break;
-		}
+		displayString += pieceColourToChar(square);
 	}
 	return displayString;
 }
@@ -61,7 +49,7 @@ void Push::explore() {
 			// Copy the part from the second square to the current square, but one tile to the left.
 			std::copy(lastEmptySquareIt+1, currentSquareIt+1, positionCopy.begin() + lastEmptySquareIndex);
 			positionCopy[i] = PieceColour::NONE;
-			if (*currentSquareIt == PieceColour::BLACK || *currentSquareIt == PieceColour::BLUE) {
+			if (*currentSquareIt == PieceColour::BLUE) {
 				leftOptions.insert(pushDatabase->getOrInsertGameId(Push(positionCopy)));
 			} else {
 				rightOptions.insert(pushDatabase->getOrInsertGameId(Push(positionCopy)));
@@ -80,19 +68,7 @@ void Push::explore() {
 Push& createPushPosition(const std::string& inputString) {
 	PushShovePosition position;
 	for (const auto& character : inputString) {
-		switch(character) {
-			case 'B':
-				position.push_back(PieceColour::BLUE);
-				break;
-			case 'R':
-			case 'W':
-				position.push_back(PieceColour::RED);
-				break;
-			case ' ':
-				position.push_back(PieceColour::NONE);
-			default:
-				break;
-		}
+		position.push_back(charToPieceColour(character));
 	}
 	Push potentialGame = Push(position);
 	return pushDatabase->getOrInsertGame(potentialGame);

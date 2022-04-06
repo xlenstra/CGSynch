@@ -16,10 +16,10 @@
  * and the ID of the abstract game with these left and right positions.
  * It can be visualised as a node in a tree, where the left and right
  */
-class CherriesGame : public AbstractGame<CherriesPosition> {
+class Cherries : public AbstractGame<CherriesPosition> {
 public:
-	explicit CherriesGame(CherriesPosition position);
-	CherriesGame(const CherriesGame& ruleset) = default;
+	explicit Cherries(CherriesPosition position);
+	Cherries(const Cherries& ruleset) = default;
 
 	std::string getDisplayString() override;
 
@@ -36,8 +36,8 @@ private:
 	CherriesPosition position;
 };
 
-CherriesGame& createCherriesPosition(const std::string& inputString);
+Cherries& createCherriesPosition(const std::string& inputString);
 
-extern std::shared_ptr<GameDatabase<CherriesPosition, CherriesGame>> cherriesDatabase;
+extern std::shared_ptr<GameDatabase<CherriesPosition, Cherries>> cherriesDatabase;
 
 #endif //CGSYNCH_2_CHERRIES_H

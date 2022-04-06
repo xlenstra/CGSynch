@@ -39,14 +39,14 @@ concept isGame = std::is_base_of<AbstractGame<U>,T>::value;
 
 /** Colours of the stones in a position of a game*/
 enum class PieceColour {
-	BLACK = 1,
-	BLUE = 2,
-	WHITE = -1,
-	RED = -2,
+	BLUE = 1,
+	RED = -1,
 	NONE = 0,
 };
 
 int pieceColourToSign(const PieceColour& piece);
+char pieceColourToChar(const PieceColour& piece);
+PieceColour charToPieceColour(const char& input);
 
 std::ostream& operator<<(std::ostream& os, const PieceColour& stone);
 
