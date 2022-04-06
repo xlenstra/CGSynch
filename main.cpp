@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Spirit/SpiritParser.h>
+#include <Hackenbush/Graph.h>
 #include "AbstractGame/CombinatorialGame.h"
 #include "AbstractGame/CombinatorialGameDatabase.h"
 #include "CombinatorialGames/RulesetMath.h"
@@ -30,6 +31,12 @@ int main() {
 			case 's':
 				std::cout << "Not implemented yet. Sorry :(" << std::endl;
 				break;
+			case 'g': {
+				std::cout << "Graph test !" << std::endl;
+				Graph graph = graphFromMatrixString(2, charsToPieceColours("_RR_"));
+				std::cout << graph.getDisplayString() << std::endl;
+				break;
+			}
 			case 'h':
 				std::cout << "Press 'a' for alternating" << std::endl
 						  << "Press 's' for synchronized" << std::endl

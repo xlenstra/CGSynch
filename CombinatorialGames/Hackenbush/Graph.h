@@ -36,6 +36,9 @@ struct Vertex {
 	void addEdge(PieceColour colour, NodeId otherNode);
 	void removeEdge(PieceColour colour, NodeId otherNode);
 
+	bool isAdjacentTo(NodeId otherNode);
+	PieceColour adjacencyColour(NodeId otherNode);
+
 	bool operator==(const Vertex& other) const;
 
 	std::set<std::pair<PieceColour,NodeId>> reachableNodes;
@@ -50,10 +53,11 @@ public:
 
 	bool operator==(const Graph& other) const;
 
-	void addNode(NodeId);
-	void addVertex(const Vertex& vertex);
+	void resizeNodeCount(size_t newSize);
 	void addEdge(NodeId from, NodeId to, PieceColour edgeColour);
 	void removeEdge(NodeId from, NodeId to, PieceColour edgeColour);
+
+	std::string getDisplayString();
 
 	/** Checks if two graphs are isomorphic.
 	 * Returns `true` or `false` if they are or are not respectively,
@@ -65,12 +69,23 @@ public:
 private:
 	/** Get degrees of all nodes in the graph */
 	[[nodiscard]] std::multiset<size_t> getDegrees() const;
+	[[nodiscard]] size_t getDegree(NodeId id) const;
+	[[nodiscard]] std::pair<size_t, size_t> getEdgeColourCounts(const NodeId& nodeId) const;
 	[[nodiscard]] std::pair<size_t, size_t> getAllEdgeColours() const;
-	[[nodiscard]] const Vertex& getGround() const { return nodeList[0]; }
+	[[nodiscard]] inline const NodeId& getGround() const { return groundId; }
+
+	void addVertex(const Vertex& vertex, std::unordered_map<NodeId, NodeId>& nodeIdTranslation);
 
 	[[nodiscard]] bool backtrackingCheckIsomorphic(const Graph& other) const;
 
 	std::vector<Vertex> nodeList;
+	std::vector<std::vector<PieceColour>> adjacencyMatrix = {{PieceColour::NONE}};
+	const NodeId groundId = 0;
+
+	friend Graph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input);
+
 };
+
+Graph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input);
 
 #endif //CGSYNCH_2_GRAPH_H

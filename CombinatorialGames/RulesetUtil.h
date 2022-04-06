@@ -47,6 +47,9 @@ enum class PieceColour {
 int pieceColourToSign(const PieceColour& piece);
 char pieceColourToChar(const PieceColour& piece);
 PieceColour charToPieceColour(const char& input);
+std::vector<PieceColour> charsToPieceColours(const std::string& input);
+
+PieceColour operator-(PieceColour piece);
 
 std::ostream& operator<<(std::ostream& os, const PieceColour& stone);
 
