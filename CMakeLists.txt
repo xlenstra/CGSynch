@@ -32,4 +32,4 @@ add_executable(CGSynch_2
 #        UI/TreeNodes/UITreeNodeFunction.cpp UI/TreeNodes/UITreeNodeFunction.h UI/TreeNodes/UITreeNodeFunctions.h UI/TreeNodes/TypeCheckFunctions.h
 
         UI/Spirit/SpiritParser.cpp UI/Spirit/SpiritParser.h
-    )
+        UI/Spirit/TreeNodes.cpp UI/Spirit/TreeNodes.h)

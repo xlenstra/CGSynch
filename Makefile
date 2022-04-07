@@ -513,6 +513,30 @@ UI/Spirit/SpiritParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/SpiritParser.cpp.s
 .PHONY : UI/Spirit/SpiritParser.cpp.s
 
+UI/Spirit/TreeNodes.o: UI/Spirit/TreeNodes.cpp.o
+.PHONY : UI/Spirit/TreeNodes.o
+
+# target to build an object file
+UI/Spirit/TreeNodes.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/TreeNodes.cpp.o
+.PHONY : UI/Spirit/TreeNodes.cpp.o
+
+UI/Spirit/TreeNodes.i: UI/Spirit/TreeNodes.cpp.i
+.PHONY : UI/Spirit/TreeNodes.i
+
+# target to preprocess a source file
+UI/Spirit/TreeNodes.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/TreeNodes.cpp.i
+.PHONY : UI/Spirit/TreeNodes.cpp.i
+
+UI/Spirit/TreeNodes.s: UI/Spirit/TreeNodes.cpp.s
+.PHONY : UI/Spirit/TreeNodes.s
+
+# target to generate assembly for a file
+UI/Spirit/TreeNodes.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/TreeNodes.cpp.s
+.PHONY : UI/Spirit/TreeNodes.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -594,6 +618,9 @@ help:
 	@echo "... UI/Spirit/SpiritParser.o"
 	@echo "... UI/Spirit/SpiritParser.i"
 	@echo "... UI/Spirit/SpiritParser.s"
+	@echo "... UI/Spirit/TreeNodes.o"
+	@echo "... UI/Spirit/TreeNodes.i"
+	@echo "... UI/Spirit/TreeNodes.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

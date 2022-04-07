@@ -21,6 +21,7 @@ int main() {
 	while(running) {
 		std::cout << "Do you want to analyze [A]lternating or [S]synchronized Combinatorial Games?" << std::endl;
 		std::cin >> userInput;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		userInput = tolower(userInput);
 		switch (userInput) {
 			case 'a':
