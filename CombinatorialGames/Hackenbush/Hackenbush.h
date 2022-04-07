@@ -6,12 +6,13 @@
 #define CGSYNCH_2_HACKENBUSH_H
 
 #include "RulesetUtil.h"
+#include "AbstractGame.h"
 #include "HackenbushUtil.h"
 
-//class Hackenbush : AbstractGame<HackenbushPosition> {
-//public:
-//
-//private:
-//};
+class Hackenbush : public AbstractGame<HackenbushPosition> {
+public:
+
+private:
+};
 
 #endif //CGSYNCH_2_HACKENBUSH_H

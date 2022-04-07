@@ -22,6 +22,7 @@ namespace parser {
 	using x3::blank;
 	using x3::_attr;
 	using x3::_val;
+	using boost::fusion::at_c;
 
 	CombinatorialGame& idToGame(AbstractId id) { return localCGDatabase.idToGame(id); }
 
@@ -80,7 +81,17 @@ namespace parser {
 	};
 
 	auto compareLess = [](auto& ctx) {
-		_val(ctx) = x3::_1
+		std::cout << "LESS!" << std::endl;
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) < at_c<1>(x3::_attr(ctx));
+	};
+
+	auto compareMore = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) > at_c<1>(x3::_attr(ctx));
+	};
+
+
+	auto boolToString = [](auto& ctx) {
+		_val(ctx) = _attr(ctx) ? "true" : "false";
 	};
 
 
@@ -135,21 +146,26 @@ namespace parser {
 	const auto boolean_def =
 		(
 			(abstractGame >> '<' >> abstractGame)[compareLess]
+			| (string >> '<' >> string)[compareLess]
+			| (abstractGame >> '>' >> abstractGame)[compareMore]
+			| (string >> '>' >> string)[compareLess]
 		)
 	;
 
 	const auto outputString_def =
 		(
 			abstractGame[abstractGetDisplay]
-			| (abstractGame[abstractGetDisplay] >> lit(".DisplayString()"))
-			| string
+			| (abstractGame[abstractGetDisplay] >> lit(".DisplayString()"))[copy]
+			| boolean[boolToString]
+			| string[copy]
 		) >> x3::eoi
 	;
 
-	BOOST_SPIRIT_DEFINE(quotedString, string, shoveGame, pushGame, cherriesGame, stackCherriesGame)
+	BOOST_SPIRIT_DEFINE(quotedString, string, shoveGame, pushGame, cherriesGame, stackCherriesGame);
 	BOOST_SPIRIT_DEFINE(abstractGame);
 	BOOST_SPIRIT_DEFINE(abstractGameTerminal);
 	BOOST_SPIRIT_DEFINE(abstractGamePrime);
+	BOOST_SPIRIT_DEFINE(boolean);
 	BOOST_SPIRIT_DEFINE(outputString);
 }
 
@@ -172,6 +188,6 @@ void parseStringMain() {
 		if (!r) continue;
 		r = (first == last);
 		std::cout << "Input fully parsed? " << r << "." << std::endl;
-		std::cout << "Result: " << output << std::endl;
+		std::cout << "  " << output << '.' << std::endl;
 	}
 }

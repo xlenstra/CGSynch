@@ -1,6 +1,6 @@
 #include <iostream>
 #include <Spirit/SpiritParser.h>
-#include <Hackenbush/Graph.h>
+#include <Hackenbush/NormalGraph.h>
 #include "AbstractGame/CombinatorialGame.h"
 #include "AbstractGame/CombinatorialGameDatabase.h"
 #include "CombinatorialGames/RulesetMath.h"
@@ -34,7 +34,7 @@ int main() {
 				break;
 			case 'g': {
 				std::cout << "Graph test !" << std::endl;
-				Graph graph = graphFromMatrixString(2, charsToPieceColours("_RR_"));
+				NormalGraph graph = graphFromMatrixString(2, charsToPieceColours("_RR_"));
 				std::cout << graph.getDisplayString() << std::endl;
 				break;
 			}

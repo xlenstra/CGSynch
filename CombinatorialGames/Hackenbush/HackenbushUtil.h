@@ -5,8 +5,9 @@
 #ifndef CGSYNCH_2_HACKENBUSHUTIL_H
 #define CGSYNCH_2_HACKENBUSHUTIL_H
 
-#include "Graph.h"
+#include "NormalGraph.h"
 
-typedef Graph HackenbushPosition;
+typedef NormalGraph HackenbushPosition;
+
 
 #endif //CGSYNCH_2_HACKENBUSHUTIL_H

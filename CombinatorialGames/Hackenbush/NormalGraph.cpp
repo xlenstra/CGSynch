@@ -2,58 +2,15 @@
 // Created by ardour on 17-03-22.
 //
 
-#include "Graph.h"
+#include "NormalGraph.h"
 
-std::pair<size_t, size_t> Vertex::getEdgeColourCounts() const {
+NormalGraph::NormalGraph() = default;
 
-}
-
-std::unordered_set<NodeId> Vertex::getNodesReachableViaColour(const PieceColour& colour) const {
-	std::unordered_set<NodeId> nodes;
-	for (const auto& [edgeColour, id] : reachableNodes) {
-		if (edgeColour == colour) {
-			nodes.insert(id);
-		}
-	}
-	return nodes;
-}
-
-void Vertex::addEdge(PieceColour colour, NodeId otherNode) {
-	if (colour != PieceColour::NONE)
-		reachableNodes.insert(std::make_pair(colour, otherNode));
-}
-
-void Vertex::removeEdge(PieceColour colour, NodeId otherNode) {
-	reachableNodes.erase(std::make_pair(colour, otherNode));
-}
-
-bool Vertex::operator==(const Vertex& other) const {
-	return ID == other.ID && reachableNodes == other.reachableNodes;
-}
-
-bool Vertex::isAdjacentTo(NodeId otherNode) {
-	return (
-		reachableNodes.contains(std::make_pair(PieceColour::BLUE, otherNode))
-		|| reachableNodes.contains(std::make_pair(PieceColour::RED, otherNode))
-	);
-}
-
-PieceColour Vertex::adjacencyColour(NodeId otherNode) {
-	if (reachableNodes.contains(std::make_pair(PieceColour::BLUE, otherNode)))
-		return PieceColour::BLUE;
-	if (reachableNodes.contains(std::make_pair(PieceColour::RED, otherNode)))
-		return PieceColour::RED;
-	return PieceColour::NONE;
-}
-
-
-Graph::Graph() = default;
-
-bool Graph::operator==(const Graph& other) const {
+bool NormalGraph::operator==(const NormalGraph& other) const {
 	return adjacencyMatrix != other.adjacencyMatrix;
 }
 
-std::optional<bool> Graph::isIsomorphicWith(const Graph& other) const {
+std::optional<bool> NormalGraph::isIsomorphicWith(const NormalGraph& other) const {
 	if (this->adjacencyMatrix.size() != other.adjacencyMatrix.size()) return false;
 	if (this->adjacencyMatrix.empty()) return true;
 	if (this->getDegree(groundId) != other.getDegree(other.getGround())) return false;
@@ -68,11 +25,11 @@ std::optional<bool> Graph::isIsomorphicWith(const Graph& other) const {
 
 
 	// Easy checks are inconclusive. Let's just try a backtracking algorithm.
-//	if (this->nodeList.size() > 32) return {}; // Too much work, don't even bother
-//	return backtrackingCheckIsomorphic(other);
+	if (this->adjacencyMatrix.size() > 32) return {}; // Too much work, don't even bother
+	return backtrackingCheckIsomorphic(other);
 }
 
-size_t Graph::getDegree(NodeId id) const {
+size_t NormalGraph::getDegree(NodeId id) const {
 	size_t degree = 0;
 	for (const auto& potentialEdge : adjacencyMatrix[id]) {
 		if (potentialEdge != PieceColour::NONE)
@@ -81,7 +38,7 @@ size_t Graph::getDegree(NodeId id) const {
 	return degree;
 }
 
-std::multiset<size_t> Graph::getDegrees() const {
+std::multiset<size_t> NormalGraph::getDegrees() const {
 	std::multiset<size_t> degrees;
 	for (size_t nodeId = 0; nodeId < adjacencyMatrix.size(); ++nodeId) {
 		degrees.insert(getDegree(nodeId));
@@ -89,7 +46,7 @@ std::multiset<size_t> Graph::getDegrees() const {
 	return degrees;
 }
 
-bool Graph::backtrackingCheckIsomorphic(const Graph& other) const {
+bool NormalGraph::backtrackingCheckIsomorphic(const NormalGraph& other) const {
 	// Plan: create tree-with-back-edges from this graph using DFS from the ground
 	// Use backtracking to try to match nodes of the other graph to this tree
 	// Constraints:
@@ -100,7 +57,7 @@ bool Graph::backtrackingCheckIsomorphic(const Graph& other) const {
 	return false;
 }
 
-std::pair<size_t, size_t> Graph::getEdgeColourCounts(const NodeId& nodeId) const {
+std::pair<size_t, size_t> NormalGraph::getEdgeColourCounts(const NodeId& nodeId) const {
 	size_t blueEdges = 0;
 	size_t redEdges = 0;
 	for (const auto& potentialEdge : adjacencyMatrix[nodeId]) {
@@ -118,7 +75,7 @@ std::pair<size_t, size_t> Graph::getEdgeColourCounts(const NodeId& nodeId) const
 	return { blueEdges, redEdges };
 }
 
-std::pair<size_t, size_t> Graph::getAllEdgeColours() const {
+std::pair<size_t, size_t> NormalGraph::getAllEdgeColours() const {
 	std::pair<size_t, size_t> edgeColours;
 	for (size_t nodeId = 0; nodeId < adjacencyMatrix.size(); ++nodeId) {
 		const std::pair<size_t, size_t>& colours = getEdgeColourCounts(nodeId);
@@ -128,7 +85,7 @@ std::pair<size_t, size_t> Graph::getAllEdgeColours() const {
 	return edgeColours;
 }
 
-void Graph::resizeNodeCount(size_t newSize) {
+void NormalGraph::resizeNodeCount(size_t newSize) {
 	if (newSize <= adjacencyMatrix.size()) return;
 	std::vector<std::vector<PieceColour>> newAdjacencyMatrix(newSize, std::vector<PieceColour>(newSize, PieceColour::NONE));
 	for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {
@@ -136,7 +93,7 @@ void Graph::resizeNodeCount(size_t newSize) {
 	}
 }
 
-void Graph::addEdge(NodeId from, NodeId to, PieceColour edgeColour) {
+void NormalGraph::addEdge(NodeId from, NodeId to, PieceColour edgeColour) {
 	if (from >= adjacencyMatrix.size() || to >= adjacencyMatrix.size()) {
 		throw std::domain_error("Edge added to non-existent node");
 	}
@@ -144,7 +101,7 @@ void Graph::addEdge(NodeId from, NodeId to, PieceColour edgeColour) {
 	adjacencyMatrix[to][from] = edgeColour;
 }
 
-void Graph::removeEdge(NodeId from, NodeId to, PieceColour edgeColour) {
+void NormalGraph::removeEdge(NodeId from, NodeId to, PieceColour edgeColour) {
 	if (from >= adjacencyMatrix.size() || to >= adjacencyMatrix.size()) {
 		throw std::domain_error("Edge added to non-existent node");
 	}
@@ -152,7 +109,7 @@ void Graph::removeEdge(NodeId from, NodeId to, PieceColour edgeColour) {
 	adjacencyMatrix[to][from] = PieceColour::NONE;
 }
 
-std::string Graph::getDisplayString() {
+std::string NormalGraph::getDisplayString() const {
 	std::string output;
 	output += "{\n";
 	for (const auto& row : adjacencyMatrix) {
@@ -168,37 +125,40 @@ std::string Graph::getDisplayString() {
 	return output;
 }
 
-Graph Graph::getSubGraphConnectedToGround() const {
-	Graph subGraph;
+NormalGraph NormalGraph::getSubGraphConnectedToGround() const {
+	NormalGraph subGraph;
 	std::deque<NodeId> reachableUnvisitedNodes = { groundId };
 	std::unordered_set<NodeId> visitedNodes;
 	std::unordered_map<NodeId, NodeId> nodeIdTranslation;
-	//while (!reachableUnvisitedNodes.empty()) {
-	//	NodeId nextNodeToVisit = reachableUnvisitedNodes.front();
-	//	reachableUnvisitedNodes.pop_front();
-	//	subGraph.addVertex(nodeList[nextNodeToVisit], nodeIdTranslation);
-	//	visitedNodes.insert(nextNodeToVisit);
-	//	for (const auto& [colour, to] : nodeList[nextNodeToVisit].reachableNodes) {
-	//		if (!visitedNodes.contains(to))
-	//			reachableUnvisitedNodes.push_back(to);
-	//	}
-	//}
+	while (!reachableUnvisitedNodes.empty()) {
+		NodeId nextNodeToVisit = reachableUnvisitedNodes.front();
+		reachableUnvisitedNodes.pop_front();
+		subGraph.addVertex(adjacencyMatrix[nextNodeToVisit], nextNodeToVisit, nodeIdTranslation);
+		visitedNodes.insert(nextNodeToVisit);
+		for (size_t i = 0; i < adjacencyMatrix[nextNodeToVisit].size(); ++i) {
+			if (adjacencyMatrix[nextNodeToVisit][i] == PieceColour::NONE) continue;
+			if (!visitedNodes.contains(i))
+				reachableUnvisitedNodes.push_back(i);
+		}
+	}
 	return subGraph;
 }
 
-void Graph::addVertex(const Vertex& vertex, std::unordered_map<NodeId, NodeId>& nodeIdTranslation) {
-	//if (!nodeIdTranslation.contains(vertex.ID)) {
-	//	nodeIdTranslation[vertex.ID] = nodeList.size();
-	//}
-	//addNode(nodeIdTranslation[vertex.ID]);
-	//
-	//for (const auto& [colour, to] : vertex.reachableNodes) {
-	//	if (!nodeIdTranslation.contains(to)) {
-	//		nodeIdTranslation[to] = nodeList.size();
-	//	}
-	//	addNode(nodeIdTranslation[to]);
-	//	addEdge(nodeIdTranslation[vertex.ID], nodeIdTranslation[to], colour);
-	//}
+void NormalGraph::addVertex(const std::vector<PieceColour>& vertex, NodeId vertexId, std::unordered_map<NodeId, NodeId>& nodeIdTranslation) {
+	if (!nodeIdTranslation.contains(vertexId)) {
+		nodeIdTranslation[vertexId] = adjacencyMatrix.size();
+	}
+	resizeNodeCount(nodeIdTranslation[vertexId]);
+
+	for (size_t i = 0; i < vertex.size(); ++i) {
+		PieceColour colour = vertex[i];
+		if (colour == PieceColour::NONE) continue;
+		if (!nodeIdTranslation.contains(i)) {
+			nodeIdTranslation[i] = adjacencyMatrix.size();
+		}
+		resizeNodeCount(nodeIdTranslation[i]);
+		addEdge(nodeIdTranslation[vertexId], nodeIdTranslation[i], colour);
+	}
 }
 
 // Assumes input as a vector that runs through a square matrix row by row, from top to bottom.
@@ -207,8 +167,8 @@ void Graph::addVertex(const Vertex& vertex, std::unordered_map<NodeId, NodeId>& 
 // _ R
 // R _
 // which in turn encodes a graph containing a red edge from the ground to node 1 and back.
-Graph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input) {
-	Graph graph;
+NormalGraph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input) {
+	NormalGraph graph;
 	graph.resizeNodeCount(nodeCount);
 	for (size_t charIndex = 0; charIndex < input.size(); ++charIndex) {
 		if (input[charIndex] != PieceColour::NONE) {
@@ -224,4 +184,8 @@ Graph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input) {
 		}
 	}
 	return graph;
+}
+
+size_t std::hash<NormalGraph>::operator()(const NormalGraph& position) const {
+	return boost::hash_range(position.adjacencyMatrix.begin(), position.adjacencyMatrix.end());
 }
