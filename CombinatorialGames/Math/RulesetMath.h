@@ -8,6 +8,8 @@
 #include <string>
 #include "AbstractGame.h"
 
+typedef std::string MathPosition;
+
 /** A class implementing the ruleset called 'the mathematical notation of games'.
  * A board position consists of two sets, the left set and the right set.
  * Each of these sets contain multiple positions.
@@ -19,12 +21,19 @@
  * The left set is written between the first { and the outermost |,
  * the right set between the outermost | and the last }.
  */
-class MathRuleset : public AbstractGame<std::string> {
+class MathRuleset : public AbstractGame<MathPosition> {
 public:
-	MathRuleset(std::string inputString);
+	explicit MathRuleset(MathPosition inputString);
+	void explore() override;
+	std::string getAnyTransposition() const override;
+	std::unordered_set<std::string> getTranspositions() const override;
+	std::string getDisplayString() override;
+	bool tryToDetermineAbstractForm() override;
+
+	//void setOptions(std::pair<std::vector<MathPosition>, std::vector<MathPosition>>);
 
 private:
-
+	MathPosition position;
 };
 
 

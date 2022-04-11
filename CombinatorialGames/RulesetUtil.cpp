@@ -17,7 +17,7 @@ char pieceColourToChar(const PieceColour& piece) {
 	switch (piece) {
 		case PieceColour::BLUE : return 'B';
 		case PieceColour::RED  : return 'R';
-		case PieceColour::NONE : return '_';
+		case PieceColour::NONE : return ' ';
 	}
 }
 

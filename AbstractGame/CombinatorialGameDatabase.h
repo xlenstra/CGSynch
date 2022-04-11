@@ -16,6 +16,7 @@
 #include "CombinatorialGameUtil.h"
 #include "DyadicRational.h"
 
+
 /** Class that implements a database for [Combinatorial Games].
  * Each combinatorial game that is created, is saved inside this database.
  * When a new game is created with the same left and right options as one that already exists,
@@ -73,6 +74,9 @@ std::ostream& operator<<(std::ostream& os, const CGDatabase& database);
 /** Turns two sets of left and right options resp. into a game with these options */
 #define GET_GAME(left, right) (CGDatabase::getInstance().getGame(left, right))
 
+
+// Yes, this needs to go here. Not at the top, as then we get recursive dependence and problems.
+#include "CombinatorialGame.h"
 
 
 #endif //CGSYNCH_2_COMBINATORIALGAMEDATABASE_H

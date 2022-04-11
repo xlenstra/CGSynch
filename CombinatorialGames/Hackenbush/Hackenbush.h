@@ -11,8 +11,16 @@
 
 class Hackenbush : public AbstractGame<HackenbushPosition> {
 public:
+	explicit Hackenbush(const HackenbushPosition& position);
+	std::string getDisplayString() override;
+	NormalGraph getAnyTransposition() const override;
+	void explore() override;
+	std::unordered_set<NormalGraph> getTranspositions() const override;
 
 private:
+	HackenbushPosition position;
 };
+
+extern std::shared_ptr<GameDatabase<HackenbushPosition, Hackenbush>> hackenbushDatabase;
 
 #endif //CGSYNCH_2_HACKENBUSH_H

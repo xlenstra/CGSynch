@@ -33,7 +33,8 @@ public:
 
 	void resizeNodeCount(size_t newSize);
 	void addEdge(NodeId from, NodeId to, PieceColour edgeColour);
-	void removeEdge(NodeId from, NodeId to, PieceColour edgeColour);
+	void removeEdge(NodeId from, NodeId to);
+	std::set<std::tuple<NodeId, NodeId, PieceColour>> getAllEdges();
 
 	[[nodiscard]] std::string getDisplayString() const;
 
@@ -48,7 +49,7 @@ private:
 	/** Get degrees of all nodes in the graph */
 	[[nodiscard]] std::multiset<size_t> getDegrees() const;
 	[[nodiscard]] size_t getDegree(NodeId id) const;
-	[[nodiscard]] std::pair<size_t, size_t> getEdgeColourCounts(const NodeId& nodeId) const;
+	[[nodiscard]] std::pair<size_t, size_t> getEdgeColours(const NodeId& nodeId) const;
 	[[nodiscard]] std::pair<size_t, size_t> getAllEdgeColours() const;
 	[[nodiscard]] inline const NodeId& getGround() const { return groundId; }
 
@@ -61,8 +62,7 @@ private:
 
 	friend NormalGraph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input);
 
-	// Unneeded warning, this function does exist.
-	// But clang can't find it or something.
+	// Unneeded warning, this function does exist, but clang can't find it or something.
 	friend size_t std::hash<NormalGraph>::operator()(const NormalGraph& position) const;
 };
 

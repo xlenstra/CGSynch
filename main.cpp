@@ -3,7 +3,7 @@
 #include <Hackenbush/NormalGraph.h>
 #include "AbstractGame/CombinatorialGame.h"
 #include "AbstractGame/CombinatorialGameDatabase.h"
-#include "CombinatorialGames/RulesetMath.h"
+#include "Math/RulesetMath.h"
 #include "CombinatorialGames/GameDatabase.h"
 #include "CombinatorialGames/Cherries/Cherries.h"
 #include "CombinatorialGames/Cherries/StackCherries.h"

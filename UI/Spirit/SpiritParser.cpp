@@ -6,6 +6,7 @@
 
 #include "SpiritParser.h"
 #include "Push-Shove/Push.h"
+#include "Push-Shove/Shove.h"
 #include "Cherries/Cherries.h"
 #include "Cherries/StackCherries.h"
 #include "CombinatorialGame.h"
@@ -81,12 +82,37 @@ namespace parser {
 	};
 
 	auto compareLess = [](auto& ctx) {
-		std::cout << "LESS!" << std::endl;
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) < at_c<1>(x3::_attr(ctx));
 	};
-
 	auto compareMore = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) > at_c<1>(x3::_attr(ctx));
+	};
+	auto compareEqual = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == 0;
+	};
+	auto compareUnequal = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) != at_c<1>(x3::_attr(ctx));
+	};
+	auto compareLessEqual = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) <= at_c<1>(x3::_attr(ctx));
+	};
+	auto compareGreaterEqual = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) >= at_c<1>(x3::_attr(ctx));
+	};
+	auto compareIncomparable = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered;
+	};
+	auto compareLessIncomparable = [](auto& ctx) {
+		_val(ctx) =
+			at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered
+			|| at_c<0>(x3::_attr(ctx)) < at_c<1>(x3::_attr(ctx))
+		;
+	};
+	auto compareGreaterIncomparable = [](auto& ctx) {
+		_val(ctx) =
+			at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered
+			|| at_c<0>(x3::_attr(ctx)) > at_c<1>(x3::_attr(ctx))
+		;
 	};
 
 
@@ -146,17 +172,25 @@ namespace parser {
 	const auto boolean_def =
 		(
 			(abstractGame >> '<' >> abstractGame)[compareLess]
-			| (string >> '<' >> string)[compareLess]
 			| (abstractGame >> '>' >> abstractGame)[compareMore]
-			| (string >> '>' >> string)[compareLess]
+			| (abstractGame >> "==" >> abstractGame)[compareEqual]
+			| (abstractGame >> "=" >> abstractGame)[compareEqual]
+			| (abstractGame >> "!=" >> abstractGame)[compareUnequal]
+			| (abstractGame >> "<=" >> abstractGame)[compareLessEqual]
+			| (abstractGame >> ">=" >> abstractGame)[compareGreaterEqual]
+			| (abstractGame >> "||" >> abstractGame)[compareIncomparable]
+			| (abstractGame >> "|>" >> abstractGame)[compareGreaterIncomparable]
+			| (abstractGame >> "<|" >> abstractGame)[compareLessIncomparable]
+			| (string >> '<' >> string)[compareLess]
+			| (string >> '>' >> string)[compareMore]
 		)
 	;
 
 	const auto outputString_def =
 		(
-			abstractGame[abstractGetDisplay]
-			| (abstractGame[abstractGetDisplay] >> lit(".DisplayString()"))[copy]
-			| boolean[boolToString]
+			boolean[boolToString]
+			| (abstractGame[abstractGetDisplay] >> lit(".DisplayString()"))
+			| abstractGame[abstractGetDisplay]
 			| string[copy]
 		) >> x3::eoi
 	;

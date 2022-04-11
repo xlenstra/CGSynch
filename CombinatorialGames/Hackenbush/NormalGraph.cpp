@@ -14,7 +14,7 @@ std::optional<bool> NormalGraph::isIsomorphicWith(const NormalGraph& other) cons
 	if (this->adjacencyMatrix.size() != other.adjacencyMatrix.size()) return false;
 	if (this->adjacencyMatrix.empty()) return true;
 	if (this->getDegree(groundId) != other.getDegree(other.getGround())) return false;
-	if (this->getEdgeColourCounts(groundId) != other.getEdgeColourCounts(other.getGround())) return false;
+	if (this->getEdgeColours(groundId) != other.getEdgeColours(other.getGround())) return false;
 	if (this->adjacencyMatrix.size() == 1) return true;
 	if (*this == other) return true;
 	if (this->getDegrees() != other.getDegrees()) return false;
@@ -57,7 +57,7 @@ bool NormalGraph::backtrackingCheckIsomorphic(const NormalGraph& other) const {
 	return false;
 }
 
-std::pair<size_t, size_t> NormalGraph::getEdgeColourCounts(const NodeId& nodeId) const {
+std::pair<size_t, size_t> NormalGraph::getEdgeColours(const NodeId& nodeId) const {
 	size_t blueEdges = 0;
 	size_t redEdges = 0;
 	for (const auto& potentialEdge : adjacencyMatrix[nodeId]) {
@@ -78,7 +78,7 @@ std::pair<size_t, size_t> NormalGraph::getEdgeColourCounts(const NodeId& nodeId)
 std::pair<size_t, size_t> NormalGraph::getAllEdgeColours() const {
 	std::pair<size_t, size_t> edgeColours;
 	for (size_t nodeId = 0; nodeId < adjacencyMatrix.size(); ++nodeId) {
-		const std::pair<size_t, size_t>& colours = getEdgeColourCounts(nodeId);
+		const std::pair<size_t, size_t>& colours = getEdgeColours(nodeId);
 		edgeColours.first += colours.first;
 		edgeColours.second += colours.second;
 	}
@@ -101,7 +101,7 @@ void NormalGraph::addEdge(NodeId from, NodeId to, PieceColour edgeColour) {
 	adjacencyMatrix[to][from] = edgeColour;
 }
 
-void NormalGraph::removeEdge(NodeId from, NodeId to, PieceColour edgeColour) {
+void NormalGraph::removeEdge(NodeId from, NodeId to) {
 	if (from >= adjacencyMatrix.size() || to >= adjacencyMatrix.size()) {
 		throw std::domain_error("Edge added to non-existent node");
 	}
@@ -184,6 +184,18 @@ NormalGraph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> inp
 		}
 	}
 	return graph;
+}
+
+std::set<std::tuple<NodeId, NodeId, PieceColour>> NormalGraph::getAllEdges() {
+	std::set<std::tuple<NodeId, NodeId, PieceColour>> data;
+	for (NodeId i = 0; i < adjacencyMatrix.size(); ++i) {
+		for (NodeId j = i + 1; j < adjacencyMatrix.size(); ++j) {
+			if (adjacencyMatrix[i][j] != PieceColour::NONE) {
+				data.insert(std::make_tuple(i, j, adjacencyMatrix[i][j]));
+			}
+		}
+	}
+	return data;
 }
 
 size_t std::hash<NormalGraph>::operator()(const NormalGraph& position) const {

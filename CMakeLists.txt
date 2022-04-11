@@ -22,7 +22,7 @@ add_executable(CGSynch_2
         CombinatorialGames/Push-Shove/PushShoveUtil.cpp
         CombinatorialGames/Push-Shove/Push.cpp
         CombinatorialGames/Push-Shove/Shove.cpp
-        CombinatorialGames/RulesetMath.cpp
+        CombinatorialGames/Math/RulesetMath.cpp
         CombinatorialGames/Hackenbush/NormalGraph.cpp
         CombinatorialGames/Hackenbush/Hackenbush.cpp
 
@@ -32,4 +32,4 @@ add_executable(CGSynch_2
 #        UI/TreeNodes/UITreeNodeFunction.cpp UI/TreeNodes/UITreeNodeFunction.h UI/TreeNodes/UITreeNodeFunctions.h UI/TreeNodes/TypeCheckFunctions.h
 
         UI/Spirit/SpiritParser.cpp UI/Spirit/SpiritParser.h
-        UI/Spirit/TreeNodes.cpp UI/Spirit/TreeNodes.h)
+        UI/Spirit/TreeNodes.cpp UI/Spirit/TreeNodes.h CombinatorialGames/Math/RulesetMathUtil.cpp CombinatorialGames/Math/RulesetMathUtil.h)
