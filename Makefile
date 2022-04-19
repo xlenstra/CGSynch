@@ -321,30 +321,6 @@ CombinatorialGames/Cherries/StackCherries.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Cherries/StackCherries.cpp.s
 .PHONY : CombinatorialGames/Cherries/StackCherries.cpp.s
 
-CombinatorialGames/Hackenbush/Graph.o: CombinatorialGames/Hackenbush/Graph.cpp.o
-.PHONY : CombinatorialGames/Hackenbush/Graph.o
-
-# target to build an object file
-CombinatorialGames/Hackenbush/Graph.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Hackenbush/Graph.cpp.o
-.PHONY : CombinatorialGames/Hackenbush/Graph.cpp.o
-
-CombinatorialGames/Hackenbush/Graph.i: CombinatorialGames/Hackenbush/Graph.cpp.i
-.PHONY : CombinatorialGames/Hackenbush/Graph.i
-
-# target to preprocess a source file
-CombinatorialGames/Hackenbush/Graph.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Hackenbush/Graph.cpp.i
-.PHONY : CombinatorialGames/Hackenbush/Graph.cpp.i
-
-CombinatorialGames/Hackenbush/Graph.s: CombinatorialGames/Hackenbush/Graph.cpp.s
-.PHONY : CombinatorialGames/Hackenbush/Graph.s
-
-# target to generate assembly for a file
-CombinatorialGames/Hackenbush/Graph.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Hackenbush/Graph.cpp.s
-.PHONY : CombinatorialGames/Hackenbush/Graph.cpp.s
-
 CombinatorialGames/Hackenbush/Hackenbush.o: CombinatorialGames/Hackenbush/Hackenbush.cpp.o
 .PHONY : CombinatorialGames/Hackenbush/Hackenbush.o
 
@@ -368,6 +344,78 @@ CombinatorialGames/Hackenbush/Hackenbush.s: CombinatorialGames/Hackenbush/Hacken
 CombinatorialGames/Hackenbush/Hackenbush.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Hackenbush/Hackenbush.cpp.s
 .PHONY : CombinatorialGames/Hackenbush/Hackenbush.cpp.s
+
+CombinatorialGames/Hackenbush/NormalGraph.o: CombinatorialGames/Hackenbush/NormalGraph.cpp.o
+.PHONY : CombinatorialGames/Hackenbush/NormalGraph.o
+
+# target to build an object file
+CombinatorialGames/Hackenbush/NormalGraph.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Hackenbush/NormalGraph.cpp.o
+.PHONY : CombinatorialGames/Hackenbush/NormalGraph.cpp.o
+
+CombinatorialGames/Hackenbush/NormalGraph.i: CombinatorialGames/Hackenbush/NormalGraph.cpp.i
+.PHONY : CombinatorialGames/Hackenbush/NormalGraph.i
+
+# target to preprocess a source file
+CombinatorialGames/Hackenbush/NormalGraph.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Hackenbush/NormalGraph.cpp.i
+.PHONY : CombinatorialGames/Hackenbush/NormalGraph.cpp.i
+
+CombinatorialGames/Hackenbush/NormalGraph.s: CombinatorialGames/Hackenbush/NormalGraph.cpp.s
+.PHONY : CombinatorialGames/Hackenbush/NormalGraph.s
+
+# target to generate assembly for a file
+CombinatorialGames/Hackenbush/NormalGraph.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Hackenbush/NormalGraph.cpp.s
+.PHONY : CombinatorialGames/Hackenbush/NormalGraph.cpp.s
+
+CombinatorialGames/Math/RulesetMath.o: CombinatorialGames/Math/RulesetMath.cpp.o
+.PHONY : CombinatorialGames/Math/RulesetMath.o
+
+# target to build an object file
+CombinatorialGames/Math/RulesetMath.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Math/RulesetMath.cpp.o
+.PHONY : CombinatorialGames/Math/RulesetMath.cpp.o
+
+CombinatorialGames/Math/RulesetMath.i: CombinatorialGames/Math/RulesetMath.cpp.i
+.PHONY : CombinatorialGames/Math/RulesetMath.i
+
+# target to preprocess a source file
+CombinatorialGames/Math/RulesetMath.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Math/RulesetMath.cpp.i
+.PHONY : CombinatorialGames/Math/RulesetMath.cpp.i
+
+CombinatorialGames/Math/RulesetMath.s: CombinatorialGames/Math/RulesetMath.cpp.s
+.PHONY : CombinatorialGames/Math/RulesetMath.s
+
+# target to generate assembly for a file
+CombinatorialGames/Math/RulesetMath.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Math/RulesetMath.cpp.s
+.PHONY : CombinatorialGames/Math/RulesetMath.cpp.s
+
+CombinatorialGames/Math/RulesetMathUtil.o: CombinatorialGames/Math/RulesetMathUtil.cpp.o
+.PHONY : CombinatorialGames/Math/RulesetMathUtil.o
+
+# target to build an object file
+CombinatorialGames/Math/RulesetMathUtil.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Math/RulesetMathUtil.cpp.o
+.PHONY : CombinatorialGames/Math/RulesetMathUtil.cpp.o
+
+CombinatorialGames/Math/RulesetMathUtil.i: CombinatorialGames/Math/RulesetMathUtil.cpp.i
+.PHONY : CombinatorialGames/Math/RulesetMathUtil.i
+
+# target to preprocess a source file
+CombinatorialGames/Math/RulesetMathUtil.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Math/RulesetMathUtil.cpp.i
+.PHONY : CombinatorialGames/Math/RulesetMathUtil.cpp.i
+
+CombinatorialGames/Math/RulesetMathUtil.s: CombinatorialGames/Math/RulesetMathUtil.cpp.s
+.PHONY : CombinatorialGames/Math/RulesetMathUtil.s
+
+# target to generate assembly for a file
+CombinatorialGames/Math/RulesetMathUtil.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Math/RulesetMathUtil.cpp.s
+.PHONY : CombinatorialGames/Math/RulesetMathUtil.cpp.s
 
 CombinatorialGames/Push-Shove/Push.o: CombinatorialGames/Push-Shove/Push.cpp.o
 .PHONY : CombinatorialGames/Push-Shove/Push.o
@@ -440,30 +488,6 @@ CombinatorialGames/Push-Shove/Shove.s: CombinatorialGames/Push-Shove/Shove.cpp.s
 CombinatorialGames/Push-Shove/Shove.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/Push-Shove/Shove.cpp.s
 .PHONY : CombinatorialGames/Push-Shove/Shove.cpp.s
-
-CombinatorialGames/RulesetMath.o: CombinatorialGames/RulesetMath.cpp.o
-.PHONY : CombinatorialGames/RulesetMath.o
-
-# target to build an object file
-CombinatorialGames/RulesetMath.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/RulesetMath.cpp.o
-.PHONY : CombinatorialGames/RulesetMath.cpp.o
-
-CombinatorialGames/RulesetMath.i: CombinatorialGames/RulesetMath.cpp.i
-.PHONY : CombinatorialGames/RulesetMath.i
-
-# target to preprocess a source file
-CombinatorialGames/RulesetMath.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/RulesetMath.cpp.i
-.PHONY : CombinatorialGames/RulesetMath.cpp.i
-
-CombinatorialGames/RulesetMath.s: CombinatorialGames/RulesetMath.cpp.s
-.PHONY : CombinatorialGames/RulesetMath.s
-
-# target to generate assembly for a file
-CombinatorialGames/RulesetMath.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/RulesetMath.cpp.s
-.PHONY : CombinatorialGames/RulesetMath.cpp.s
 
 CombinatorialGames/RulesetUtil.o: CombinatorialGames/RulesetUtil.cpp.o
 .PHONY : CombinatorialGames/RulesetUtil.o
@@ -594,12 +618,18 @@ help:
 	@echo "... CombinatorialGames/Cherries/StackCherries.o"
 	@echo "... CombinatorialGames/Cherries/StackCherries.i"
 	@echo "... CombinatorialGames/Cherries/StackCherries.s"
-	@echo "... CombinatorialGames/Hackenbush/Graph.o"
-	@echo "... CombinatorialGames/Hackenbush/Graph.i"
-	@echo "... CombinatorialGames/Hackenbush/Graph.s"
 	@echo "... CombinatorialGames/Hackenbush/Hackenbush.o"
 	@echo "... CombinatorialGames/Hackenbush/Hackenbush.i"
 	@echo "... CombinatorialGames/Hackenbush/Hackenbush.s"
+	@echo "... CombinatorialGames/Hackenbush/NormalGraph.o"
+	@echo "... CombinatorialGames/Hackenbush/NormalGraph.i"
+	@echo "... CombinatorialGames/Hackenbush/NormalGraph.s"
+	@echo "... CombinatorialGames/Math/RulesetMath.o"
+	@echo "... CombinatorialGames/Math/RulesetMath.i"
+	@echo "... CombinatorialGames/Math/RulesetMath.s"
+	@echo "... CombinatorialGames/Math/RulesetMathUtil.o"
+	@echo "... CombinatorialGames/Math/RulesetMathUtil.i"
+	@echo "... CombinatorialGames/Math/RulesetMathUtil.s"
 	@echo "... CombinatorialGames/Push-Shove/Push.o"
 	@echo "... CombinatorialGames/Push-Shove/Push.i"
 	@echo "... CombinatorialGames/Push-Shove/Push.s"
@@ -609,9 +639,6 @@ help:
 	@echo "... CombinatorialGames/Push-Shove/Shove.o"
 	@echo "... CombinatorialGames/Push-Shove/Shove.i"
 	@echo "... CombinatorialGames/Push-Shove/Shove.s"
-	@echo "... CombinatorialGames/RulesetMath.o"
-	@echo "... CombinatorialGames/RulesetMath.i"
-	@echo "... CombinatorialGames/RulesetMath.s"
 	@echo "... CombinatorialGames/RulesetUtil.o"
 	@echo "... CombinatorialGames/RulesetUtil.i"
 	@echo "... CombinatorialGames/RulesetUtil.s"

@@ -2,6 +2,7 @@
 // Created by ardour on 25-03-22.
 //
 
+#include <boost/spirit/home/x3.hpp>
 #include "Hackenbush.h"
 
 // Initialize static member variables
@@ -10,7 +11,7 @@ template<> std::vector<std::shared_ptr<Hackenbush>> GameDatabase<HackenbushPosit
 template<> std::unordered_map<HackenbushPosition, GameId> GameDatabase<HackenbushPosition, Hackenbush>::transpositionTable = {};
 // Get a global variable for the actual database
 // TODO: inline this
-std::shared_ptr<GameDatabase<HackenbushPosition, Hackenbush>> hackenbushDatabase = GameDatabase<HackenbushPosition, Hackenbush>::getInstance();
+const std::shared_ptr<GameDatabase<HackenbushPosition, Hackenbush>> hackenbushDatabase = GameDatabase<HackenbushPosition, Hackenbush>::getInstance();
 
 Hackenbush::Hackenbush(const HackenbushPosition& position) : position(position) {}
 
@@ -37,4 +38,10 @@ void Hackenbush::explore() {
 
 std::unordered_set<NormalGraph> Hackenbush::getTranspositions() const {
 	return { position };
+}
+
+Hackenbush& createHackenbushPosition(const int& nodeSize, const std::string& inputString) {
+	std::vector<PieceColour> positionStrip = charsToPieceColours(inputString);
+	Hackenbush potentialPosition = Hackenbush(graphFromMatrixString(nodeSize, positionStrip));
+	return hackenbushDatabase->getOrInsertGame(potentialPosition);
 }

@@ -19,19 +19,20 @@
 //	negativeFormId(negativeFormId), cachedIsInteger(cachedIsInteger), isNumber(isNumber) {}
 
 
-std::ostream& operator<<(std::ostream& os, WinningPlayer winningPlayer) {
-	static const std::string LEFT = "LEFT";
-	static const std::string RIGHT = "RIGHT";
-	static const std::string PREVIOUS = "PREVIOUS";
-	static const std::string NEXT = "NEXT";
-	static const std::string NONE = "NONE";
+
+
+std::string winningPlayerGetDisplayString(const WinningPlayer& winningPlayer) {
 	switch (winningPlayer) {
-		case WinningPlayer::LEFT: os << LEFT; break;
-		case WinningPlayer::RIGHT: os << RIGHT; break;
-		case WinningPlayer::PREVIOUS: os << PREVIOUS; break;
-		case WinningPlayer::NEXT: os << NEXT; break;
-		case WinningPlayer::NONE: os << NONE; break;
+		case WinningPlayer::LEFT: return "LEFT";
+		case WinningPlayer::RIGHT: return "RIGHT";
+		case WinningPlayer::PREVIOUS: return "PREVIOUS";
+		case WinningPlayer::NEXT: return "NEXT";
+		case WinningPlayer::NONE: return "NONE";
 	}
+}
+
+std::ostream& operator<<(std::ostream& os, const WinningPlayer& winningPlayer) {
+	os << winningPlayerGetDisplayString(winningPlayer);
 	return os;
 }
 

@@ -21,6 +21,9 @@ private:
 	HackenbushPosition position;
 };
 
-extern std::shared_ptr<GameDatabase<HackenbushPosition, Hackenbush>> hackenbushDatabase;
+Hackenbush& createHackenbushPosition(const int&, const std::string& inputString);
+
+
+extern const std::shared_ptr<GameDatabase<HackenbushPosition, Hackenbush>> hackenbushDatabase;
 
 #endif //CGSYNCH_2_HACKENBUSH_H

@@ -22,7 +22,9 @@ enum class WinningPlayer {
 	RIGHT,
 	NONE = -1,
 };
-std::ostream& operator<<(std::ostream &os, WinningPlayer winningPlayer);
+std::string winningPlayerGetDisplayString(const WinningPlayer& winningPlayer);
+
+std::ostream& operator<<(std::ostream &os, const WinningPlayer& winningPlayer);
 
 /** The cached data of each game */
 struct CGCacheBlock {

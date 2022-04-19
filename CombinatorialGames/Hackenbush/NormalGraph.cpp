@@ -91,6 +91,7 @@ void NormalGraph::resizeNodeCount(size_t newSize) {
 	for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {
 		std::move(adjacencyMatrix[i].begin(), adjacencyMatrix[i].end(), newAdjacencyMatrix[i].begin());
 	}
+	adjacencyMatrix = newAdjacencyMatrix;
 }
 
 void NormalGraph::addEdge(NodeId from, NodeId to, PieceColour edgeColour) {
@@ -129,7 +130,7 @@ NormalGraph NormalGraph::getSubGraphConnectedToGround() const {
 	NormalGraph subGraph;
 	std::deque<NodeId> reachableUnvisitedNodes = { groundId };
 	std::unordered_set<NodeId> visitedNodes;
-	std::unordered_map<NodeId, NodeId> nodeIdTranslation;
+	std::unordered_map<NodeId, NodeId> nodeIdTranslation = {{groundId, groundId}};
 	while (!reachableUnvisitedNodes.empty()) {
 		NodeId nextNodeToVisit = reachableUnvisitedNodes.front();
 		reachableUnvisitedNodes.pop_front();
@@ -148,7 +149,7 @@ void NormalGraph::addVertex(const std::vector<PieceColour>& vertex, NodeId verte
 	if (!nodeIdTranslation.contains(vertexId)) {
 		nodeIdTranslation[vertexId] = adjacencyMatrix.size();
 	}
-	resizeNodeCount(nodeIdTranslation[vertexId]);
+	resizeNodeCount(nodeIdTranslation[vertexId]+1);
 
 	for (size_t i = 0; i < vertex.size(); ++i) {
 		PieceColour colour = vertex[i];
@@ -156,14 +157,31 @@ void NormalGraph::addVertex(const std::vector<PieceColour>& vertex, NodeId verte
 		if (!nodeIdTranslation.contains(i)) {
 			nodeIdTranslation[i] = adjacencyMatrix.size();
 		}
-		resizeNodeCount(nodeIdTranslation[i]);
+		resizeNodeCount(nodeIdTranslation[i]+1);
 		addEdge(nodeIdTranslation[vertexId], nodeIdTranslation[i], colour);
 	}
 }
 
-// Assumes input as a vector that runs through a square matrix row by row, from top to bottom.
+std::set<std::tuple<NodeId, NodeId, PieceColour>> NormalGraph::getAllEdges() {
+	std::set<std::tuple<NodeId, NodeId, PieceColour>> data;
+	for (NodeId i = 0; i < adjacencyMatrix.size(); ++i) {
+		for (NodeId j = i + 1; j < adjacencyMatrix.size(); ++j) {
+			if (adjacencyMatrix[i][j] != PieceColour::NONE) {
+				data.insert(std::make_tuple(i, j, adjacencyMatrix[i][j]));
+			}
+		}
+	}
+	return data;
+}
+
+size_t std::hash<NormalGraph>::operator()(const NormalGraph& position) const {
+	return boost::hash_range(position.adjacencyMatrix.begin(), position.adjacencyMatrix.end());
+}
+
+
+// Assumes input as a vector that runs through a square hackenbushInput row by row, from top to bottom.
 // The rows are the 'from' node, and the columns are the 'to' node.
-// E.g., "_RR_" would encode the matrix
+// E.g., "_RR_" would encode the hackenbushInput
 // _ R
 // R _
 // which in turn encodes a graph containing a red edge from the ground to node 1 and back.
@@ -184,20 +202,4 @@ NormalGraph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> inp
 		}
 	}
 	return graph;
-}
-
-std::set<std::tuple<NodeId, NodeId, PieceColour>> NormalGraph::getAllEdges() {
-	std::set<std::tuple<NodeId, NodeId, PieceColour>> data;
-	for (NodeId i = 0; i < adjacencyMatrix.size(); ++i) {
-		for (NodeId j = i + 1; j < adjacencyMatrix.size(); ++j) {
-			if (adjacencyMatrix[i][j] != PieceColour::NONE) {
-				data.insert(std::make_tuple(i, j, adjacencyMatrix[i][j]));
-			}
-		}
-	}
-	return data;
-}
-
-size_t std::hash<NormalGraph>::operator()(const NormalGraph& position) const {
-	return boost::hash_range(position.adjacencyMatrix.begin(), position.adjacencyMatrix.end());
 }
