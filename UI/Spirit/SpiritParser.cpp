@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <chrono>
 
 #include "SpiritParser.h"
 #include "Push-Shove/Push.h"
@@ -248,10 +249,18 @@ namespace parser {
 
 void parseStringMain() {
 	std::cout << "Enter a command." << std::endl;
+	bool timeOn = false;
+	auto startTime = std::chrono::steady_clock::now();
+	auto endTime = std::chrono::steady_clock::now();
 	while (true) {
 		std::string input;
 		std::getline(std::cin, input);
 		if (input == "q" || input == "quit") return;
+		if (input == "time" || input == "t" || input == "timeOn" || input == "timeOff") {
+			timeOn = !timeOn;
+			std::cout << "Timing on: " << timeOn << std::endl;
+			continue;
+		}
 
 		auto first = input.begin();
 		auto last = input.end();
@@ -259,12 +268,21 @@ void parseStringMain() {
 		std::string output;
 		bool result;
 		std::string error;
+
+		if (timeOn)
+			startTime = std::chrono::steady_clock::now();
+
 		try {
 			result = phrase_parse(first, last, parser::outputString, x3::ascii::space, output);
 		} catch (std::exception& exception) {
 			result = false;
 			error = exception.what();
 		}
+
+		if (timeOn)
+			endTime = std::chrono::steady_clock::now();
+
+
 
 		if (!result) {
 			std::cout << "Parsing error, please try again" << std::endl;
@@ -274,5 +292,10 @@ void parseStringMain() {
 			continue;
 		}
 		std::cout << "  " << output << '.' << std::endl;
+
+		if (timeOn) {
+			auto takenTime = endTime - startTime;
+			std::cout << "Caculation time: " << std::chrono::duration_cast<std::chrono::microseconds>(takenTime).count() << " microseconds" << std::endl;
+		}
 	}
 }
