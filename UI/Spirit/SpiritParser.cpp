@@ -248,7 +248,7 @@ namespace parser {
 
 
 void parseStringMain() {
-	std::cout << "Enter a command." << std::endl;
+	std::cout << "Enter a command. 'help' for help" << std::endl;
 	bool timeOn = false;
 	auto startTime = std::chrono::steady_clock::now();
 	auto endTime = std::chrono::steady_clock::now();
@@ -260,6 +260,23 @@ void parseStringMain() {
 			timeOn = !timeOn;
 			std::cout << "Timing on: " << timeOn << std::endl;
 			continue;
+		}
+		if (input == "help" || input == "h") {
+			std::cout << "You can enter the following games:" << std::endl
+					  << "Hackenbush(a, b) -- a: the number of nodes, b: the string representation of the adjacency matrix" << std::endl
+					  << "Cherries(a) -- a: The strip representation of the position" << std::endl
+					  << "StackCherries(a) -- a: The strip representation of the position" << std::endl
+					  << "Push(a) -- a: The strip representation of the position" << std::endl
+					  << "Shove(a) -- a: The strip representation of the position" << std::endl
+					  << std::endl
+					  << "These can be added together with +, subtracted with -, compared with <, <=, ==, >=, !=, <| or |> or bracketed" << std::endl
+					  << "Additionaly, the functions `.CanonicalForm()`, `.GetBirthday()`, `isNumber()` and `getWinner()` can be called" << std::endl
+					  << std::endl
+					  << "The following commands are also suported:" << std::endl
+					  << "  (h)elp -- show this message" << std::endl
+					  << "  (q)uit -- quit" << std::endl
+					  << "  (t)ime -- time how long execution takes and print that time" << std::endl
+					  << std::endl;
 		}
 
 		auto first = input.begin();
