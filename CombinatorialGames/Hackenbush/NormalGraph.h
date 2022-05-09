@@ -43,7 +43,7 @@ public:
 	 * or std::optional(); if checking whether they are isomorphic would take too long.
 	 */
 	[[nodiscard]] std::optional<bool> isIsomorphicWith(const NormalGraph& other) const;
-	[[nodiscard]] NormalGraph getSubGraphConnectedToGround() const;
+	[[nodiscard]] NormalGraph getSubGraphConnectedToGround(NodeId from, NodeId to) const;
 
 private:
 	/** Get degrees of all nodes in the graph */
@@ -53,7 +53,7 @@ private:
 	[[nodiscard]] std::pair<size_t, size_t> getAllEdgeColours() const;
 	[[nodiscard]] inline const NodeId& getGround() const { return groundId; }
 
-	void addVertex(const std::vector<PieceColour>& vertex, NodeId vertexId, std::unordered_map<NodeId, NodeId>& nodeIdTranslation);
+	void addVertex(const std::vector<PieceColour>& vertex, NodeId vertexId, const std::vector<NodeId>& nodeIdTranslation);
 
 	[[nodiscard]] bool backtrackingCheckIsomorphic(const NormalGraph& other) const;
 
@@ -62,8 +62,7 @@ private:
 
 	friend NormalGraph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input);
 
-	// Unneeded warning, this function does exist, but clang can't find it or something.
-	friend size_t std::hash<NormalGraph>::operator()(const NormalGraph& position) const;
+	friend struct std::hash<NormalGraph>;
 };
 
 NormalGraph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input);

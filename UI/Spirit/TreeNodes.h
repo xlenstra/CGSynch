@@ -6,7 +6,7 @@
 #define CGSYNCH_2_TREENODES_H
 
 #include <vector>
-#include "CombinatorialGameUtil.h"
+#include "CombinatorialGame/CombinatorialGameUtil.h"
 
 namespace parser {
 	struct SpiritParserTreeNode {
@@ -14,7 +14,7 @@ namespace parser {
 		virtual ~SpiritParserTreeNode() { delete rightChild; }
 
 		void setRightChild(SpiritParserTreeNode* newChild) { rightChild = newChild; }
-		virtual void setLeftChild(AbstractId newChild) {};
+		virtual void setLeftChild(AbstractId newChild) { auto var = newChild; newChild = var; };
 		virtual AbstractId explore(AbstractId parent) = 0;
 	};
 

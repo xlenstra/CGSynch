@@ -26,7 +26,7 @@ NormalGraph Hackenbush::getAnyTransposition() const {
 void Hackenbush::explore() {
 	for (const auto& [nodeFrom, nodeTo, colour] : position.getAllEdges()) {
 		position.removeEdge(nodeFrom, nodeTo);
-		Hackenbush newGame = Hackenbush(position.getSubGraphConnectedToGround());
+		Hackenbush newGame = Hackenbush(position.getSubGraphConnectedToGround(nodeFrom, nodeTo));
 		if (colour == PieceColour::BLUE) {
 			leftOptions.insert(hackenbushDatabase->getOrInsertGameId(newGame));
 		} else {

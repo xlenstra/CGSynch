@@ -40,6 +40,8 @@ public:
     /** Returns the ID of the game this position is a known transposition of, or -1 if it is unknown */
 	static GameId isKnownTransposition(Position transposition);
 
+	static size_t size() { return database.size(); }
+
     /** PRINT */
 	friend std::ostream& operator<<(std::ostream& os, GameDatabase<Position, Game> database) {
 		if (database.database.empty()) {

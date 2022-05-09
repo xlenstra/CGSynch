@@ -5,8 +5,15 @@
 #ifndef CGSYNCH_2_SYNCHRONOUSGAME_H
 #define CGSYNCH_2_SYNCHRONOUSGAME_H
 
+#include "SynchronizedGameUtil.h"
 
 
+class SynchronizedGame {
+public:
+
+private:
+
+};
 
 
 

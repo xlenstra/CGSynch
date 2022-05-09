@@ -7,7 +7,7 @@
 
 #include <concepts>
 #include "RulesetUtil.h"
-#include "../AbstractGame/CombinatorialGameDatabase.h"
+#include "CombinatorialGame/CombinatorialGameDatabase.h"
 #include "GameDatabase.h"
 
 template<isPosition Position, isGame<Position> Game>

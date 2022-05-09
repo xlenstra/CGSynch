@@ -9,6 +9,7 @@
 #include <optional>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 #include "CombinatorialGameDatabase.h"
 #include "CombinatorialGameUtil.h"

@@ -1,15 +1,19 @@
 #include <iostream>
+#include <chrono>
+
 #include <Spirit/SpiritParser.h>
 #include <Hackenbush/NormalGraph.h>
-#include "AbstractGame/CombinatorialGame.h"
-#include "AbstractGame/CombinatorialGameDatabase.h"
+
+#include "CombinatorialGame/CombinatorialGame.h"
+#include "CombinatorialGame/CombinatorialGameDatabase.h"
 #include "Math/RulesetMath.h"
 #include "CombinatorialGames/GameDatabase.h"
 #include "CombinatorialGames/Cherries/Cherries.h"
 #include "CombinatorialGames/Cherries/StackCherries.h"
 #include "Push-Shove/Push.h"
 #include "Push-Shove/Shove.h"
-#include "UI/CombinatorialGameCommandLine.h"
+#include "Hackenbush/HackenbushUtil.h"
+#include "Hackenbush/Hackenbush.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl;
@@ -17,7 +21,6 @@ int main() {
 
 	char userInput;
 	bool running = true;
-	CombinatorialGameCommandLine alternatingUI;
 
 	while(running) {
 		std::cout << "Do you want to analyze [A]lternating or [S]synchronized Combinatorial Games?" << std::endl;
@@ -26,7 +29,6 @@ int main() {
 		userInput = tolower(userInput);
 		switch (userInput) {
 			case 'a':
-				//alternatingUI.main();
 				parseStringMain();
 				break;
 			case 's':
@@ -47,10 +49,27 @@ int main() {
 			case 'q':
 				running = false;
 				break;
+			case 't': {
+				std::cout << "Starting test!" << std::endl;
+				auto startTime = std::chrono::steady_clock::now();
+				std::cout << CGDatabase::getInstance().idToGame(getAbstractFormId<HackenbushPosition, Hackenbush>(createHackenbushPosition(11,"_BBBB______B____R_____B_____R____B______R___B_______R___R____RR_____R__R__R_____R_R__RR_____R_RR__R__________R_________R_"))).getCanonicalForm().getDisplayString() << std::endl;
+				auto endTime = std::chrono::steady_clock::now();
+				auto takenTime = endTime - startTime;
+				std::cout << "Caculation time: " << std::chrono::duration_cast<std::chrono::microseconds>(takenTime).count() << " microseconds" << std::endl;
+				running = false;
+				break;
+			}
 			default:
 				std::cout << "Unknown option '" << userInput << "'" << std::endl << "Press 'h' for help." << std::endl;
 		}
 	};
+
+	std::cout << GameDatabase<HackenbushPosition, Hackenbush>::getInstance()->size() << std::endl;
+//	for (GameId gameId = 0; gameId < 15 && gameId < GameDatabase<HackenbushPosition, Hackenbush>::getInstance()->size(); ++gameId) {
+//		auto game = GameDatabase<HackenbushPosition, Hackenbush>::getInstance()->idToGame(gameId);
+//		std::cout << gameId << ":" << game.getDisplayString() << std::endl << std::hash<NormalGraph>()(game.getAnyTransposition())
+//		<< std::endl;
+//	}
 
 	//CombinatorialGame& gameStar = GET_GAME({ cgDatabase.zeroId }, { cgDatabase.zeroId });
 

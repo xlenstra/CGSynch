@@ -5,4 +5,11 @@
 #ifndef CGSYNCH_2_SYNCHRONIZEDGAMEDATABASE_H
 #define CGSYNCH_2_SYNCHRONIZEDGAMEDATABASE_H
 
+#include "SynchronizedGameUtil.h"
+
+class SGDatabase {
+
+};
+
+
 #endif //CGSYNCH_2_SYNCHRONIZEDGAMEDATABASE_H

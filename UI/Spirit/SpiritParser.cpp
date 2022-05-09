@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <boost/algorithm/string.hpp>
 
 #include "SpiritParser.h"
 #include "Push-Shove/Push.h"
@@ -11,7 +12,7 @@
 #include "Cherries/Cherries.h"
 #include "Cherries/StackCherries.h"
 #include "Hackenbush/Hackenbush.h"
-#include "CombinatorialGame.h"
+#include "CombinatorialGame/CombinatorialGame.h"
 #include "TreeNodes.h"
 
 namespace x3 = boost::spirit::x3;
@@ -256,8 +257,16 @@ void parseStringMain() {
 		std::string input;
 		std::getline(std::cin, input);
 		if (input == "q" || input == "quit") return;
-		if (input == "time" || input == "t" || input == "timeOn" || input == "timeOff") {
+		if (input == "time" || input == "t") {
 			timeOn = !timeOn;
+			std::cout << "Timing on: " << timeOn << std::endl;
+			continue;
+		} else if (boost::iequals(input, "timeOn")) {
+			timeOn = true;
+			std::cout << "Timing on: " << timeOn << std::endl;
+			continue;
+		} else if (boost::iequals(input, "timeOff")) {
+			timeOn = false;
 			std::cout << "Timing on: " << timeOn << std::endl;
 			continue;
 		}

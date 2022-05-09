@@ -3,8 +3,8 @@
 //
 
 #include "TreeNodes.h"
-#include "CombinatorialGameDatabase.h"
-#include "CombinatorialGame.h"
+#include "CombinatorialGame/CombinatorialGameDatabase.h"
+#include "CombinatorialGame/CombinatorialGame.h"
 
 void parser::SpiritParserTreeNodeBinary::setLeftChild(AbstractId newChild) {
 	leftChild = newChild;

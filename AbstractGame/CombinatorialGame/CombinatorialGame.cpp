@@ -254,6 +254,7 @@ std::string CombinatorialGame::getDisplayString() const {
 	}
 	if (!rightOptions.empty()) cacheBlock.displayString += "\b"; // remove trailing ,
 	cacheBlock.displayString += "}";
+	if (cacheBlock.displayString.length() >= 100) return "...";
 	return cacheBlock.displayString;
 }
 

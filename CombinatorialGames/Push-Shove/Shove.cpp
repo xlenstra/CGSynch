@@ -6,7 +6,7 @@
 #include <ranges>
 
 #include "Shove.h"
-#include "CombinatorialGame.h"
+#include "CombinatorialGame/CombinatorialGame.h"
 
 // Initialize static member variables
 template<> std::shared_ptr<GameDatabase<PushShovePosition, Shove>> GameDatabase<PushShovePosition, Shove>::instance = nullptr;

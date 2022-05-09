@@ -3,7 +3,7 @@
 //
 
 #include "Cherries.h"
-#include "CombinatorialGame.h"
+#include "CombinatorialGame/CombinatorialGame.h"
 
 #include <utility>
 #include <iostream>
