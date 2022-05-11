@@ -12,12 +12,13 @@ SynchedId SGDatabase::getGameId(const SynchedMatrix& synchedMatrix) {
 }
 
 SynchronizedGame& SGDatabase::idToGame(const SynchedId& id) {
-	return *games[matrixIds[id]];
+	const SynchedMatrix& matrix = matrixIds[id];
+	return *games[matrix];
 }
 
 SynchronizedGame& SGDatabase::getGame(const SynchedMatrix& synchedMatrix) {
 	if (!games.contains(synchedMatrix)) {
-		games.at(synchedMatrix) = std::make_unique<SynchronizedGame>(SynchronizedGame(synchedMatrix, firstUnusedId));
+		games[synchedMatrix] = std::make_unique<SynchronizedGame>(SynchronizedGame(synchedMatrix, firstUnusedId));
 		matrixIds.push_back(synchedMatrix);
 		++firstUnusedId;
 	}

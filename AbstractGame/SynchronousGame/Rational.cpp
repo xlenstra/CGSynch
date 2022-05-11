@@ -77,3 +77,7 @@ bool Rational::operator==(const Rational& other) const {
 	Rational simplifiedSelf = simplify();
 	return (simplifiedOther.numerator == simplifiedSelf.numerator && simplifiedOther.denominator == simplifiedSelf.denominator);
 }
+
+double Rational::toDouble() const {
+	return static_cast<double>(numerator) / denominator;
+}

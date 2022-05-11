@@ -6,19 +6,25 @@
 #define CGSYNCH_2_GUROBISOLVER_H
 
 #include <vector>
+#include <gurobi_c++.h>
 #include "Rational.h"
 
-typedef std::vector<std::vector<Rational>> RationalMatrix;
+const int MAX_BOUNDS = 32768;
+
+typedef std::vector<std::vector<double>> DoubleMatrix;
 
 class GurobiSolver {
 public:
-	explicit GurobiSolver(const RationalMatrix& rationalMatrix);
-	Rational solve();
+	explicit GurobiSolver(const DoubleMatrix& rationalMatrix);
+	double solve();
 private:
-	std::vector<Rational> getOptimalLeftStrategy();
-	std::vector<Rational> getOptimalRightStrategy();
-	Rational calculateValue(const std::vector<Rational>& leftStrategy, const std::vector<Rational>& rightStrategy);
-	const RationalMatrix& rationalMatrix;
+
+	static inline GRBEnv getEnvironment();
+
+	std::vector<double> getOptimalLeftStrategy();
+	std::vector<double> getOptimalRightStrategy();
+	double calculateValue(const std::vector<double>& leftStrategy, const std::vector<double>& rightStrategy);
+	const DoubleMatrix& doubleMatrix;
 };
 
 

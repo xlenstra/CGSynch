@@ -34,6 +34,8 @@ public:
 	std::partial_ordering operator<=>(const Rational& other) const;
 	bool operator==(const Rational& other) const;
 
+	double toDouble() const;
+
 private:
 	long long numerator = 0;
 	long long denominator = 1;

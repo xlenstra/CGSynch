@@ -7,11 +7,9 @@
 
 #include <cstddef>
 #include <vector>
-#include <boost/container_hash/hash.hpp>
+#include <boost/functional/hash/hash.hpp>
 
 typedef size_t SynchedId;
-
-//typedef std::vector<std::vector<SynchedId>> SynchedMatrix;
 
 struct SynchedMatrix {
 	std::vector<std::vector<SynchedId>> matrix;
@@ -25,7 +23,7 @@ struct SynchedMatrix {
 namespace std {
 	template<>
 	struct hash<SynchedMatrix> {
-		size_t operator()(const SynchedMatrix& synchedMatrix) {
+		size_t operator()(const SynchedMatrix& synchedMatrix) const {
 			size_t matrixHash = boost::hash_range(synchedMatrix.matrix.begin(), synchedMatrix.matrix.end());
 			boost::hash_combine(matrixHash, synchedMatrix.leftMoveCount);
 			boost::hash_combine(matrixHash, synchedMatrix.rightMoveCount);
