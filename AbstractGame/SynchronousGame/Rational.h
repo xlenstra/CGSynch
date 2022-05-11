@@ -10,7 +10,7 @@
 class Rational {
 public:
 	Rational(long long numerator, long long denominator);
-	explicit Rational(long long integer) : Rational(integer, 1) {};
+	Rational(long long integer) : Rational(integer, 1) {}; // NOLINT(google-explicit-constructor)
 	Rational() : Rational(0,1) {};
 	Rational(const Rational& other) : Rational(other.numerator, other.denominator) {};
 	Rational& operator=(const Rational& other) = default;

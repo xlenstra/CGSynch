@@ -6,13 +6,24 @@
 #define CGSYNCH_2_SYNCHRONOUSGAME_H
 
 #include "SynchronizedGameUtil.h"
+#include "Rational.h"
+
+struct SGCacheBlock {
+	Rational value;
+};
 
 
 class SynchronizedGame {
 public:
 
+	SynchronizedGame(SynchedMatrix synchedMatrix, SynchedId id);
+
+	[[nodiscard]] SynchedId getId() const;
+
 private:
 
+	SynchedMatrix matrix;
+	SynchedId id;
 };
 
 

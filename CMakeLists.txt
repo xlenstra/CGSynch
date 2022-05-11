@@ -10,10 +10,12 @@ include_directories(AbstractGame CombinatorialGames UI)
 add_executable(CGSynch_2
         main.cpp
         AbstractGame/CombinatorialGame/CombinatorialGame.cpp
-        AbstractGame/SynchronousGame/SynchronousGame.cpp
         AbstractGame/CombinatorialGame/CombinatorialGameDatabase.cpp
         AbstractGame/CombinatorialGame/DyadicRational.cpp
+        AbstractGame/SynchronousGame/SynchronousGame.cpp
+        AbstractGame/SynchronousGame/SynchronousGame.h
         AbstractGame/SynchronousGame/SynchronizedGameDatabase.cpp
+        AbstractGame/SynchronousGame/Rational.cpp
 
         CombinatorialGames/RulesetUtil.cpp
         CombinatorialGames/Cherries/CherriesUtil.cpp
@@ -25,11 +27,10 @@ add_executable(CGSynch_2
         CombinatorialGames/Math/RulesetMath.cpp
         CombinatorialGames/Hackenbush/NormalGraph.cpp
         CombinatorialGames/Hackenbush/Hackenbush.cpp
+        CombinatorialGames/Math/RulesetMathUtil.cpp
 
 #        UI/CombinatorialGameCommandLine.cpp
 #        UI/TreeNodes/AbstractUITreeNode.cpp
 #        UI/TreeNodes/UITreeNodeInEquality.cpp
 #        UI/TreeNodes/UITreeNodeFunction.cpp UI/TreeNodes/UITreeNodeFunction.h UI/TreeNodes/UITreeNodeFunctions.h UI/TreeNodes/TypeCheckFunctions.h
-
-        UI/Spirit/SpiritParser.cpp UI/Spirit/SpiritParser.h
-        UI/Spirit/TreeNodes.cpp UI/Spirit/TreeNodes.h CombinatorialGames/Math/RulesetMathUtil.cpp CombinatorialGames/Math/RulesetMathUtil.h AbstractGame/SynchronousGame/SynchronizedGameUtil.h AbstractGame/SynchronousGame/Rational.cpp AbstractGame/SynchronousGame/Rational.h)
+        AbstractGame/SynchronousGame/GurobiSolver.cpp AbstractGame/SynchronousGame/GurobiSolver.h)

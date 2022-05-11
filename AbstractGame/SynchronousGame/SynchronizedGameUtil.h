@@ -7,9 +7,32 @@
 
 #include <cstddef>
 #include <vector>
-#include "Rational.h"
+#include <boost/container_hash/hash.hpp>
 
 typedef size_t SynchedId;
+
+//typedef std::vector<std::vector<SynchedId>> SynchedMatrix;
+
+struct SynchedMatrix {
+	std::vector<std::vector<SynchedId>> matrix;
+	size_t leftMoveCount;
+	size_t rightMoveCount;
+
+	bool operator==(const SynchedMatrix& other) const = default;
+};
+
+
+namespace std {
+	template<>
+	struct hash<SynchedMatrix> {
+		size_t operator()(const SynchedMatrix& synchedMatrix) {
+			size_t matrixHash = boost::hash_range(synchedMatrix.matrix.begin(), synchedMatrix.matrix.end());
+			boost::hash_combine(matrixHash, synchedMatrix.leftMoveCount);
+			boost::hash_combine(matrixHash, synchedMatrix.rightMoveCount);
+			return matrixHash;
+		}
+	};
+}
 
 class SGDatabase;
 class SynchronizedGame;

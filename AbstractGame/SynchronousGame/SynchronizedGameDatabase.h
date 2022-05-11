@@ -8,7 +8,22 @@
 #include "SynchronizedGameUtil.h"
 
 class SGDatabase {
+public:
+	static SGDatabase& getInstance() { return instance; };
+	SGDatabase(const SGDatabase& other) = delete;
 
+	SynchedId getGameId(const SynchedMatrix& synchedMatrix);
+	SynchronizedGame& idToGame(const SynchedId& id);
+	SynchronizedGame& getGame(const SynchedMatrix& synchedMatrix);
+
+private:
+	SGDatabase();
+	static SGDatabase instance;
+
+	int firstUnusedId = 0;
+
+	std::vector<SynchedMatrix> matrixIds;
+	std::unordered_map<SynchedMatrix, std::unique_ptr<SynchronizedGame>> games;
 };
 
 

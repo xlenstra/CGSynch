@@ -201,6 +201,30 @@ AbstractGame/CombinatorialGame/DyadicRational.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/CombinatorialGame/DyadicRational.cpp.s
 .PHONY : AbstractGame/CombinatorialGame/DyadicRational.cpp.s
 
+AbstractGame/SynchronousGame/GurobiSolver.o: AbstractGame/SynchronousGame/GurobiSolver.cpp.o
+.PHONY : AbstractGame/SynchronousGame/GurobiSolver.o
+
+# target to build an object file
+AbstractGame/SynchronousGame/GurobiSolver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/SynchronousGame/GurobiSolver.cpp.o
+.PHONY : AbstractGame/SynchronousGame/GurobiSolver.cpp.o
+
+AbstractGame/SynchronousGame/GurobiSolver.i: AbstractGame/SynchronousGame/GurobiSolver.cpp.i
+.PHONY : AbstractGame/SynchronousGame/GurobiSolver.i
+
+# target to preprocess a source file
+AbstractGame/SynchronousGame/GurobiSolver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/SynchronousGame/GurobiSolver.cpp.i
+.PHONY : AbstractGame/SynchronousGame/GurobiSolver.cpp.i
+
+AbstractGame/SynchronousGame/GurobiSolver.s: AbstractGame/SynchronousGame/GurobiSolver.cpp.s
+.PHONY : AbstractGame/SynchronousGame/GurobiSolver.s
+
+# target to generate assembly for a file
+AbstractGame/SynchronousGame/GurobiSolver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/AbstractGame/SynchronousGame/GurobiSolver.cpp.s
+.PHONY : AbstractGame/SynchronousGame/GurobiSolver.cpp.s
+
 AbstractGame/SynchronousGame/Rational.o: AbstractGame/SynchronousGame/Rational.cpp.o
 .PHONY : AbstractGame/SynchronousGame/Rational.o
 
@@ -537,54 +561,6 @@ CombinatorialGames/RulesetUtil.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/CombinatorialGames/RulesetUtil.cpp.s
 .PHONY : CombinatorialGames/RulesetUtil.cpp.s
 
-UI/Spirit/SpiritParser.o: UI/Spirit/SpiritParser.cpp.o
-.PHONY : UI/Spirit/SpiritParser.o
-
-# target to build an object file
-UI/Spirit/SpiritParser.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/SpiritParser.cpp.o
-.PHONY : UI/Spirit/SpiritParser.cpp.o
-
-UI/Spirit/SpiritParser.i: UI/Spirit/SpiritParser.cpp.i
-.PHONY : UI/Spirit/SpiritParser.i
-
-# target to preprocess a source file
-UI/Spirit/SpiritParser.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/SpiritParser.cpp.i
-.PHONY : UI/Spirit/SpiritParser.cpp.i
-
-UI/Spirit/SpiritParser.s: UI/Spirit/SpiritParser.cpp.s
-.PHONY : UI/Spirit/SpiritParser.s
-
-# target to generate assembly for a file
-UI/Spirit/SpiritParser.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/SpiritParser.cpp.s
-.PHONY : UI/Spirit/SpiritParser.cpp.s
-
-UI/Spirit/TreeNodes.o: UI/Spirit/TreeNodes.cpp.o
-.PHONY : UI/Spirit/TreeNodes.o
-
-# target to build an object file
-UI/Spirit/TreeNodes.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/TreeNodes.cpp.o
-.PHONY : UI/Spirit/TreeNodes.cpp.o
-
-UI/Spirit/TreeNodes.i: UI/Spirit/TreeNodes.cpp.i
-.PHONY : UI/Spirit/TreeNodes.i
-
-# target to preprocess a source file
-UI/Spirit/TreeNodes.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/TreeNodes.cpp.i
-.PHONY : UI/Spirit/TreeNodes.cpp.i
-
-UI/Spirit/TreeNodes.s: UI/Spirit/TreeNodes.cpp.s
-.PHONY : UI/Spirit/TreeNodes.s
-
-# target to generate assembly for a file
-UI/Spirit/TreeNodes.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CGSynch_2.dir/build.make CMakeFiles/CGSynch_2.dir/UI/Spirit/TreeNodes.cpp.s
-.PHONY : UI/Spirit/TreeNodes.cpp.s
-
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -627,6 +603,9 @@ help:
 	@echo "... AbstractGame/CombinatorialGame/DyadicRational.o"
 	@echo "... AbstractGame/CombinatorialGame/DyadicRational.i"
 	@echo "... AbstractGame/CombinatorialGame/DyadicRational.s"
+	@echo "... AbstractGame/SynchronousGame/GurobiSolver.o"
+	@echo "... AbstractGame/SynchronousGame/GurobiSolver.i"
+	@echo "... AbstractGame/SynchronousGame/GurobiSolver.s"
 	@echo "... AbstractGame/SynchronousGame/Rational.o"
 	@echo "... AbstractGame/SynchronousGame/Rational.i"
 	@echo "... AbstractGame/SynchronousGame/Rational.s"
@@ -669,12 +648,6 @@ help:
 	@echo "... CombinatorialGames/RulesetUtil.o"
 	@echo "... CombinatorialGames/RulesetUtil.i"
 	@echo "... CombinatorialGames/RulesetUtil.s"
-	@echo "... UI/Spirit/SpiritParser.o"
-	@echo "... UI/Spirit/SpiritParser.i"
-	@echo "... UI/Spirit/SpiritParser.s"
-	@echo "... UI/Spirit/TreeNodes.o"
-	@echo "... UI/Spirit/TreeNodes.i"
-	@echo "... UI/Spirit/TreeNodes.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
