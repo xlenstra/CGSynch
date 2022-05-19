@@ -4,6 +4,8 @@
 #include <Spirit/SpiritParser.h>
 #include <Hackenbush/NormalGraph.h>
 #include <SynchronousGame/GurobiSolver.h>
+#include <SynchronousGame/SynchronizedGameDatabase.h>
+#include <SynchronousGame/SynchronousGame.h>
 
 #include "CombinatorialGame/CombinatorialGame.h"
 #include "CombinatorialGame/CombinatorialGameDatabase.h"
@@ -53,9 +55,9 @@ int main() {
 			case 't': {
 				std::cout << "Starting test!" << std::endl;
 				auto startTime = std::chrono::steady_clock::now();
-				std::vector<std::vector<double>> matrix = {{-1,0},{0,1}};
-				GurobiSolver solver(matrix);
-				std::cout << "Nash value = " << solver.solve() << std::endl;
+				std::vector<std::vector<double>> matrix = {{0,1},{1,2}};
+				auto game = SGDatabase::getInstance().idToGame(0);
+				std::cout << "Value = " << game.getValue() << std::endl;
 				auto endTime = std::chrono::steady_clock::now();
 				auto takenTime = endTime - startTime;
 				std::cout << "Caculation time: " << std::chrono::duration_cast<std::chrono::microseconds>(takenTime).count() << " microseconds" << std::endl;

@@ -2,7 +2,7 @@
 // Created by s1935534 on 09/03/2022.
 //
 
-#include "AbstractGame.h"
+#include "../AbstractGame.h"
 #include "PushShoveUtil.h"
 
 #ifndef CGSYNCH_2_SHOVE_H

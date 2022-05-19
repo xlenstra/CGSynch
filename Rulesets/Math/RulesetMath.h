@@ -6,7 +6,7 @@
 #define CGSYNCH_2_RULESETMATH_H
 
 #include <string>
-#include "AbstractGame.h"
+#include "../AbstractGame.h"
 
 typedef std::string MathPosition;
 

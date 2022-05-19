@@ -14,15 +14,8 @@
 #include "CombinatorialGameDatabase.h"
 #include "CombinatorialGameUtil.h"
 #include "DyadicRational.h"
+#include "GameUtil.h"
 
-/** Player that wins a game */
-enum class WinningPlayer {
-	LEFT,
-	PREVIOUS,
-	NEXT,
-	RIGHT,
-	NONE = -1,
-};
 std::string winningPlayerGetDisplayString(const WinningPlayer& winningPlayer);
 
 std::ostream& operator<<(std::ostream &os, const WinningPlayer& winningPlayer);

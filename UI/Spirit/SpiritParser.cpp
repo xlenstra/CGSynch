@@ -207,8 +207,8 @@ namespace parser {
 	;
 
 	const auto boolean_def =
-			(abstractGame >> '<' > abstractGame)[compareLess]
-			| (abstractGame >> '>' > abstractGame)[compareMore]
+			(abstractGame >> '<' >> abstractGame)[compareLess]
+			| (abstractGame >> '>' >> abstractGame)[compareMore]
 			| (abstractGame >> "==" > abstractGame)[compareEqual]
 			| (abstractGame >> "=" > abstractGame)[compareEqual]
 			| (abstractGame >> "!=" > abstractGame)[compareUnequal]

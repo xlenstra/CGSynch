@@ -74,14 +74,14 @@ protected:
 
 // Templated class, so member functions need to go here
 
-template<isPosition comparable>
-std::unordered_set<GameId> AbstractGame<comparable>::getLeftOptions() {
+template<isPosition Position>
+std::unordered_set<GameId> AbstractGame<Position>::getLeftOptions() {
 	if (!explored) explore();
 	return leftOptions;
 }
 
-template<isPosition comparable>
-std::unordered_set<GameId> AbstractGame<comparable>::getRightOptions() {
+template<isPosition Position>
+std::unordered_set<GameId> AbstractGame<Position>::getRightOptions() {
 	if (!explored) explore();
 	return rightOptions;
 }

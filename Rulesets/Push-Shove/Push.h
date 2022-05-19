@@ -5,7 +5,7 @@
 #ifndef CGSYNCH_2_PUSH_H
 #define CGSYNCH_2_PUSH_H
 
-#include "AbstractGame.h"
+#include "../AbstractGame.h"
 #include "PushShoveUtil.h"
 
 class Push : public AbstractGame<PushShovePosition> {

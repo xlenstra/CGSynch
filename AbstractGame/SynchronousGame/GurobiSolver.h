@@ -19,12 +19,9 @@ public:
 	double solve();
 private:
 
-	static inline GRBEnv getEnvironment();
-
-	std::vector<double> getOptimalLeftStrategy();
-	std::vector<double> getOptimalRightStrategy();
-	double calculateValue(const std::vector<double>& leftStrategy, const std::vector<double>& rightStrategy);
 	const DoubleMatrix& doubleMatrix;
+
+	static GRBEnv gurobiEnvironment;
 };
 
 

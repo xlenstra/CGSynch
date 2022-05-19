@@ -5,8 +5,8 @@
 #ifndef CGSYNCH_2_HACKENBUSH_H
 #define CGSYNCH_2_HACKENBUSH_H
 
-#include "RulesetUtil.h"
-#include "AbstractGame.h"
+#include "../RulesetUtil.h"
+#include "../AbstractGame.h"
 #include "HackenbushUtil.h"
 
 class Hackenbush : public AbstractGame<HackenbushPosition> {

@@ -9,7 +9,7 @@
 #include <boost/functional/hash.hpp>
 #include <optional>
 
-#include "RulesetUtil.h"
+#include "../RulesetUtil.h"
 
 typedef size_t NodeId;
 typedef std::vector<std::vector<PieceColour>> PieceMatrix;

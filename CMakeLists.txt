@@ -18,7 +18,7 @@ message(STATUS "Gurobi dir: $ENV{GUROBI_HOME}")
 find_package(GUROBI REQUIRED)
 
 include_directories(${GUROBI_INCLUDE_DIRS})
-include_directories(AbstractGame CombinatorialGames UI)
+include_directories(AbstractGame Rulesets/CombinatorialGames UI)
 
 # list source files here
 set(sources main.cpp
@@ -31,21 +31,21 @@ set(sources main.cpp
     AbstractGame/SynchronousGame/Rational.cpp
     AbstractGame/SynchronousGame/GurobiSolver.cpp
 
-    CombinatorialGames/RulesetUtil.cpp
-    CombinatorialGames/Cherries/CherriesUtil.cpp
-    CombinatorialGames/Cherries/Cherries.cpp
-    CombinatorialGames/Cherries/StackCherries.cpp
-    CombinatorialGames/Push-Shove/PushShoveUtil.cpp
-    CombinatorialGames/Push-Shove/Push.cpp
-    CombinatorialGames/Push-Shove/Shove.cpp
-    CombinatorialGames/Math/RulesetMath.cpp
-    CombinatorialGames/Hackenbush/NormalGraph.cpp
-    CombinatorialGames/Hackenbush/Hackenbush.cpp
-    CombinatorialGames/Math/RulesetMathUtil.cpp
+        Rulesets/RulesetUtil.cpp
+        Rulesets/Cherries/CherriesUtil.cpp
+        Rulesets/Cherries/Cherries.cpp
+        Rulesets/Cherries/StackCherries.cpp
+        Rulesets/Push-Shove/PushShoveUtil.cpp
+        Rulesets/Push-Shove/Push.cpp
+        Rulesets/Push-Shove/Shove.cpp
+        Rulesets/Math/RulesetMath.cpp
+        Rulesets/Hackenbush/NormalGraph.cpp
+        Rulesets/Hackenbush/Hackenbush.cpp
+        Rulesets/Math/RulesetMathUtil.cpp
 
     UI/Spirit/SpiritParser.cpp
     UI/Spirit/TreeNodes.cpp
-)
+        AbstractGame/GameUtil.h Rulesets/AbstractSynchedGame.h Rulesets/SynchronizedGames/Cherries/SynchedCherriesUtil.cpp Rulesets/SynchronizedGames/Cherries/SynchedCherriesUtil.h Rulesets/Cherries/SynchedCherries.cpp Rulesets/Cherries/SynchedCherries.h)
 
 add_executable(${CMAKE_PROJECT_NAME} ${sources})
 

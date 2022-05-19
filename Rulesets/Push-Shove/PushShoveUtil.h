@@ -8,7 +8,7 @@
 #include <list>
 #include <boost/functional/hash.hpp>
 
-#include "RulesetUtil.h"
+#include "../RulesetUtil.h"
 
 typedef std::vector<PieceColour> PushShovePosition;
 std::ostream& operator<<(std::ostream& os, const PushShovePosition& position);
