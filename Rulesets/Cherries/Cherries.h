@@ -28,6 +28,7 @@ public:
 	std::unordered_set<CherriesPosition> getTranspositions() const override;
 //	GameId getIdOrInsertIntoDatabase() override;
 	bool tryToDetermineAlternatingId() override;
+	void exploreSynched() override;
 
 private:
 	void addTranspositionsRecursively(std::unordered_set<CherriesPosition>& transposition, std::unordered_set<size_t>& sectionsToReverse, const size_t& depth) const;

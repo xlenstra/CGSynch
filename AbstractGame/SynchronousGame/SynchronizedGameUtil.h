@@ -8,13 +8,14 @@
 #include <cstddef>
 #include <vector>
 #include <boost/functional/hash/hash.hpp>
+#include "../../Util/Matrix.h"
 
 typedef size_t SynchedId;
 
 struct SynchedMatrix {
-	std::vector<std::vector<SynchedId>> matrix;
-	size_t leftMoveCount;
-	size_t rightMoveCount;
+	Matrix<SynchedId> matrix;
+	size_t leftMoveCount = 0;
+	size_t rightMoveCount = 0;
 
 	bool operator==(const SynchedMatrix& other) const = default;
 };

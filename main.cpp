@@ -11,6 +11,7 @@
 #include "Push-Shove/Shove.h"
 #include "Hackenbush/HackenbushUtil.h"
 #include "Hackenbush/Hackenbush.h"
+#include "Cherries/Cherries.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl;
@@ -49,9 +50,18 @@ int main() {
 			case 't': {
 				std::cout << "Starting test!" << std::endl;
 				auto startTime = std::chrono::steady_clock::now();
-				std::vector<std::vector<double>> matrix = {{0,1},{1,2}};
-				auto game = SGDatabase::getInstance().idToGame(0);
-				std::cout << "Value = " << game.getValue() << std::endl;
+
+				Cherries game = Cherries({std::deque<PieceColour>({PieceColour::BLUE}), std::deque<PieceColour>({PieceColour::RED, PieceColour::RED})});
+//				Cherries game = Cherries({std::deque<PieceColour>({PieceColour::BLUE, PieceColour::RED, PieceColour::RED})});
+//				game.exploreSynched();
+//				std::cout << game.getSynchedOptions().leftMoveCount << "×" << game.getSynchedOptions().rightMoveCount << std::endl << game.getSynchedOptions().options << std::endl;
+
+				SynchedId synchedId = getSynchedId<CherriesPosition>(game);
+				std::cout << synchedId << std::endl;
+				std::cout << SGDatabase::getInstance().idToGame(synchedId).getValue() << std::endl;
+
+//				std::cout << *GameDatabase<CherriesPosition, Cherries>::getInstance() << std::endl;
+
 				auto endTime = std::chrono::steady_clock::now();
 				auto takenTime = endTime - startTime;
 				std::cout << "Caculation time: " << std::chrono::duration_cast<std::chrono::microseconds>(takenTime).count() << " microseconds" << std::endl;

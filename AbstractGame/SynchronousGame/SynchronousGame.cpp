@@ -30,7 +30,7 @@ double SynchronizedGame::getValue() {
 		return (double) matrix.leftMoveCount;
 	if (matrix.leftMoveCount == 0)
 		return - (double) matrix.rightMoveCount;
-	DoubleMatrix values;
+	Matrix<double> values(matrix.matrix.getWidth(), matrix.matrix.getHeight());
 	for (size_t i = 0; i < matrix.matrix.size(); ++i) {
 		for (size_t j = 0; j < matrix.matrix[i].size(); ++j) {
 			values[i][j] = sgDatabase.idToGame(matrix.matrix[i][j]).getValue();
@@ -53,8 +53,8 @@ std::unordered_set<WinningPlayer> SynchronizedGame::getWinners() {
 	if (matrix.leftMoveCount == 0)
 		return { WinningPlayer::RIGHT };
 
-	for (auto & row : matrix.matrix) {
-		for (unsigned long & childId : row) {
+	for (const auto& row : matrix.matrix) {
+		for (const auto& childId : row) {
 			std::unordered_set<WinningPlayer> winners = sgDatabase.idToGame(childId).getWinners();
 			cacheBlock.winners.insert(winners.begin(), winners.end());
 		}
@@ -68,8 +68,8 @@ size_t SynchronizedGame::getBirthday() {
 
 	if (matrix.leftMoveCount == 0 || matrix.rightMoveCount == 0)
 		return 0;
-	for (auto & row : matrix.matrix) {
-		for (unsigned long & childId : row) {
+	for (const auto& row : matrix.matrix) {
+		for (const auto& childId : row) {
 			*cacheBlock.birthday = std::max(*cacheBlock.birthday, sgDatabase.idToGame(childId).getBirthday() + 1);
 		}
 	}

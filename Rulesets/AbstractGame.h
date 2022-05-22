@@ -6,10 +6,12 @@
 #define CGSYNCH_2_ABSTRACTGAME_H
 
 #include <concepts>
-#include "RulesetUtil.h"
+
 #include "CombinatorialGame/CombinatorialGameDatabase.h"
-#include "SynchronousGame/SynchronizedGameDatabase.h"
 #include "GameDatabase.h"
+#include "../Util/Matrix.h"
+#include "RulesetUtil.h"
+#include "SynchronousGame/SynchronizedGameDatabase.h"
 
 template<isPosition Position, isGame<Position> Game>
 AlternatingId getAlternatingId(Game& game);
@@ -28,6 +30,8 @@ public:
 	/** Get the left and right options of this game */
 	virtual std::unordered_set<GameId> getLeftOptions();
 	virtual std::unordered_set<GameId> getRightOptions();
+
+	virtual SynchedOptionData getSynchedOptions();
 
 	/** Get a string of the position of this game */
 	virtual std::string getDisplayString() = 0;
@@ -77,7 +81,7 @@ protected:
 	bool synchedExplored = false;
 	std::unordered_set<GameId> leftOptions {};
 	std::unordered_set<GameId> rightOptions {};
-	std::vector<std::vector<GameId>> synchedOptions {};
+	SynchedOptionData synchedOptions;
 	GameId gameId = -1ul;
 	AlternatingId alternatingId = -1;
 	SynchedId synchedId = -1;
@@ -100,7 +104,11 @@ std::unordered_set<GameId> AbstractGame<Position>::getRightOptions() {
 	return rightOptions;
 }
 
-
+template<typename Position>
+SynchedOptionData AbstractGame<Position>::getSynchedOptions() {
+	if (!synchedExplored) exploreSynched();
+	return synchedOptions;
+}
 
 
 template<isPosition Position, isGame<Position> Game>
@@ -123,18 +131,21 @@ AlternatingId getAlternatingId(Game& game) {
 template<isPosition Position, isGame<Position> Game>
 SynchedId getSynchedId(Game& game) {
 	if (game.getSynchedId() != -1ul) return game.getSynchedId();
-	if (game.tryToDetermineAlternatingId()) return game.getAlternatingId();
-	std::unordered_set<AlternatingId> leftOptions;
-	std::unordered_set<AlternatingId> rightOptions;
+	if (game.tryToDetermineSynchedId()) return game.getSynchedId();
+	SynchedOptionData synchedOptions = game.getSynchedOptions();
+	SynchedMatrix synchedMatrix;
+	synchedMatrix.matrix = Matrix(synchedOptions.options.getWidth(), synchedOptions.options.getHeight(), -1ul);
+	synchedMatrix.leftMoveCount = synchedOptions.leftMoveCount;
+	synchedMatrix.rightMoveCount = synchedOptions.rightMoveCount;
 	GameDatabase<Position, Game>& database = *GameDatabase<Position, Game>::getInstance();
-	for (const auto& leftPosition : game.getLeftOptions()) {
-		leftOptions.insert(getAlternatingId<Position, Game>(database.idToGame(leftPosition)));
+	for (size_t row = 0; row < synchedOptions.leftMoveCount; ++row) {
+		for (size_t column = 0; column < synchedOptions.rightMoveCount; ++column) {
+			auto id = getSynchedId<Position, Game>(database.idToGame(synchedOptions.options[row][column]));
+			synchedMatrix.matrix[row][column] = id;
+		}
 	}
-	for (const auto& rightPosition : game.getRightOptions()) {
-		rightOptions.insert(getAlternatingId<Position, Game>(database.idToGame(rightPosition)));
-	}
-	game.setAlternatingId(CGDatabase::getInstance().getGameId(leftOptions, rightOptions));
-	return game.getAlternatingId();
+	game.setSynchedId(SGDatabase::getInstance().getGameId(synchedMatrix));
+	return game.getSynchedId();
 }
 
 

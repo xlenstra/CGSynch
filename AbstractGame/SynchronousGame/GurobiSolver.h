@@ -8,18 +8,17 @@
 #include <vector>
 #include <gurobi_c++.h>
 #include "Rational.h"
+#include "../../Util/Matrix.h"
 
 const int MAX_BOUNDS = 32768;
 
-typedef std::vector<std::vector<double>> DoubleMatrix;
-
 class GurobiSolver {
 public:
-	explicit GurobiSolver(const DoubleMatrix& rationalMatrix);
+	explicit GurobiSolver(const Matrix<double>& rationalMatrix);
 	double solve();
 private:
 
-	const DoubleMatrix& doubleMatrix;
+	const Matrix<double>& doubleMatrix;
 
 	static GRBEnv gurobiEnvironment;
 };

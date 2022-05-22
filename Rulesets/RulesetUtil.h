@@ -10,6 +10,8 @@
 #include <functional>
 #include <iostream>
 
+#include "../Util/Matrix.h"
+
 /** Id of a ruleset, which can be turned into a game in the database corresponding to that game */
 typedef size_t GameId;
 
@@ -40,8 +42,6 @@ concept isGame = std::is_base_of<AbstractGame<U>,T>::value;
 template<isPosition Position, isGame<Position> Game>
 class GameDatabase;
 
-
-
 /** Colours of the stones in a position of a game*/
 enum class PieceColour {
 	BLUE = 1,
@@ -57,6 +57,13 @@ std::vector<PieceColour> charsToPieceColours(const std::string& input);
 PieceColour operator-(PieceColour piece);
 
 std::ostream& operator<<(std::ostream& os, const PieceColour& stone);
+
+struct SynchedOptionData {
+	size_t leftMoveCount = 0;
+	size_t rightMoveCount = 0;
+	Matrix<GameId> options {};
+};
+
 
 
 #endif //CGSYNCH_2_RULESETUTIL_H

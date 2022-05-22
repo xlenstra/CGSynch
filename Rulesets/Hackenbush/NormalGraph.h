@@ -10,9 +10,9 @@
 #include <optional>
 
 #include "../RulesetUtil.h"
+#include "../../Util/Matrix.h"
 
 typedef size_t NodeId;
-typedef std::vector<std::vector<PieceColour>> PieceMatrix;
 
 class NormalGraph;
 
@@ -57,7 +57,7 @@ private:
 
 	[[nodiscard]] bool backtrackingCheckIsomorphic(const NormalGraph& other) const;
 
-	PieceMatrix adjacencyMatrix = {{PieceColour::NONE}};
+	Matrix<PieceColour> adjacencyMatrix = Matrix(1,1, PieceColour::NONE);
 	const NodeId groundId = 0;
 
 	friend NormalGraph graphFromMatrixString(size_t nodeCount, std::vector<PieceColour> input);

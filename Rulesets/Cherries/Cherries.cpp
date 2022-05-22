@@ -52,6 +52,124 @@ void Cherries::exploreAlternating() {
 	alternatingExplored = true;
 }
 
+void Cherries::exploreSynched() {
+	Matrix<GameId> positions;
+
+	int positionElementCount = 0;
+	size_t blueMovesFound = 0;
+	// First find a move for left
+	for (const auto& blueUnconnectedLine : position) {
+		if (blueUnconnectedLine.front() != PieceColour::BLUE && blueUnconnectedLine.back() != PieceColour::BLUE) {
+			++positionElementCount;
+			continue;
+		}
+		++blueMovesFound;
+		// Copy position
+		CherriesPosition positionWithoutRed = position;
+		auto elementToRemove = positionWithoutRed.begin();
+		std::advance(elementToRemove, positionElementCount);
+		positionWithoutRed.erase(elementToRemove);
+
+		std::vector<GameId> redOptions;
+
+		// Next, find a move for right in the original position
+		for (const auto& redUnconnectedLine : position) {
+			if (redUnconnectedLine.front() != PieceColour::RED && redUnconnectedLine.back() != PieceColour::RED) continue;
+			// Then find where this section is stored in the position where red already played
+			size_t elementCount = 0;
+			CherriesPosition positionWithoutRedAndBlue = positionWithoutRed;
+			for (const auto& redInBlueIt : positionWithoutRedAndBlue) {
+				if (redInBlueIt == redUnconnectedLine) break;
+				++elementCount;
+			}
+			// If we don't play on the same segment
+			if (elementCount != positionWithoutRedAndBlue.size()) {
+				// Remove the segment we played on as well
+				elementToRemove = positionWithoutRedAndBlue.begin();
+				auto elementToRemoveCopy = positionWithoutRedAndBlue.begin();
+				std::advance(elementToRemove, elementCount);
+				positionWithoutRedAndBlue.erase(elementToRemove);
+
+				// Then re-add both segments after removing the stones we played on
+				if (blueUnconnectedLine.front() == PieceColour::BLUE) {
+					std::deque<PieceColour> blueReplacement = blueUnconnectedLine;
+					blueReplacement.pop_front();
+
+					if (redUnconnectedLine.front() == PieceColour::RED) {
+						CherriesPosition positionWithRemovedParts = positionWithoutRedAndBlue;
+						std::deque<PieceColour> redReplacement = redUnconnectedLine;
+						redReplacement.pop_front();
+
+						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
+						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
+						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+					}
+					if (redUnconnectedLine.back() == PieceColour::RED && redUnconnectedLine.size() > 1) {
+						CherriesPosition positionWithRemovedParts = positionWithoutRedAndBlue;
+						std::deque<PieceColour> redReplacement = redUnconnectedLine;
+						redReplacement.pop_back();
+
+						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
+						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
+						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+					}
+				}
+				if (blueUnconnectedLine.back() == PieceColour::BLUE && blueUnconnectedLine.size() > 1) {
+					std::deque<PieceColour> blueReplacement = blueUnconnectedLine;
+					blueReplacement.pop_back();
+
+					if (redUnconnectedLine.front() == PieceColour::RED) {
+						CherriesPosition positionWithRemovedParts = positionWithoutRedAndBlue;
+						std::deque<PieceColour> redReplacement = redUnconnectedLine;
+						redReplacement.pop_front();
+
+						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
+						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
+						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+					}
+					if (redUnconnectedLine.back() == PieceColour::RED && redUnconnectedLine.size() > 1) {
+						CherriesPosition positionWithRemovedParts = positionWithoutRedAndBlue;
+						std::deque<PieceColour> redReplacement = redUnconnectedLine;
+						redReplacement.pop_back();
+
+						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
+						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
+						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+					}
+				}
+			} else {
+				// We played on the same segment, so we remove both the start and end of this segment
+				CherriesPosition positionWithRemovedParts = positionWithoutRedAndBlue;
+				std::deque<PieceColour> replacementSegment = blueUnconnectedLine;
+				replacementSegment.pop_front();
+				replacementSegment.pop_back();
+				if (!replacementSegment.empty()) positionWithRemovedParts.insert(replacementSegment);
+				redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+			}
+		}
+
+		positions.push_back(redOptions);
+		++positionElementCount;
+	}
+
+	synchedOptions.options = positions;
+	synchedOptions.leftMoveCount = blueMovesFound;
+	if (blueMovesFound > 0) {
+		synchedOptions.rightMoveCount = positions.getWidth();
+	} else {
+		synchedOptions.rightMoveCount = 0;
+		for (const auto& unconnectedLine : position) {
+			if (unconnectedLine.size() == 1) {
+				synchedOptions.rightMoveCount += 1;
+			} else {
+				synchedOptions.rightMoveCount += 2;
+			}
+		}
+	}
+
+	synchedExplored = true;
+}
+
 std::unordered_set<CherriesPosition> Cherries::getTranspositions() const {
 	std::unordered_set<CherriesPosition> transpositions;
 	std::unordered_set<size_t> sectionsToReverse;
@@ -162,8 +280,6 @@ bool Cherries::tryToDetermineAlternatingId() {
 	alternatingId = CGDatabase::getInstance().getInteger(value).getId();
 	return true;
 }
-
-
 
 
 Cherries& createCherriesPosition(const std::string& inputString) {

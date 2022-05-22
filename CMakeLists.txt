@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(CGSynch)
 
-add_compile_options(-Wall -Wextra -O3)
+add_compile_options(-Wall -Wextra)
 
 option(CXX "enable C++ compilation" ON)
 
@@ -30,6 +30,7 @@ set(sources main.cpp
     AbstractGame/SynchronousGame/SynchronizedGameDatabase.cpp
     AbstractGame/SynchronousGame/Rational.cpp
     AbstractGame/SynchronousGame/GurobiSolver.cpp
+    AbstractGame/GameUtil.h
 
     Rulesets/RulesetUtil.cpp
     Rulesets/Cherries/CherriesUtil.cpp
@@ -45,8 +46,8 @@ set(sources main.cpp
 
     UI/Spirit/SpiritParser.cpp
     UI/Spirit/TreeNodes.cpp
-    AbstractGame/GameUtil.h
-    Rulesets/AbstractSynchedGame.h
+
+        Util/Matrix.h
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${sources})
