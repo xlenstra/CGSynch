@@ -93,7 +93,7 @@ GameId GameDatabase<comparableType, Ruleset>::getOrInsertGameId(const Ruleset& r
 	// It's not in the known transpositions database, so add it and all its transpositions
 	database.emplace_back(std::make_shared<Ruleset>(ruleset));
 	GameId id = database.size() - 1;
-	database.back()->setId(id);
+	database.back()->setGameId(id);
 	for (const auto& transposition : ruleset.getTranspositions()) {
 		transpositionTable[transposition] = id;
 	}

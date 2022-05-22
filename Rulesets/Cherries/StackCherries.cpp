@@ -17,7 +17,7 @@ std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherries>> stackCherrie
 
 StackCherries::StackCherries(StackCherriesPosition position) : position(std::move(position)) {}
 
-void StackCherries::explore() {
+void StackCherries::exploreAlternating() {
 	for (auto it = position.begin(); it != position.end(); ++it) {
 		const auto& unconnectedLine = *it;
 		// Copy position
@@ -37,7 +37,7 @@ void StackCherries::explore() {
 			rightOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherries(copy)));
 		}
 	}
-	explored = true;
+	alternatingExplored = true;
 }
 
 std::unordered_set<StackCherriesPosition> StackCherries::getTranspositions() const {

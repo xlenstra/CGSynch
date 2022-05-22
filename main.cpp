@@ -7,13 +7,7 @@
 #include <SynchronousGame/SynchronizedGameDatabase.h>
 #include <SynchronousGame/SynchronousGame.h>
 
-#include "CombinatorialGame/CombinatorialGame.h"
-#include "CombinatorialGame/CombinatorialGameDatabase.h"
-#include "Math/RulesetMath.h"
-#include "CombinatorialGames/GameDatabase.h"
-#include "CombinatorialGames/Cherries/Cherries.h"
-#include "CombinatorialGames/Cherries/StackCherries.h"
-#include "Push-Shove/Push.h"
+#include "Rulesets/GameDatabase.h"
 #include "Push-Shove/Shove.h"
 #include "Hackenbush/HackenbushUtil.h"
 #include "Hackenbush/Hackenbush.h"
@@ -89,7 +83,7 @@ int main() {
 //	std::cout << pushPosition.getDisplayString() << std::endl;
 //	AbstractId abstractId = getAbstractFormId<PushShovePosition>(pushPosition);
 ////	Cherries& cherriesPosition = createCherriesPosition("BBWBBW BWWWB WBB WBBWW WWWW");
-////	AbstractId abstractId = getAbstractFormId<CherriesPosition>(cherriesPosition);
+////	AbstractId abstractId = getAlternatingId<CherriesPosition>(cherriesPosition);
 ////	std::cout << cherriesPosition.getDisplayString() << std::endl;
 //	std::cout << (int)abstractId << std::endl;
 //	std::cout << ID_TO_GAME(abstractId).getCanonicalForm().getDisplayString() << std::endl;

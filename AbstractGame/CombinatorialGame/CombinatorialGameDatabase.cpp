@@ -9,8 +9,8 @@ CGDatabase CGDatabase::instance = CGDatabase();
 CGDatabase::CGDatabase() {
 	existingGames.emplace_back(
 		std::make_unique<CombinatorialGame>(
-			std::unordered_set<AbstractId>(),
-			std::unordered_set<AbstractId>(),
+			std::unordered_set<AlternatingId>(),
+			std::unordered_set<AlternatingId>(),
 			0
 		)
 	);
@@ -41,7 +41,7 @@ std::ostream& operator<<(std::ostream& os, const CGDatabase& database) {
     return os;
 }
 
-AbstractId CGDatabase::getGameId(const std::unordered_set<AbstractId>& left, const std::unordered_set<AbstractId>& right) {
+AlternatingId CGDatabase::getGameId(const std::unordered_set<AlternatingId>& left, const std::unordered_set<AlternatingId>& right) {
     if (left.empty() && right.empty()) return zeroId;
     for (const auto& game : existingGames) {
         if (game->getLeftOptions() == left && game->getRightOptions() == right)
@@ -53,8 +53,8 @@ AbstractId CGDatabase::getGameId(const std::unordered_set<AbstractId>& left, con
 }
 
 CombinatorialGame& CGDatabase::getGame(
-	const std::unordered_set<AbstractId>& left,
-	const std::unordered_set<AbstractId>& right
+	const std::unordered_set<AlternatingId>& left,
+	const std::unordered_set<AlternatingId>& right
 ) {
     return idToGame(getGameId(left, right));
 }
@@ -107,7 +107,7 @@ CombinatorialGame& CGDatabase::getDyadicRational(int numerator, int denominator)
     return idToGame(_getDyadicRational(numerator, denominator));
 }
 
-AbstractId CGDatabase::_getDyadicRational(int numerator, int denominator) {
+AlternatingId CGDatabase::_getDyadicRational(int numerator, int denominator) {
     if (denominator == 1)
         return getInteger(numerator).getId();
     if (numerator % 2 == 0)

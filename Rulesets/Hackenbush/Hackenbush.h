@@ -14,7 +14,7 @@ public:
 	explicit Hackenbush(const HackenbushPosition& position);
 	std::string getDisplayString() override;
 	NormalGraph getAnyTransposition() const override;
-	void explore() override;
+	void exploreAlternating() override;
 	std::unordered_set<NormalGraph> getTranspositions() const override;
 
 private:

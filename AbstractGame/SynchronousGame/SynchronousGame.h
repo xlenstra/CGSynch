@@ -8,6 +8,7 @@
 #include <optional>
 #include <unordered_set>
 #include "SynchronizedGameUtil.h"
+#include "GameUtil.h"
 #include "Rational.h"
 
 struct SGCacheBlock {

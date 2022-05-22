@@ -29,11 +29,16 @@ concept isPosition =
 template<isPosition U>
 class AbstractGame;
 
+
 /** Databases for games may only be created for games
  * This concept captures that property
  */
 template<typename T, typename U>
 concept isGame = std::is_base_of<AbstractGame<U>,T>::value;
+
+// More forward declarations
+template<isPosition Position, isGame<Position> Game>
+class GameDatabase;
 
 
 

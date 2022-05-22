@@ -18,7 +18,7 @@ std::shared_ptr<GameDatabase<CherriesPosition, Cherries>> cherriesDatabase = Gam
 
 Cherries::Cherries(CherriesPosition position) : position(std::move(position)) {}
 
-void Cherries::explore() {
+void Cherries::exploreAlternating() {
 	for (auto it = position.begin(); it != position.end(); ++it) {
 		const auto& unconnectedLine = *it;
 		// Copy position
@@ -49,7 +49,7 @@ void Cherries::explore() {
 			rightOptions.insert(cherriesDatabase->getOrInsertGameId(Cherries(secondCopy)));
 		}
 	}
-	explored = true;
+	alternatingExplored = true;
 }
 
 std::unordered_set<CherriesPosition> Cherries::getTranspositions() const {
@@ -102,7 +102,7 @@ std::string Cherries::getDisplayString() {
 }
 
 // Source: Mark van den Bergh, accessed via a paper written by Thomas de Mol I received from Walter Kosters.
-bool Cherries::tryToDetermineAbstractForm() {
+bool Cherries::tryToDetermineAlternatingId() {
 	// It turns out the value of each cherries game is an integer.
 	// We get it, by summing the values of each segment of the position.
 	int value = 0;
@@ -159,7 +159,7 @@ bool Cherries::tryToDetermineAbstractForm() {
 			+ ((int)firstLargeBlockColour + (int)lastLargeBlockColour)/2
 		);
 	}
-	abstractForm = CGDatabase::getInstance().getInteger(value).getId();
+	alternatingId = CGDatabase::getInstance().getInteger(value).getId();
 	return true;
 }
 

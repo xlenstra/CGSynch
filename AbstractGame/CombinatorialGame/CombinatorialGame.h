@@ -34,14 +34,14 @@ struct CGCacheBlock {
 	std::string displayString = "";
 	WinningPlayer cachedWinner = WinningPlayer::NONE;
 	std::optional<size_t> birthDay = {};
-	AbstractId canonicalFormId = -1ul;
-	AbstractId negativeFormId = -1ul;
+	AlternatingId canonicalFormId = -1ul;
+	AlternatingId negativeFormId = -1ul;
 	std::optional<bool> isInteger = {};
     std::optional<bool> isNumber = {};
     std::optional<DyadicRational> numberValue = {};
-	std::unordered_map<AbstractId, AbstractId> subtractionCache = {};
-	std::unordered_map<AbstractId, AbstractId> additionCache = {};
-	std::unordered_map<AbstractId, std::partial_ordering> compareCache = {};
+	std::unordered_map<AlternatingId, AlternatingId> subtractionCache = {};
+	std::unordered_map<AlternatingId, AlternatingId> additionCache = {};
+	std::unordered_map<AlternatingId, std::partial_ordering> compareCache = {};
 };
 
 /** A node in the tree of abstract combinatorial games.
@@ -58,7 +58,7 @@ class CombinatorialGame {
 public:
 
     // DO NOT USE THIS! Instead, use cgDatabase.getOrInsertGame(leftOptions, rightOptions);
-    CombinatorialGame(std::unordered_set<AbstractId> leftOptions, std::unordered_set<AbstractId> rightOptions, AbstractId id);
+    CombinatorialGame(std::unordered_set<AlternatingId> leftOptions, std::unordered_set<AlternatingId> rightOptions, AlternatingId id);
 	CombinatorialGame(const CombinatorialGame& other);
 
     /** Sets the cache of this game to something else.
@@ -75,9 +75,9 @@ public:
     size_t getBirthday() const;
 
     /** Get the id's of the left options of this game, which can be turned into games in the [cgDatabase] */
-	const std::unordered_set<AbstractId>& getLeftOptions() const { return leftOptions; }
+	const std::unordered_set<AlternatingId>& getLeftOptions() const { return leftOptions; }
     /** Get the id's of the right options of this game, which can be turned into games in the <A NAME="cgDatabase"> cgDatabase</A> */
-	const std::unordered_set<AbstractId>& getRightOptions() const { return rightOptions; }
+	const std::unordered_set<AlternatingId>& getRightOptions() const { return rightOptions; }
 
     /** Get the canonical, most simplified, form of this game */
 	CombinatorialGame& getCanonicalForm() const;
@@ -110,8 +110,8 @@ public:
 
 private:
 
-	std::unordered_set<AbstractId> leftOptions;
-	std::unordered_set<AbstractId> rightOptions;
+	std::unordered_set<AlternatingId> leftOptions;
+	std::unordered_set<AlternatingId> rightOptions;
 //    std::unordered_set<AbstractId> parents;
     const size_t id;
 

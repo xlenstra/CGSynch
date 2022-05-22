@@ -29,7 +29,7 @@ public:
 
 	std::string getDisplayString() override;
 
-	void explore() override;
+	void exploreAlternating() override;
 	StackCherriesPosition getAnyTransposition() const override;
 	std::unordered_set<StackCherriesPosition> getTranspositions() const override;
 	//GameId getIdOrInsertIntoDatabase() override;

@@ -24,11 +24,11 @@ typedef std::string MathPosition;
 class MathRuleset : public AbstractGame<MathPosition> {
 public:
 	explicit MathRuleset(MathPosition inputString);
-	void explore() override;
+	void exploreAlternating() override;
 	std::string getAnyTransposition() const override;
 	std::unordered_set<std::string> getTranspositions() const override;
 	std::string getDisplayString() override;
-	bool tryToDetermineAbstractForm() override;
+	bool tryToDetermineAlternatingId() override;
 
 	//void setOptions(std::pair<std::vector<MathPosition>, std::vector<MathPosition>>);
 

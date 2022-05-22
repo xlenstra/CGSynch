@@ -38,7 +38,7 @@ std::unordered_set<PushShovePosition> Push::getTranspositions() const {
 	return { position };
 }
 
-void Push::explore() {
+void Push::exploreAlternating() {
 	int lastEmptySquareIndex = 0;
 	auto lastEmptySquareIt = position.begin();
 	auto currentSquareIt = position.begin();
@@ -61,7 +61,7 @@ void Push::explore() {
 
 		++currentSquareIt;
 	}
-	explored = true;
+	alternatingExplored = true;
 }
 
 

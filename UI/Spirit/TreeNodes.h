@@ -14,25 +14,25 @@ namespace parser {
 		virtual ~SpiritParserTreeNode() { delete rightChild; }
 
 		void setRightChild(SpiritParserTreeNode* newChild) { rightChild = newChild; }
-		virtual void setLeftChild(AbstractId newChild) { auto var = newChild; newChild = var; };
-		virtual AbstractId explore(AbstractId parent) = 0;
+		virtual void setLeftChild(AlternatingId newChild) { auto var = newChild; newChild = var; };
+		virtual AlternatingId explore(AlternatingId parent) = 0;
 	};
 
 	struct SpiritParserTreeNodeBinary : SpiritParserTreeNode {
-		void setLeftChild(AbstractId newChild) override;
-		AbstractId leftChild = -1;
+		void setLeftChild(AlternatingId newChild) override;
+		AlternatingId leftChild = -1;
 	};
 
 	struct SpiritParserTreeNodeAdd : SpiritParserTreeNodeBinary {
-		AbstractId explore(AbstractId parent) override;
+		AlternatingId explore(AlternatingId parent) override;
 	};
 
 	struct SpiritParserTreeNodeSubtract : SpiritParserTreeNodeBinary {
-		AbstractId explore(AbstractId parent) override;
+		AlternatingId explore(AlternatingId parent) override;
 	};
 
 	struct SpiritParserTreeNodeCanonical: SpiritParserTreeNode {
-		AbstractId explore(AbstractId parent) override;
+		AlternatingId explore(AlternatingId parent) override;
 	};
 }
 

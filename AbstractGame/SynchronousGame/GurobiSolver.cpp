@@ -47,6 +47,6 @@ double GurobiSolver::solve() {
 	} catch (...) {
 		std::cout << "Exception during optimization" << std::endl;
 	}
-	return double(1)/0;
+	return 0.0;
 }
 

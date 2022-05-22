@@ -14,8 +14,8 @@ public:
 	std::string getDisplayString() override;
 	PushShovePosition getAnyTransposition() const override;
 	std::unordered_set<PushShovePosition> getTranspositions() const override;
-	void explore() override;
-	bool tryToDetermineAbstractForm() override;
+	void exploreAlternating() override;
+	bool tryToDetermineAlternatingId() override;
 
 private:
 	PushShovePosition position;

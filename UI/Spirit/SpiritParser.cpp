@@ -26,8 +26,21 @@ namespace parser {
 	using x3::_val;
 	using boost::fusion::at_c;
 
-	CombinatorialGame& idToGame(AbstractId id) { return localCGDatabase.idToGame(id); }
+	CombinatorialGame& idToGame(AlternatingId id) { return localCGDatabase.idToGame(id); }
 
+//	struct error_handler
+//	{
+//		template <typename Iterator, typename Exception, typename Context>
+//		x3::error_handler_result on_error(
+//			Iterator& first, Iterator const& last
+//			, Exception const& x, Context const& context)
+//		{
+//			auto& error_handler = x3::get<x3::error_handler_tag>(context).get();
+//			std::string message = "Error! Expecting: " + x.which() + " here:";
+//			error_handler(x.where(), message);
+//			return x3::error_handler_result::fail;
+//		}
+//	};
 
 	auto addLetter = [](auto& ctx) { _val(ctx) += _attr(ctx); };
 	auto copy = [](auto& ctx) { _val(ctx) = _attr(ctx); };
@@ -52,13 +65,13 @@ namespace parser {
 
 
 	auto pushShoveToAbstract = [](auto& ctx) {
-		_val(ctx) = getAbstractFormId<PushShovePosition>(*_attr(ctx));
+		_val(ctx) = getAlternatingId<PushShovePosition>(*_attr(ctx));
 	};
 	auto cherriesToAbstract = [](auto& ctx) {
-		_val(ctx) = getAbstractFormId<CherriesPosition>(*_attr(ctx));
+		_val(ctx) = getAlternatingId<CherriesPosition>(*_attr(ctx));
 	};
 	auto hackenbushToAbstract = [](auto& ctx) {
-		_val(ctx) = getAbstractFormId<HackenbushPosition>(*_attr(ctx));
+		_val(ctx) = getAlternatingId<HackenbushPosition>(*_attr(ctx));
 	};
 
 	auto unaryMinusGame = [](auto& ctx) {
@@ -154,9 +167,9 @@ namespace parser {
 	const x3::rule<class stackCherriesGame, StackCherries*> stackCherriesGame = "stackCherriesGame";
 	const x3::rule<class hackenbushGame, Hackenbush*> hackenbushGame = "hackenbushGame";
 
-	const x3::rule<class abstractGame, AbstractId> abstractGame = "abstractGame";
+	const x3::rule<class abstractGame, AlternatingId> abstractGame = "abstractGame";
 	const x3::rule<class abstractGamePrime, SpiritParserTreeNode*> abstractGamePrime = "abstractGamePrime";
-	const x3::rule<class abstractGameTerminal, AbstractId> abstractGameTerminal = "abstractGameTerminal";
+	const x3::rule<class abstractGameTerminal, AlternatingId> abstractGameTerminal = "abstractGameTerminal";
 
 	const x3::rule<class boolean, bool> boolean = "bool";
 	const x3::rule<class winner, WinningPlayer> winner = "winner";

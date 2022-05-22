@@ -39,7 +39,7 @@ std::unordered_set<PushShovePosition> Shove::getTranspositions() const {
 	return { position };
 }
 
-void Shove::explore() {
+void Shove::exploreAlternating() {
 	auto currentSquareIt = position.begin();
 	for (size_t i = 0; i < position.size(); ++i) {
 		if (*currentSquareIt == PieceColour::NONE) {
@@ -59,11 +59,11 @@ void Shove::explore() {
 
 		++currentSquareIt;
 	}
-	explored = true;
+	alternatingExplored = true;
 }
 
 // Source: LIP
-bool Shove::tryToDetermineAbstractForm() {
+bool Shove::tryToDetermineAlternatingId() {
 	DyadicRational gameValue = DyadicRational(0);
 	PushShovePosition simplifiedPosition = position;
 	PushShovePosition positionWithoutEmpties;
@@ -76,7 +76,7 @@ bool Shove::tryToDetermineAbstractForm() {
 	// First check if we only have a single piece; then the value is just the board size.
 	if (positionWithoutEmpties.size() == 1) {
 		gameValue += pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
-		abstractForm = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
+		alternatingId = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
 		return true;
 	}
 
@@ -91,7 +91,7 @@ bool Shove::tryToDetermineAbstractForm() {
 		// If all pieces are the same size, we're done.
 		if (positionWithoutEmpties.size() < 2) {
 			gameValue += pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
-			abstractForm = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
+			alternatingId = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
 			return true;
 		}
 	}
@@ -108,7 +108,7 @@ bool Shove::tryToDetermineAbstractForm() {
 		}
 		denominator *= 2;
 	}
-	abstractForm = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
+	alternatingId = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
 	return true;
 }
 

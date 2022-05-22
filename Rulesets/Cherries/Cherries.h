@@ -7,7 +7,7 @@
 
 #include <functional>
 
-#include "../AbstractGame.h"
+#include "AbstractGame.h"
 #include "CherriesUtil.h"
 
 
@@ -23,11 +23,11 @@ public:
 
 	std::string getDisplayString() override;
 
-	void explore() override;
+	void exploreAlternating() override;
 	CherriesPosition getAnyTransposition() const override;
 	std::unordered_set<CherriesPosition> getTranspositions() const override;
 //	GameId getIdOrInsertIntoDatabase() override;
-	bool tryToDetermineAbstractForm() override;
+	bool tryToDetermineAlternatingId() override;
 
 private:
 	void addTranspositionsRecursively(std::unordered_set<CherriesPosition>& transposition, std::unordered_set<size_t>& sectionsToReverse, const size_t& depth) const;

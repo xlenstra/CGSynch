@@ -5,7 +5,7 @@
 #ifndef CGSYNCH_2_PUSH_H
 #define CGSYNCH_2_PUSH_H
 
-#include "../AbstractGame.h"
+#include "AbstractGame.h"
 #include "PushShoveUtil.h"
 
 class Push : public AbstractGame<PushShovePosition> {
@@ -16,7 +16,7 @@ public:
 	std::string getDisplayString() override;
 	PushShovePosition getAnyTransposition() const override;
 	std::unordered_set<PushShovePosition> getTranspositions() const override;
-	void explore() override;
+	void exploreAlternating() override;
 
 private:
 	PushShovePosition position;

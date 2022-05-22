@@ -32,15 +32,15 @@ public:
     /** Checks if a game with these options exists. If it does, it returns the ID of that game.
      * If it doesn't, it creates such a game and then return the new ID.
      */
-    AbstractId getGameId(const std::unordered_set<AbstractId>& left, const std::unordered_set<AbstractId>& right);
+    AlternatingId getGameId(const std::unordered_set<AlternatingId>& left, const std::unordered_set<AlternatingId>& right);
 	/** Same as <code><em>getGameId</em></code>, but returns a reference to the game instead of its ID.
 	 * That is, it checks if a game with the provided left and right options exists.
 	 * If it does, it returns a reference to that game.
 	 * Otherwise, it creates that game and returns the new ID.
 	 */
-    CombinatorialGame& getGame(const std::unordered_set<AbstractId>& left, const std::unordered_set<AbstractId>& right);
+    CombinatorialGame& getGame(const std::unordered_set<AlternatingId>& left, const std::unordered_set<AlternatingId>& right);
 	/** Get the game corresponding to a given ID */
-    CombinatorialGame& idToGame(AbstractId id) { return *existingGames.at(id); }
+    CombinatorialGame& idToGame(AlternatingId id) { return *existingGames.at(id); }
 
 	/** Get the game corresponding to 0, i.e., neither player has a move */
     CombinatorialGame& getZeroGame() { return idToGame(zeroId); }
@@ -53,13 +53,13 @@ public:
 
 
 	/** the id of the game corresponding to 0, in which neither player has a move */
-    const AbstractId zeroId = 0;
+    const AlternatingId zeroId = 0;
 
 private:
 	CGDatabase();
     std::vector<std::unique_ptr<CombinatorialGame>> existingGames;
 
-    AbstractId _getDyadicRational(int numerator, int denominator);
+    AlternatingId _getDyadicRational(int numerator, int denominator);
 
 	static CGDatabase instance;
 //	std::unordered_map<AbstractId,int> savedIntegers;

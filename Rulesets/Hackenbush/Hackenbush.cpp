@@ -23,7 +23,7 @@ NormalGraph Hackenbush::getAnyTransposition() const {
 	return position;
 }
 
-void Hackenbush::explore() {
+void Hackenbush::exploreAlternating() {
 	for (const auto& [nodeFrom, nodeTo, colour] : position.getAllEdges()) {
 		position.removeEdge(nodeFrom, nodeTo);
 		Hackenbush newGame = Hackenbush(position.getSubGraphConnectedToGround(nodeFrom, nodeTo));

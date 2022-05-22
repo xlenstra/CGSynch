@@ -3,3 +3,5 @@ https://gambitproject.readthedocs.io/en/latest/formats.html
 https://gambitproject.readthedocs.io/en/latest/tools.html?highlight=command%20line#gambit-lp-compute-equilibria-in-a-two-player-constant-sum-game-via-linear-programming
 https://cgi.csc.liv.ac.uk/~rahul/bimatrix_solver/
 http://www.gametheoryexplorer.org/
+
+Daphne Koller, Nimrod Megiddo, and Bernhard von Stengel (1996). “Efficient computation of equilibria for extensive two-person games.” Games and Economic Behavior 14: 247-259.

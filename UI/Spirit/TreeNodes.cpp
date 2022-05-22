@@ -6,29 +6,29 @@
 #include "CombinatorialGame/CombinatorialGameDatabase.h"
 #include "CombinatorialGame/CombinatorialGame.h"
 
-void parser::SpiritParserTreeNodeBinary::setLeftChild(AbstractId newChild) {
+void parser::SpiritParserTreeNodeBinary::setLeftChild(AlternatingId newChild) {
 	leftChild = newChild;
 }
 
-AbstractId parser::SpiritParserTreeNodeAdd::explore(AbstractId parent) {
+AlternatingId parser::SpiritParserTreeNodeAdd::explore(AlternatingId parent) {
 	CGDatabase& cgDatabase = CGDatabase::getInstance();
-	AbstractId result = (cgDatabase.idToGame(parent) + cgDatabase.idToGame(leftChild)).getId();
+	AlternatingId result = (cgDatabase.idToGame(parent) + cgDatabase.idToGame(leftChild)).getId();
 	if (rightChild)
 		return rightChild->explore(result);
 	return result;
 }
 
-AbstractId parser::SpiritParserTreeNodeSubtract::explore(AbstractId parent) {
+AlternatingId parser::SpiritParserTreeNodeSubtract::explore(AlternatingId parent) {
 	CGDatabase& cgDatabase = CGDatabase::getInstance();
-	AbstractId result = (cgDatabase.idToGame(parent) - cgDatabase.idToGame(leftChild)).getId();
+	AlternatingId result = (cgDatabase.idToGame(parent) - cgDatabase.idToGame(leftChild)).getId();
 	if (rightChild)
 		return rightChild->explore(result);
 	return result;
 }
 
-AbstractId parser::SpiritParserTreeNodeCanonical::explore(AbstractId parent) {
+AlternatingId parser::SpiritParserTreeNodeCanonical::explore(AlternatingId parent) {
 	CGDatabase& cgDatabase = CGDatabase::getInstance();
-	AbstractId result = (cgDatabase.idToGame(parent).getCanonicalForm()).getId();
+	AlternatingId result = (cgDatabase.idToGame(parent).getCanonicalForm()).getId();
 	if (rightChild)
 		return rightChild->explore(result);
 	return result;
