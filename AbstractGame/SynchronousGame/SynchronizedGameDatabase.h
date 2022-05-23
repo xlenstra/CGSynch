@@ -26,5 +26,7 @@ private:
 	std::unordered_map<SynchedMatrix, std::unique_ptr<SynchronizedGame>> games;
 };
 
+#include "SynchronousGame.h"
+
 
 #endif //CGSYNCH_2_SYNCHRONIZEDGAMEDATABASE_H

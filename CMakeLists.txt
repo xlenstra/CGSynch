@@ -44,11 +44,11 @@ set(sources main.cpp
     Rulesets/Hackenbush/Hackenbush.cpp
     Rulesets/Math/RulesetMathUtil.cpp
 
-    UI/Spirit/SpiritParser.cpp
-    UI/Spirit/TreeNodes.cpp
+        UI/AlternatingUI/SpiritParser.cpp
+        UI/AlternatingUI/TreeNodes.cpp
 
         Util/Matrix.h
-)
+        UI/SynchedUI/SpiritParser.cpp UI/SynchedUI/SpiritParser.h)
 
 add_executable(${CMAKE_PROJECT_NAME} ${sources})
 

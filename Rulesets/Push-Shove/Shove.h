@@ -16,6 +16,7 @@ public:
 	std::unordered_set<PushShovePosition> getTranspositions() const override;
 	void exploreAlternating() override;
 	bool tryToDetermineAlternatingId() override;
+	void exploreSynched() override;
 
 private:
 	PushShovePosition position;

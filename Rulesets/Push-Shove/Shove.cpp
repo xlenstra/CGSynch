@@ -62,7 +62,38 @@ void Shove::exploreAlternating() {
 	alternatingExplored = true;
 }
 
-// Source: LIP
+void Shove::exploreSynched() {
+	std::vector<size_t> leftOptions;
+	std::vector<size_t> rightOptions;
+	for (size_t i = 0; i < position.size(); ++i) {
+		if (position[i] == PieceColour::BLUE)
+			leftOptions.push_back(i);
+		else if (position[i] == PieceColour::RED)
+			rightOptions.push_back(i);
+	}
+	synchedOptions.leftMoveCount = leftOptions.size();
+	synchedOptions.rightMoveCount = rightOptions.size();
+
+	for (const auto& leftOption : leftOptions) {
+		std::vector<GameId> blueOptions;
+		for (const auto& rightOption : rightOptions) {
+			PushShovePosition positionCopy = position;
+			size_t lowestSquare = std::min(leftOption, rightOption);
+			size_t highestSquare = std::max(leftOption, rightOption);
+			std::copy(position.begin()+2, position.begin() + lowestSquare + 2, positionCopy.begin());
+			std::copy(position.begin() + lowestSquare + 1, position.begin() + highestSquare + 1, positionCopy.begin() + lowestSquare);
+			positionCopy[highestSquare] = PieceColour::NONE;
+			if (lowestSquare >= 1)
+				positionCopy[lowestSquare-1] = PieceColour::NONE;
+			blueOptions.push_back(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
+		}
+		synchedOptions.options.push_back(blueOptions);
+	}
+
+	synchedExplored = true;
+}
+
+// Source: LiP
 bool Shove::tryToDetermineAlternatingId() {
 	DyadicRational gameValue = DyadicRational(0);
 	PushShovePosition simplifiedPosition = position;

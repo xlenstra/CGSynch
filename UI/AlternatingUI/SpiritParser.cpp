@@ -17,7 +17,7 @@
 
 namespace x3 = boost::spirit::x3;
 
-namespace parser {
+namespace alternatingGamesParser {
 	CGDatabase& localCGDatabase = CGDatabase::getInstance();
 
 	using x3::char_;
@@ -51,8 +51,6 @@ namespace parser {
 	auto createPushGame = [](auto& ctx) {
 		_val(ctx) = &(createPushPosition(_attr(ctx)));
 	};
-
-
 	auto createCherriesGame = [](auto& ctx) {
 		_val(ctx) = &(createCherriesPosition(_attr(ctx)));
 	};
@@ -261,7 +259,7 @@ namespace parser {
 
 
 
-void parseStringMain() {
+void alternatingGameUI() {
 	std::cout << "Enter a command. 'help' for help" << std::endl;
 	bool timeOn = false;
 	auto startTime = std::chrono::steady_clock::now();
@@ -292,9 +290,9 @@ void parseStringMain() {
 					  << "Shove(a) -- a: The strip representation of the position" << std::endl
 					  << std::endl
 					  << "These can be added together with +, subtracted with -, compared with <, <=, ==, >=, !=, <| or |> or bracketed" << std::endl
-					  << "Additionaly, the functions `.CanonicalForm()`, `.GetBirthday()`, `isNumber()` and `getWinner()` can be called" << std::endl
+					  << "Additionally, the functions `.CanonicalForm()`, `.GetBirthday()`, `isNumber()` and `getWinner()` can be called" << std::endl
 					  << std::endl
-					  << "The following commands are also suported:" << std::endl
+					  << "The following commands are also supported:" << std::endl
 					  << "  (h)elp -- show this message" << std::endl
 					  << "  (q)uit -- quit" << std::endl
 					  << "  (t)ime -- time how long execution takes and print that time" << std::endl
@@ -312,7 +310,7 @@ void parseStringMain() {
 			startTime = std::chrono::steady_clock::now();
 
 		try {
-			result = phrase_parse(first, last, parser::outputString, x3::ascii::space, output);
+			result = phrase_parse(first, last, alternatingGamesParser::outputString, x3::ascii::space, output);
 		} catch (std::exception& exception) {
 			result = false;
 			error = exception.what();

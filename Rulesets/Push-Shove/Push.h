@@ -17,6 +17,7 @@ public:
 	PushShovePosition getAnyTransposition() const override;
 	std::unordered_set<PushShovePosition> getTranspositions() const override;
 	void exploreAlternating() override;
+	void exploreSynched() override;
 
 private:
 	PushShovePosition position;

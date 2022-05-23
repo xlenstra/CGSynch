@@ -1,7 +1,8 @@
 #include <iostream>
 #include <chrono>
 
-#include <Spirit/SpiritParser.h>
+#include <AlternatingUI/SpiritParser.h>
+#include <SynchedUI/SpiritParser.h>
 #include <Hackenbush/NormalGraph.h>
 #include <SynchronousGame/GurobiSolver.h>
 #include <SynchronousGame/SynchronizedGameDatabase.h>
@@ -27,10 +28,10 @@ int main() {
 		userInput = tolower(userInput);
 		switch (userInput) {
 			case 'a':
-				parseStringMain();
+				alternatingGameUI();
 				break;
 			case 's':
-				std::cout << "Not implemented yet. Sorry :(" << std::endl;
+				synchedGameUI();
 				break;
 			case 'g': {
 				std::cout << "Graph test !" << std::endl;
@@ -51,12 +52,18 @@ int main() {
 				std::cout << "Starting test!" << std::endl;
 				auto startTime = std::chrono::steady_clock::now();
 
-				Cherries game = Cherries({std::deque<PieceColour>({PieceColour::BLUE}), std::deque<PieceColour>({PieceColour::RED, PieceColour::RED})});
+				Shove game = createShovePosition(" BRB");
 //				Cherries game = Cherries({std::deque<PieceColour>({PieceColour::BLUE, PieceColour::RED, PieceColour::RED})});
-//				game.exploreSynched();
-//				std::cout << game.getSynchedOptions().leftMoveCount << "×" << game.getSynchedOptions().rightMoveCount << std::endl << game.getSynchedOptions().options << std::endl;
+				game.exploreSynched();
+				std::cout << game.getSynchedOptions().leftMoveCount << "×" << game.getSynchedOptions().rightMoveCount << std::endl << game.getSynchedOptions().options << std::endl;
+				for (const auto& row : game.getSynchedOptions().options) {
+					for (const auto& id: row) {
+						std::cout << "'" << shoveDatabase->idToGame(id).getDisplayString() << "',";
+					}
+					std::cout << std::endl;
+				}
 
-				SynchedId synchedId = getSynchedId<CherriesPosition>(game);
+				SynchedId synchedId = getSynchedId<PushShovePosition>(game);
 				std::cout << synchedId << std::endl;
 				std::cout << SGDatabase::getInstance().idToGame(synchedId).getValue() << std::endl;
 

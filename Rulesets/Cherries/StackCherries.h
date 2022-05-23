@@ -33,6 +33,7 @@ public:
 	StackCherriesPosition getAnyTransposition() const override;
 	std::unordered_set<StackCherriesPosition> getTranspositions() const override;
 	//GameId getIdOrInsertIntoDatabase() override;
+	void exploreSynched() override;
 
 private:
 	StackCherriesPosition position;

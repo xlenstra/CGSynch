@@ -52,6 +52,8 @@ void Cherries::exploreAlternating() {
 	alternatingExplored = true;
 }
 
+
+// This function is completely unreadable spaghetti. I hope it works
 void Cherries::exploreSynched() {
 	Matrix<GameId> positions;
 
@@ -64,20 +66,24 @@ void Cherries::exploreSynched() {
 			continue;
 		}
 		++blueMovesFound;
+		if (blueUnconnectedLine.front() == PieceColour::BLUE && blueUnconnectedLine.back() == PieceColour::BLUE && blueUnconnectedLine.size() > 1) {
+			++blueMovesFound;
+		}
 		// Copy position
-		CherriesPosition positionWithoutRed = position;
-		auto elementToRemove = positionWithoutRed.begin();
+		CherriesPosition positionWithoutBlue = position;
+		auto elementToRemove = positionWithoutBlue.begin();
 		std::advance(elementToRemove, positionElementCount);
-		positionWithoutRed.erase(elementToRemove);
+		positionWithoutBlue.erase(elementToRemove);
 
-		std::vector<GameId> redOptions;
+		std::vector<GameId> redOptionsForBlueFront;
+		std::vector<GameId> redOptionsForBlueBack;
 
 		// Next, find a move for right in the original position
 		for (const auto& redUnconnectedLine : position) {
 			if (redUnconnectedLine.front() != PieceColour::RED && redUnconnectedLine.back() != PieceColour::RED) continue;
 			// Then find where this section is stored in the position where red already played
 			size_t elementCount = 0;
-			CherriesPosition positionWithoutRedAndBlue = positionWithoutRed;
+			CherriesPosition positionWithoutRedAndBlue = positionWithoutBlue;
 			for (const auto& redInBlueIt : positionWithoutRedAndBlue) {
 				if (redInBlueIt == redUnconnectedLine) break;
 				++elementCount;
@@ -86,7 +92,6 @@ void Cherries::exploreSynched() {
 			if (elementCount != positionWithoutRedAndBlue.size()) {
 				// Remove the segment we played on as well
 				elementToRemove = positionWithoutRedAndBlue.begin();
-				auto elementToRemoveCopy = positionWithoutRedAndBlue.begin();
 				std::advance(elementToRemove, elementCount);
 				positionWithoutRedAndBlue.erase(elementToRemove);
 
@@ -102,7 +107,7 @@ void Cherries::exploreSynched() {
 
 						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
 						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
-						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+						redOptionsForBlueFront.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
 					}
 					if (redUnconnectedLine.back() == PieceColour::RED && redUnconnectedLine.size() > 1) {
 						CherriesPosition positionWithRemovedParts = positionWithoutRedAndBlue;
@@ -111,7 +116,7 @@ void Cherries::exploreSynched() {
 
 						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
 						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
-						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+						redOptionsForBlueFront.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
 					}
 				}
 				if (blueUnconnectedLine.back() == PieceColour::BLUE && blueUnconnectedLine.size() > 1) {
@@ -125,7 +130,7 @@ void Cherries::exploreSynched() {
 
 						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
 						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
-						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+						redOptionsForBlueBack.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
 					}
 					if (redUnconnectedLine.back() == PieceColour::RED && redUnconnectedLine.size() > 1) {
 						CherriesPosition positionWithRemovedParts = positionWithoutRedAndBlue;
@@ -134,7 +139,7 @@ void Cherries::exploreSynched() {
 
 						if (!redReplacement.empty()) positionWithRemovedParts.insert(redReplacement);
 						if (!blueReplacement.empty()) positionWithRemovedParts.insert(blueReplacement);
-						redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+						redOptionsForBlueBack.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
 					}
 				}
 			} else {
@@ -144,11 +149,17 @@ void Cherries::exploreSynched() {
 				replacementSegment.pop_front();
 				replacementSegment.pop_back();
 				if (!replacementSegment.empty()) positionWithRemovedParts.insert(replacementSegment);
-				redOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+				if (blueUnconnectedLine.front() == PieceColour::BLUE)
+					redOptionsForBlueFront.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
+				else if (blueUnconnectedLine.size() > 1)
+					redOptionsForBlueBack.push_back(cherriesDatabase->getOrInsertGameId(Cherries(positionWithRemovedParts)));
 			}
 		}
 
-		positions.push_back(redOptions);
+		if (blueUnconnectedLine.front() == PieceColour::BLUE)
+			positions.push_back(redOptionsForBlueFront);
+		if (blueUnconnectedLine.back() == PieceColour::BLUE && blueUnconnectedLine.size() > 1)
+			positions.push_back(redOptionsForBlueBack);
 		++positionElementCount;
 	}
 

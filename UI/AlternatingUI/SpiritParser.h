@@ -7,7 +7,7 @@
 
 #include <boost/spirit/home/x3.hpp>
 
-void parseStringMain();
+void alternatingGameUI();
 
 
 #endif //CGSYNCH_2_SPIRITPARSER_H

@@ -8,7 +8,7 @@
 #include <vector>
 #include "CombinatorialGame/CombinatorialGameUtil.h"
 
-namespace parser {
+namespace alternatingGamesParser {
 	struct SpiritParserTreeNode {
 		SpiritParserTreeNode* rightChild = nullptr;
 		virtual ~SpiritParserTreeNode() { delete rightChild; }

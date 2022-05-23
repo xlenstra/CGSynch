@@ -64,6 +64,50 @@ void Push::exploreAlternating() {
 	alternatingExplored = true;
 }
 
+void Push::exploreSynched() {
+	std::vector<size_t> leftOptions;
+	std::vector<size_t> rightOptions;
+	for (size_t i = 0; i < position.size(); ++i) {
+		if (position[i] == PieceColour::BLUE)
+			leftOptions.push_back(i);
+		else if (position[i] == PieceColour::RED)
+			rightOptions.push_back(i);
+	}
+	synchedOptions.leftMoveCount = leftOptions.size();
+	synchedOptions.rightMoveCount = rightOptions.size();
+
+	for (const auto& leftOption : leftOptions) {
+		std::vector<GameId> blueOptions;
+		size_t indexOfFirstEmptyLeftOfLeftMove = 0ul;
+		for (size_t i = leftOption; i != -1ul; --i) {
+			if (position[i] == PieceColour::NONE) {
+				indexOfFirstEmptyLeftOfLeftMove = i;
+				break;
+			}
+		}
+
+		for (const auto& rightOption : rightOptions) {
+			size_t indexOfFirstEmptyLeftOfRightMove = 0ul;
+			if (indexOfFirstEmptyLeftOfLeftMove < rightOption && rightOption < leftOption) {
+				indexOfFirstEmptyLeftOfRightMove = indexOfFirstEmptyLeftOfLeftMove;
+			} else {
+				for (size_t i = rightOption; i != -1ul; --i) {
+					if (position[i] == PieceColour::NONE) {
+						indexOfFirstEmptyLeftOfRightMove = i;
+						break;
+					}
+				}
+			}
+
+
+		}
+		synchedOptions.options.push_back(blueOptions);
+	}
+
+
+	synchedExplored = true;
+}
+
 
 Push& createPushPosition(const std::string& inputString) {
 	PushShovePosition position;
