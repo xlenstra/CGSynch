@@ -5,6 +5,8 @@
 #ifndef CGSYNCH_GAMEUTIL_H
 #define CGSYNCH_GAMEUTIL_H
 
+#include <string>
+
 /** Player that wins a game */
 enum class WinningPlayer {
 	LEFT,
@@ -14,5 +16,9 @@ enum class WinningPlayer {
 	DRAW,
 	NONE = -1,
 };
+std::string winningPlayerGetDisplayString(const WinningPlayer& winningPlayer);
+
+std::ostream& operator<<(std::ostream &os, const WinningPlayer& winningPlayer);
+
 
 #endif //CGSYNCH_GAMEUTIL_H

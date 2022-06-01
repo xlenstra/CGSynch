@@ -36,6 +36,44 @@ void Hackenbush::exploreAlternating() {
 	}
 }
 
+void Hackenbush::exploreSynched() {
+	synchedOptions.leftMoveCount = 0;
+	synchedOptions.rightMoveCount = 0;
+	for (const auto& [nodeFrom, nodeTo, colour] : position.getAllEdges()) {
+		switch (colour) {
+			case PieceColour::BLUE:
+				++synchedOptions.leftMoveCount;
+				break;
+			case PieceColour::RED:
+				++synchedOptions.rightMoveCount;
+				break;
+			default:
+				break;
+		}
+	}
+
+	for (const auto& [nodeFromBlue, nodeToBlue, colourBlue] : position.getAllEdges()) {
+		if (colourBlue != PieceColour::BLUE) continue;
+		HackenbushPosition positionCopy = position;
+		positionCopy.removeEdge(nodeFromBlue, nodeToBlue);
+
+		std::vector<GameId> rightOptionsFromHere;
+
+		for (const auto&[nodeFromRed, nodeToRed, colourRed] : position.getAllEdges()) {
+			if (colourRed != PieceColour::RED) continue;
+			HackenbushPosition positionCopyCopy = positionCopy;
+			positionCopyCopy.removeEdge(nodeFromRed, nodeToRed);
+			HackenbushPosition reducedPosition = positionCopyCopy.getSubGraphConnectedToGround(-1, -1);
+
+			rightOptionsFromHere.push_back(hackenbushDatabase->getOrInsertGameId(Hackenbush(reducedPosition)));
+		}
+
+		synchedOptions.options.push_back(rightOptionsFromHere);
+	}
+
+	synchedExplored = true;
+}
+
 std::unordered_set<NormalGraph> Hackenbush::getTranspositions() const {
 	return { position };
 }

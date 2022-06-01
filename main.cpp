@@ -3,19 +3,20 @@
 
 #include <AlternatingUI/SpiritParser.h>
 #include <SynchedUI/SpiritParser.h>
-#include <Hackenbush/NormalGraph.h>
 #include <SynchronousGame/GurobiSolver.h>
 #include <SynchronousGame/SynchronizedGameDatabase.h>
 #include <SynchronousGame/SynchronousGame.h>
 
 #include "Rulesets/GameDatabase.h"
-#include "Push-Shove/Shove.h"
-#include "Hackenbush/HackenbushUtil.h"
-#include "Hackenbush/Hackenbush.h"
-#include "Cherries/Cherries.h"
+#include "Rulesets/Push-Shove/Shove.h"
+#include "Rulesets/Hackenbush/HackenbushUtil.h"
+#include "Rulesets/Hackenbush/Hackenbush.h"
+#include "Rulesets/Hackenbush/NormalGraph.h"
 
 int main() {
 	std::cout << "Compiled with C++ version " << __cplusplus << std::endl;
+	const char* tmp = std::getenv("GRB_LICENSE_FILE");
+	std::cout << "Gurobi license key location: " << std::string(tmp ?: "Key not found!") << std::endl;
 	std::cout << "Written by Xander Lenstra" << std::endl << std::endl;
 
 	char userInput;
@@ -33,12 +34,12 @@ int main() {
 			case 's':
 				synchedGameUI();
 				break;
-			case 'g': {
-				std::cout << "Graph test !" << std::endl;
-				NormalGraph graph = graphFromMatrixString(2, charsToPieceColours("_RR_"));
-				std::cout << graph.getDisplayString() << std::endl;
-				break;
-			}
+			//case 'g': {
+			//	std::cout << "Graph test !" << std::endl;
+			//	NormalGraph graph = graphFromMatrixString(2, charsToPieceColours("_RR_"));
+			//	std::cout << graph.getDisplayString() << std::endl;
+			//	break;
+			//}
 			case 'h':
 				std::cout << "Press 'a' for alternating" << std::endl
 						  << "Press 's' for synchronized" << std::endl
@@ -48,33 +49,34 @@ int main() {
 			case 'q':
 				running = false;
 				break;
-			case 't': {
-				std::cout << "Starting test!" << std::endl;
-				auto startTime = std::chrono::steady_clock::now();
-
-				Shove game = createShovePosition(" BRB");
-//				Cherries game = Cherries({std::deque<PieceColour>({PieceColour::BLUE, PieceColour::RED, PieceColour::RED})});
-				game.exploreSynched();
-				std::cout << game.getSynchedOptions().leftMoveCount << "×" << game.getSynchedOptions().rightMoveCount << std::endl << game.getSynchedOptions().options << std::endl;
-				for (const auto& row : game.getSynchedOptions().options) {
-					for (const auto& id: row) {
-						std::cout << "'" << shoveDatabase->idToGame(id).getDisplayString() << "',";
-					}
-					std::cout << std::endl;
-				}
-
-				SynchedId synchedId = getSynchedId<PushShovePosition>(game);
-				std::cout << synchedId << std::endl;
-				std::cout << SGDatabase::getInstance().idToGame(synchedId).getValue() << std::endl;
-
-//				std::cout << *GameDatabase<CherriesPosition, Cherries>::getInstance() << std::endl;
-
-				auto endTime = std::chrono::steady_clock::now();
-				auto takenTime = endTime - startTime;
-				std::cout << "Caculation time: " << std::chrono::duration_cast<std::chrono::microseconds>(takenTime).count() << " microseconds" << std::endl;
-				running = false;
-				break;
-			}
+//			case 't': {
+//				std::cout << "Starting test!" << std::endl;
+//				auto startTime = std::chrono::steady_clock::now();
+//
+//				Hackenbush game = Hackenbush(createHackenbushPosition(3,"_B_B_R_R_"));
+//				game.exploreSynched();
+//				std::cout << game.getSynchedOptions().leftMoveCount << "×" << game.getSynchedOptions().rightMoveCount << std::endl
+//				          << game.getSynchedOptions().options.getHeight() << "×" << game.getSynchedOptions().options.getWidth() << std::endl
+//						  << game.getSynchedOptions().options << std::endl;
+//				for (const auto& row : game.getSynchedOptions().options) {
+//					for (const auto& id: row) {
+//						std::cout << "'" << hackenbushDatabase->idToGame(id).getDisplayString() << "'," << std::endl;
+//					}
+//					std::cout << std::endl << std::endl;
+//				}
+//
+//				SynchedId synchedId = getSynchedId<HackenbushPosition>(game);
+//				std::cout << synchedId << std::endl;
+//				std::cout << SGDatabase::getInstance().idToGame(synchedId).getValue() << std::endl;
+//
+////				std::cout << *GameDatabase<CherriesPosition, Cherries>::getInstance() << std::endl;
+//
+//				auto endTime = std::chrono::steady_clock::now();
+//				auto takenTime = endTime - startTime;
+//				std::cout << "Caculation time: " << std::chrono::duration_cast<std::chrono::microseconds>(takenTime).count() << " microseconds" << std::endl;
+//				running = false;
+//				break;
+//			}
 			default:
 				std::cout << "Unknown option '" << userInput << "'" << std::endl << "Press 'h' for help." << std::endl;
 		}

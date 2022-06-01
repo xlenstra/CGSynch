@@ -111,6 +111,9 @@ namespace alternatingGamesParser {
 	auto abstractGetBirthday = [](auto& ctx) {
 		_val(ctx) = std::to_string(idToGame(_attr(ctx)).getBirthday());
 	};
+	auto abstractIsCanonical = [](auto& ctx) {
+		_val(ctx) = idToGame(_attr(ctx)).isInCanonicalForm();
+	};
 
 	auto winnerToString = [](auto& ctx) {
 		_val(ctx) = winningPlayerGetDisplayString(_attr(ctx));
@@ -169,7 +172,7 @@ namespace alternatingGamesParser {
 	const x3::rule<class abstractGamePrime, SpiritParserTreeNode*> abstractGamePrime = "abstractGamePrime";
 	const x3::rule<class abstractGameTerminal, AlternatingId> abstractGameTerminal = "abstractGameTerminal";
 
-	const x3::rule<class boolean, bool> boolean = "bool";
+	const x3::rule<class boolean, bool> boolean = "boolean";
 	const x3::rule<class winner, WinningPlayer> winner = "winner";
 
 	const x3::rule<class outputString, std::string> outputString = "outputString";
@@ -228,6 +231,7 @@ namespace alternatingGamesParser {
 			| (abstractGame >> "||" > abstractGame)[compareIncomparable]
 			| (abstractGame >> "|>" > abstractGame)[compareGreaterIncomparable]
 			| (abstractGame >> "<|" > abstractGame)[compareLessIncomparable]
+			| (abstractGame[abstractIsCanonical] >> ".IsInCanonicalForm()")
 			| (string >> '<' > string)[compareLess]
 			| (string >> '>' > string)[compareMore]
 			| (string >> '=' > string)[compareEqual]
@@ -290,7 +294,7 @@ void alternatingGameUI() {
 					  << "Shove(a) -- a: The strip representation of the position" << std::endl
 					  << std::endl
 					  << "These can be added together with +, subtracted with -, compared with <, <=, ==, >=, !=, <| or |> or bracketed" << std::endl
-					  << "Additionally, the functions `.CanonicalForm()`, `.GetBirthday()`, `isNumber()` and `getWinner()` can be called" << std::endl
+					  << "Additionally, the functions `.CanonicalForm()`, `.IsInCanonicalForm()`, `.GetBirthday()`, `isNumber()` and `getWinner()` can be called" << std::endl
 					  << std::endl
 					  << "The following commands are also supported:" << std::endl
 					  << "  (h)elp -- show this message" << std::endl

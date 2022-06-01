@@ -8,9 +8,14 @@
 GRBEnv GurobiSolver::gurobiEnvironment = GRBEnv(true);
 
 GurobiSolver::GurobiSolver(const Matrix<double>& rationalMatrix) : doubleMatrix(rationalMatrix) {
-	gurobiEnvironment.set("OutputFlag", "0");
-	gurobiEnvironment.set("LogFile", "mip1.log");
-	gurobiEnvironment.start();
+	try {
+		gurobiEnvironment.set("OutputFlag", "0");
+		gurobiEnvironment.set("LogFile", "mip1.log");
+		gurobiEnvironment.start();
+	} catch (GRBException& e) {
+		std::cout << "Error code = " << e.getErrorCode () << std::endl;
+		std::cout << e.getMessage() << std::endl;
+	}
 }
 
 double GurobiSolver::solve() {
@@ -47,8 +52,9 @@ double GurobiSolver::solve() {
 	} catch (GRBException& e) {
 		std::cout << "Error code = " << e.getErrorCode () << std::endl;
 		std::cout << e.getMessage() << std::endl;
-	} catch (...) {
-		std::cout << "Exception during optimization" << std::endl;
+	} catch (std::exception& e) {
+		std::cout << "Exception during optimization:" << std::endl;
+		std::cout << e.what() << std::endl;
 	}
 	return 0.0;
 }

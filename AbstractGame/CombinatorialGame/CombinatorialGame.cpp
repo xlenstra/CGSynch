@@ -18,25 +18,6 @@
 //	displayString(std::move(displayString)), cachedWinner(cachedWinner), canonicalFormId(canonicalFormId),
 //	negativeFormId(negativeFormId), cachedIsInteger(cachedIsInteger), isNumber(isNumber) {}
 
-
-
-
-std::string winningPlayerGetDisplayString(const WinningPlayer& winningPlayer) {
-	switch (winningPlayer) {
-		case WinningPlayer::LEFT: return "LEFT";
-		case WinningPlayer::RIGHT: return "RIGHT";
-		case WinningPlayer::PREVIOUS: return "PREVIOUS";
-		case WinningPlayer::NEXT: return "NEXT";
-		case WinningPlayer::NONE: return "NONE";
-	}
-}
-
-std::ostream& operator<<(std::ostream& os, const WinningPlayer& winningPlayer) {
-	os << winningPlayerGetDisplayString(winningPlayer);
-	return os;
-}
-
-
 CombinatorialGame::CombinatorialGame(
 	std::unordered_set<AlternatingId> leftOptions,
 	std::unordered_set<AlternatingId> rightOptions,

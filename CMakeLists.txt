@@ -15,6 +15,8 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 message(STATUS "Gurobi dir: $ENV{GUROBI_HOME}")
 
+message(STATUS "License file: $ENV{GRB_LICENSE_FILE}")
+
 find_package(GUROBI REQUIRED)
 
 include_directories(${GUROBI_INCLUDE_DIRS})
@@ -44,11 +46,13 @@ set(sources main.cpp
     Rulesets/Hackenbush/Hackenbush.cpp
     Rulesets/Math/RulesetMathUtil.cpp
 
-        UI/AlternatingUI/SpiritParser.cpp
-        UI/AlternatingUI/TreeNodes.cpp
+    UI/AlternatingUI/SpiritParser.cpp
+    UI/AlternatingUI/TreeNodes.cpp
+    UI/SynchedUI/SpiritParser.cpp
+    UI/SynchedUI/SpiritParser.h
 
-        Util/Matrix.h
-        UI/SynchedUI/SpiritParser.cpp UI/SynchedUI/SpiritParser.h)
+    Util/Matrix.h
+        AbstractGame/GameUtil.cpp)
 
 add_executable(${CMAKE_PROJECT_NAME} ${sources})
 

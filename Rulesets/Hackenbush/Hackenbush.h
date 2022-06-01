@@ -16,6 +16,7 @@ public:
 	NormalGraph getAnyTransposition() const override;
 	void exploreAlternating() override;
 	std::unordered_set<NormalGraph> getTranspositions() const override;
+	void exploreSynched() override;
 
 private:
 	HackenbushPosition position;

@@ -28,6 +28,8 @@ public:
 	double getValue();
 	size_t getBirthday();
 
+	bool operator==(const SynchronizedGame& other);
+
 private:
 
 	SGCacheBlock cacheBlock;

@@ -75,3 +75,7 @@ size_t SynchronizedGame::getBirthday() {
 	}
 	return *cacheBlock.birthday;
 }
+
+bool SynchronizedGame::operator==(const SynchronizedGame& other) {
+	return id == other.id;
+}
