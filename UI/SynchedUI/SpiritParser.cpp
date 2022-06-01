@@ -11,13 +11,13 @@
 #include "Cherries/StackCherries.h"
 #include "Push-Shove/PushShoveUtil.h"
 #include "Push-Shove/Shove.h"
+#include "Push-Shove/Push.h"
 
 namespace x3 = boost::spirit::x3;
 
 namespace synchedGamesParser {
 	SGDatabase& localSGDatabase = SGDatabase::getInstance();
 	bool ignoreNonSeparable = false;
-	bool ignoreIllDefinedRulesets = false;
 	bool timeOn = false;
 
 	using x3::char_;
@@ -32,12 +32,10 @@ namespace synchedGamesParser {
 	auto copy = [](auto& ctx) { _val(ctx) = _attr(ctx); };
 
 	auto createShoveGame = [](auto& ctx) {
-		if (!ignoreIllDefinedRulesets) {
-			std::cout << "Note that the synchronized version of shove in this program assumes that pieces" << std::endl
-			          << "to the left of both pieces move 2 spaces." << std::endl << std::endl
-					  << "Type 'ignoreIllDefinedRulesets' to disable this warning (this session)" << std::endl << std::endl << std::endl;
-		}
 		_val(ctx) = &(createShovePosition(_attr(ctx)));
+	};
+	auto createPushGame = [](auto& ctx) {
+		_val(ctx) = &(createPushPosition(_attr(ctx)));
 	};
 	auto createCherriesGame = [](auto& ctx) {
 		if (!ignoreNonSeparable)
@@ -73,10 +71,11 @@ namespace synchedGamesParser {
 	};
 
 
-	const x3::rule<class shoveGame, Shove*> shoveGame = "shoveGame";
 	const x3::rule<class quotedString, std::string> quotedString = "readString";
 	const x3::rule<class string, std::string> string = "string";
 
+	const x3::rule<class shoveGame, Push*> pushGame = "pushGame";
+	const x3::rule<class shoveGame, Shove*> shoveGame = "shoveGame";
 	const x3::rule<class cherriesGame, Cherries*> cherriesGame = "cherriesGame";
 	const x3::rule<class stackCherriesGame, StackCherries*> stackCherriesGame = "stackCherriesGame";
 
@@ -92,13 +91,14 @@ namespace synchedGamesParser {
 	;
 
 	const auto shoveGame_def = lit("Shove") > '(' > string[createShoveGame] > ')';
+	const auto pushGame_def = lit("Push") > '(' > string[createPushGame] > ')';
 	const auto cherriesGame_def = lit("Cherries") > '(' > string[createCherriesGame] > ')';
 	const auto stackCherriesGame_def = lit("StackCherries") > '(' > string[createStackCherriesGame] > ')';
 
 	const auto synchedGame_def =
 		(
 			shoveGame[pushShoveToAbstract]
-//			| pushGame[pushShoveToAbstract]
+			| pushGame[pushShoveToAbstract]
 			| cherriesGame[cherriesToAbstract]
 			| stackCherriesGame[cherriesToAbstract]
 //			| hackenbushGame[hackenbushToAbstract]
@@ -119,7 +119,7 @@ namespace synchedGamesParser {
 		) > x3::eoi
 	;
 
-	BOOST_SPIRIT_DEFINE(quotedString, string, shoveGame/*, pushGame*/, cherriesGame, stackCherriesGame/*, hackenbushGame*/);
+	BOOST_SPIRIT_DEFINE(quotedString, string, shoveGame, pushGame, cherriesGame, stackCherriesGame/*, hackenbushGame*/);
 	BOOST_SPIRIT_DEFINE(synchedGame);
 	BOOST_SPIRIT_DEFINE(outputString);
 }
@@ -149,11 +149,12 @@ void synchedGameUI() {
 			synchedGamesParser::ignoreNonSeparable = true;
 			std::cout << "Disabled warning from analyzing non-separable rulesets" << std::endl;
 			continue;
-		} else if (boost::iequals(input, "ignoreIllDefinedRulesets")) {
-			synchedGamesParser::ignoreIllDefinedRulesets = true;
-			std::cout << "Disabled warning from analyzing rulesets with multiple interpretations" << std::endl;
-			continue;
 		}
+//		else if (boost::iequals(input, "ignoreIllDefinedRulesets")) {
+//			synchedGamesParser::ignoreIllDefinedRulesets = true;
+//			std::cout << "Disabled warning from analyzing rulesets with multiple interpretations" << std::endl;
+//			continue;
+//		}
 		if (input == "help" || input == "h") {
 			std::cout << "You can enter the following games:" << std::endl
 //			          << "Hackenbush(a, b) -- a: the number of nodes, b: the string representation of the adjacency matrix" << std::endl

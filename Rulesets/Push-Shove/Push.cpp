@@ -77,8 +77,9 @@ void Push::exploreSynched() {
 	synchedOptions.rightMoveCount = rightOptions.size();
 
 	for (const auto& leftOption : leftOptions) {
-		std::vector<GameId> blueOptions;
+		std::vector<GameId> redOptions;
 		size_t indexOfFirstEmptyLeftOfLeftMove = 0ul;
+		// We find the first empty square left of the current left move
 		for (size_t i = leftOption; i != -1ul; --i) {
 			if (position[i] == PieceColour::NONE) {
 				indexOfFirstEmptyLeftOfLeftMove = i;
@@ -86,22 +87,45 @@ void Push::exploreSynched() {
 			}
 		}
 
+		// Then we create the position where that entire segment is moved one square to the left
+		PushShovePosition positionCopy = position;
+		std::copy(
+			position.begin() + (long) indexOfFirstEmptyLeftOfLeftMove + 1,
+			position.begin() + (long) leftOption + 1,
+			positionCopy.begin() + (long) indexOfFirstEmptyLeftOfLeftMove
+		);
+		positionCopy[leftOption] = PieceColour::NONE;
+
+		// Then for each right move
 		for (const auto& rightOption : rightOptions) {
-			size_t indexOfFirstEmptyLeftOfRightMove = 0ul;
+			// If that right piece is already moved, we don't have to do anything and can add it to the vector of completed positions
 			if (indexOfFirstEmptyLeftOfLeftMove < rightOption && rightOption < leftOption) {
-				indexOfFirstEmptyLeftOfRightMove = indexOfFirstEmptyLeftOfLeftMove;
-			} else {
-				for (size_t i = rightOption; i != -1ul; --i) {
-					if (position[i] == PieceColour::NONE) {
-						indexOfFirstEmptyLeftOfRightMove = i;
-						break;
-					}
+				redOptions.push_back(pushDatabase->getOrInsertGameId(Push(positionCopy)));
+				continue;
+			}
+
+			// Otherwise, we find the first empty square left of that move
+			size_t indexOfFirstEmptyLeftOfRightMove = 0ul;
+			for (size_t i = rightOption; i != -1ul; --i) {
+				if (position[i] == PieceColour::NONE) {
+					indexOfFirstEmptyLeftOfRightMove = i;
+					break;
 				}
 			}
 
+			// And copy that segment one square over.
+			PushShovePosition positionCopyCopy = positionCopy;
+			std::copy(
+				positionCopy.begin() + (long) indexOfFirstEmptyLeftOfRightMove + 1,
+				positionCopy.begin() + (long) rightOption + 1,
+				positionCopyCopy.begin() + (long) indexOfFirstEmptyLeftOfRightMove
+			);
+			positionCopy[rightOption] = PieceColour::NONE;
 
+			// And add it to the vector of options.
+			redOptions.push_back(pushDatabase->getOrInsertGameId(Push(positionCopyCopy)));
 		}
-		synchedOptions.options.push_back(blueOptions);
+		synchedOptions.options.push_back(redOptions);
 	}
 
 
