@@ -122,11 +122,17 @@ namespace alternatingGamesParser {
 	auto compareLess = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) < at_c<1>(x3::_attr(ctx));
 	};
-	auto compareMore = [](auto& ctx) {
+	auto compareGreater = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) > at_c<1>(x3::_attr(ctx));
 	};
-	auto compareEqual = [](auto& ctx) {
+	auto compareEquivalent = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == 0;
+	};
+	auto compareUnequivalent = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) != 0;
+	};
+	auto compareEqual = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) == at_c<1>(x3::_attr(ctx));
 	};
 	auto compareUnequal = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) != at_c<1>(x3::_attr(ctx));
@@ -222,25 +228,29 @@ namespace alternatingGamesParser {
 
 	const auto boolean_def =
 			(abstractGame >> '<' >> abstractGame)[compareLess]
-			| (abstractGame >> '>' >> abstractGame)[compareMore]
-			| (abstractGame >> "==" > abstractGame)[compareEqual]
-			| (abstractGame >> "=" > abstractGame)[compareEqual]
-			| (abstractGame >> "!=" > abstractGame)[compareUnequal]
+			| (abstractGame >> '>' >> abstractGame)[compareGreater]
+			| (abstractGame >> "==" > abstractGame)[compareEquivalent]
+			| (abstractGame >> "=" > abstractGame)[compareEquivalent]
+			| (abstractGame >> "!=" > abstractGame)[compareUnequivalent]
 			| (abstractGame >> "<=" > abstractGame)[compareLessEqual]
 			| (abstractGame >> ">=" > abstractGame)[compareGreaterEqual]
 			| (abstractGame >> "||" > abstractGame)[compareIncomparable]
 			| (abstractGame >> "|>" > abstractGame)[compareGreaterIncomparable]
 			| (abstractGame >> "<|" > abstractGame)[compareLessIncomparable]
-			| (abstractGame[abstractIsCanonical] >> ".IsInCanonicalForm()")
 			| (string >> '<' > string)[compareLess]
-			| (string >> '>' > string)[compareMore]
+			| (string >> '>' > string)[compareGreater]
 			| (string >> '=' > string)[compareEqual]
 			| (string >> "==" > string)[compareEqual]
 			| (string >> "!=" > string)[compareUnequal]
 			| (winner >> '=' > winner)[compareEqual]
 			| (winner >> "==" > winner)[compareEqual]
 			| (winner >> "!=" > winner)[compareUnequal]
+			| (winner >> "<" >> winner)[compareLess]
+			| (winner >> "<=" > winner)[compareLessEqual]
+			| (winner >> ">=" > winner)[compareGreaterEqual]
+			| (winner >> ">" >> winner)[compareGreater]
 			| (abstractGame >> ".IsNumber()")[abstractIsNumber]
+			| (abstractGame >> ".IsInCanonicalForm()")[abstractIsCanonical]
 	;
 
 	const auto outputString_def =

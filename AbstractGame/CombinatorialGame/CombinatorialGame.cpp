@@ -148,13 +148,13 @@ std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& ot
 		return leftGame.cacheBlock.compareCache.at(rightGame.getId());
 	// If we already know that this game is a number without doing additional calculations,
 	// just compare the numbers.
-	if (leftGame.cacheBlock.isNumber && leftGame.isNumber() && rightGame.cacheBlock.isNumber && rightGame.isNumber())
+	if (leftGame.cacheBlock.isNumber.has_value() && leftGame.isNumber() && rightGame.cacheBlock.isNumber.has_value() && rightGame.isNumber())
 		return leftGame.getNumberValue() <=> rightGame.getNumberValue();
 	AlternatingId differenceGame;
 	bool swappedGames = false;
-	if (leftGame.getBirthday() < rightGame.getBirthday())
+	if (leftGame.getBirthday() < rightGame.getBirthday()) {
 		differenceGame = (leftGame - rightGame).getId();
-	else {
+	} else {
 		differenceGame = (rightGame - leftGame).getId();
 		swappedGames = true;
 	}

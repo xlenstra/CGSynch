@@ -20,5 +20,8 @@ std::string winningPlayerGetDisplayString(const WinningPlayer& winningPlayer);
 
 std::ostream& operator<<(std::ostream &os, const WinningPlayer& winningPlayer);
 
+std::partial_ordering operator<=>(const WinningPlayer& winningPlayer1, const WinningPlayer& winningPlayer2);
+
+
 
 #endif //CGSYNCH_GAMEUTIL_H
