@@ -1,5 +1,5 @@
 //
-// Created by ardour on 15-02-22.
+// Created by Xander Lenstra on 15-02-22.
 //
 
 #include <regex>
@@ -42,8 +42,4 @@ std::string MathRuleset::getDisplayString() {
 bool MathRuleset::tryToDetermineAlternatingId() {
 	return AbstractGame::tryToDetermineAlternatingId();
 }
-
-//void MathRuleset::setOptions(std::pair<std::vector<MathPosition>, std::vector<MathPosition>>) {
-//
-//}
 

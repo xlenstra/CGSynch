@@ -1,17 +1,11 @@
 //
-// Created by ardour on 25-03-22.
+// Created by Xander Lenstra on 25-03-22.
 //
 
 #include <boost/spirit/home/x3.hpp>
 #include "Hackenbush.h"
 
-// Initialize static member variables
-template<> std::shared_ptr<GameDatabase<HackenbushPosition, Hackenbush>> GameDatabase<HackenbushPosition, Hackenbush>::instance = nullptr;
-template<> std::vector<std::shared_ptr<Hackenbush>> GameDatabase<HackenbushPosition, Hackenbush>::database = {};
-template<> std::unordered_map<HackenbushPosition, GameId> GameDatabase<HackenbushPosition, Hackenbush>::transpositionTable = {};
-// Get a global variable for the actual database
-// TODO: inline this
-const std::shared_ptr<GameDatabase<HackenbushPosition, Hackenbush>> hackenbushDatabase = GameDatabase<HackenbushPosition, Hackenbush>::getInstance();
+CreateDatabase(HackenbushPosition, Hackenbush, hackenbushDatabase);
 
 Hackenbush::Hackenbush(const HackenbushPosition& position) : position(position) {}
 
@@ -28,30 +22,15 @@ void Hackenbush::exploreAlternating() {
 		position.removeEdge(nodeFrom, nodeTo);
 		Hackenbush newGame = Hackenbush(position.getSubGraphConnectedToGround(nodeFrom, nodeTo));
 		if (colour == PieceColour::BLUE) {
-			leftOptions.insert(hackenbushDatabase->getOrInsertGameId(newGame));
+			leftOptions.push_back(hackenbushDatabase->getOrInsertGameId(newGame));
 		} else {
-			rightOptions.insert(hackenbushDatabase->getOrInsertGameId(newGame));
+			rightOptions.push_back(hackenbushDatabase->getOrInsertGameId(newGame));
 		}
 		position.addEdge(nodeFrom, nodeTo, colour);
 	}
 }
 
 void Hackenbush::exploreSynched() {
-	synchedOptions.leftMoveCount = 0;
-	synchedOptions.rightMoveCount = 0;
-	for (const auto& [nodeFrom, nodeTo, colour] : position.getAllEdges()) {
-		switch (colour) {
-			case PieceColour::BLUE:
-				++synchedOptions.leftMoveCount;
-				break;
-			case PieceColour::RED:
-				++synchedOptions.rightMoveCount;
-				break;
-			default:
-				break;
-		}
-	}
-
 	for (const auto& [nodeFromBlue, nodeToBlue, colourBlue] : position.getAllEdges()) {
 		if (colourBlue != PieceColour::BLUE) continue;
 		HackenbushPosition positionCopy = position;
@@ -70,12 +49,17 @@ void Hackenbush::exploreSynched() {
 
 		synchedOptions.options.push_back(rightOptionsFromHere);
 	}
-
-	synchedExplored = true;
 }
 
 std::unordered_set<NormalGraph> Hackenbush::getTranspositions() const {
 	return { position };
+}
+
+bool Hackenbush::determineDecidedSynchedValue() {
+	std::pair<size_t, size_t> edgeColours = position.getAllEdgeColours();
+	if (edgeColours.first * edgeColours.second != 0) return false;
+	synchedId = SGDatabase::getInstance().getDecidedGameWithValueId((double) ((long long) edgeColours.first - (long long) edgeColours.second));
+	return true;
 }
 
 Hackenbush& createHackenbushPosition(const int& nodeSize, const std::string& inputString) {

@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 23/02/2022.
+// Created by Xander Lenstra on 23/02/2022.
 //
 
 #ifndef CGSYNCH_2_DYADICRATIONAL_H
@@ -9,11 +9,11 @@
 
 class DyadicRational {
 public:
-	int numerator;
-    int denominator;
+	long long numerator;
+	long long denominator;
     DyadicRational() = delete;
-    DyadicRational(int numerator, int denominator);
-    explicit DyadicRational(int integer);
+    DyadicRational(long long numerator, long long denominator);
+    explicit DyadicRational(long long integer);
     DyadicRational(const DyadicRational& other);
     DyadicRational& operator=(const DyadicRational& other);
 
@@ -22,19 +22,21 @@ public:
     DyadicRational operator-(const DyadicRational& other) const;
 	void operator+=(const DyadicRational& other);
 	void operator-=(const DyadicRational& other);
-    DyadicRational operator+(const int& other) const;
-    DyadicRational operator-(const int& other) const;
-	void operator +=(const int& other);
-	void operator -=(const int& other);
+
+    DyadicRational operator+(const long long& other) const;
+    DyadicRational operator-(const long long& other) const;
+	void operator +=(const long long& other);
+	void operator -=(const long long& other);
+
     std::strong_ordering operator<=>(const DyadicRational& other) const;
     bool operator==(const DyadicRational& other) const;
-    std::strong_ordering operator<=>(const int& other) const;
+    std::strong_ordering operator<=>(const long long& other) const;
 
     DyadicRational simplify();
-    std::pair<int,int> getDatabaseVersion() { return { numerator, denominator }; }
-    bool isInteger() { return simplify().denominator == 1; }
     [[nodiscard]] DyadicRational roundToZero() const;
 };
+
+std::ostream& operator<<(std::ostream& os, const DyadicRational rational);
 
 std::optional<DyadicRational> getSimplestNumber(const DyadicRational& left, const DyadicRational& right);
 

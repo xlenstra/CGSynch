@@ -1,5 +1,5 @@
 //
-// Created by ardour on 08-02-22.
+// Created by Xander Lenstra on 08-02-22.
 //
 #pragma once
 
@@ -7,14 +7,26 @@
 #define CGSYNCH_2_COMBINATORIALGAMEDATABASE_H
 
 
-//#include <boost/bimap.hpp>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
 #include <memory>
-//#include "CombinatorialGame.h"
+#include <boost/container_hash/hash.hpp>
 #include "CombinatorialGameUtil.h"
 #include "DyadicRational.h"
+
+
+
+namespace std {
+	template<>
+	struct hash<std::pair<long long, long long>> {
+		size_t operator()(const std::pair<long long, long long>& pair) const {
+			size_t hashValue = pair.first;
+			boost::hash_combine(hashValue, pair.second);
+			return hashValue;
+		}
+	};
+}
 
 
 /** Class that implements a database for [Combinatorial Games].
@@ -32,23 +44,23 @@ public:
     /** Checks if a game with these options exists. If it does, it returns the ID of that game.
      * If it doesn't, it creates such a game and then return the new ID.
      */
-    AlternatingId getGameId(const std::unordered_set<AlternatingId>& left, const std::unordered_set<AlternatingId>& right);
+    AlternatingId getGameId(const std::set<AlternatingId>& left, const std::set<AlternatingId>& right);
 	/** Same as <code><em>getGameId</em></code>, but returns a reference to the game instead of its ID.
 	 * That is, it checks if a game with the provided left and right options exists.
 	 * If it does, it returns a reference to that game.
 	 * Otherwise, it creates that game and returns the new ID.
 	 */
-    CombinatorialGame& getGame(const std::unordered_set<AlternatingId>& left, const std::unordered_set<AlternatingId>& right);
+    CombinatorialGame& getGame(const std::set<AlternatingId>& left, const std::set<AlternatingId>& right);
 	/** Get the game corresponding to a given ID */
     CombinatorialGame& idToGame(AlternatingId id) { return *existingGames.at(id); }
 
 	/** Get the game corresponding to 0, i.e., neither player has a move */
     CombinatorialGame& getZeroGame() { return idToGame(zeroId); }
 	/** Get the game that is in canonical form and has integer value equal to <code><em>value</em></code> */
-	CombinatorialGame& getInteger(int value);
+	CombinatorialGame& getInteger(long long value);
 //	const std::unordered_map<AbstractId,int>& getSavedIntegers() { return savedIntegers; }
     /** Gets the game in canoncial form that has dyadic rational value equal to <code><em>numerator/denominator</em></code> */
-    CombinatorialGame& getDyadicRational(int numerator, int denominator);
+    CombinatorialGame& getDyadicRational(long long numerator, long long denominator);
 	CombinatorialGame& getDyadicRational(const DyadicRational& dyadicRational);
 
 
@@ -58,12 +70,14 @@ public:
 private:
 	CGDatabase();
     std::vector<std::unique_ptr<CombinatorialGame>> existingGames;
+	std::unordered_map<std::pair<std::set<AlternatingId>,std::set<AlternatingId>>, AlternatingId> setsToIdMap;
 
-    AlternatingId _getDyadicRational(int numerator, int denominator);
+    AlternatingId _getDyadicRational(long long numerator, long long denominator);
 
 	static CGDatabase instance;
-//	std::unordered_map<AbstractId,int> savedIntegers;
-//	boost::bimaps::bimap<AbstractId, int, boost::container::allocator<int>> savedIntegers;
+
+	std::unordered_map<long long, AlternatingId> savedIntegers;
+	std::unordered_map<std::pair<long long, long long>, AlternatingId> savedFractions;
 };
 
 

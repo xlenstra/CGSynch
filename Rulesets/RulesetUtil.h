@@ -1,5 +1,5 @@
 //
-// Created by ardour on 18-02-22.
+// Created by Xander Lenstra on 18-02-22.
 //
 
 #ifndef CGSYNCH_2_RULESETUTIL_H
@@ -59,9 +59,9 @@ PieceColour operator-(PieceColour piece);
 std::ostream& operator<<(std::ostream& os, const PieceColour& stone);
 
 struct SynchedOptionData {
-	size_t leftMoveCount = 0;
-	size_t rightMoveCount = 0;
 	Matrix<GameId> options {};
+	std::vector<GameId> leftOptions;
+	std::vector<GameId> rightOptions;
 };
 
 

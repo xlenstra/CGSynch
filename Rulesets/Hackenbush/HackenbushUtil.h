@@ -1,5 +1,5 @@
 //
-// Created by ardour on 25-03-22.
+// Created by Xander Lenstra on 25-03-22.
 //
 
 #ifndef CGSYNCH_2_HACKENBUSHUTIL_H

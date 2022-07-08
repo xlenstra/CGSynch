@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 31/03/2022.
+// Created by Xander Lenstra on 31/03/2022.
 //
 
 #ifndef CGSYNCH_2_SYNCHRONIZEDGAMEDATABASE_H
@@ -9,21 +9,22 @@
 
 class SGDatabase {
 public:
-	static SGDatabase& getInstance() { return instance; };
+	static SGDatabase& getInstance();
 	SGDatabase(const SGDatabase& other) = delete;
+	void operator=(const SGDatabase& other) = delete;
 
 	SynchedId getGameId(const SynchedMatrix& synchedMatrix);
-	SynchronizedGame& idToGame(const SynchedId& id);
+	SynchronizedGame& idToGame(const SynchedId& id) { return *existingGames.at(id); };
 	SynchronizedGame& getGame(const SynchedMatrix& synchedMatrix);
+
+	SynchedId getDecidedGameWithValueId(double value);
 
 private:
 	SGDatabase();
-	static SGDatabase instance;
+	static std::unique_ptr<SGDatabase> instance;
 
-	int firstUnusedId = 0;
-
-	std::vector<SynchedMatrix> matrixIds;
-	std::unordered_map<SynchedMatrix, std::unique_ptr<SynchronizedGame>> games;
+	std::vector<std::unique_ptr<SynchronizedGame>> existingGames;
+	std::unordered_map<SynchedMatrix, SynchedId> matrixToIdMap;
 };
 
 #include "SynchronousGame.h"

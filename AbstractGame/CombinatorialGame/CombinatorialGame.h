@@ -1,5 +1,5 @@
 //
-// Created by ardour on 03-02-22.
+// Created by Xander Lenstra on 03-02-22.
 //
 
 #ifndef CGSYNCH_2_COMBINATORIALGAME_H
@@ -19,15 +19,6 @@
 
 /** The cached data of each game */
 struct CGCacheBlock {
-	//CGCacheBlock(
-	//	std::string displayString = "",
-	//	WinningPlayer cachedWinner = WinningPlayer::NONE,
-	//	AbstractId canonicalFormId = -1ul,
-	//	AbstractId negativeFormId = -1ul,
-	//	const std::optional<bool>& cachedIsInteger = std::optional<bool>{},
-    //    const std::optional<bool>& isNumber = std::optional<bool>{}
-	//);
-
 	std::string displayString = "";
 	WinningPlayer cachedWinner = WinningPlayer::NONE;
 	std::optional<size_t> birthDay = {};
@@ -55,7 +46,7 @@ class CombinatorialGame {
 public:
 
     // DO NOT USE THIS! Instead, use cgDatabase.getOrInsertGame(leftOptions, rightOptions);
-    CombinatorialGame(std::unordered_set<AlternatingId> leftOptions, std::unordered_set<AlternatingId> rightOptions, AlternatingId id);
+    CombinatorialGame(std::set<AlternatingId> leftOptions, std::set<AlternatingId> rightOptions, AlternatingId id);
 	CombinatorialGame(const CombinatorialGame& other);
 
     /** Sets the cache of this game to something else.
@@ -72,9 +63,9 @@ public:
     size_t getBirthday() const;
 
     /** Get the id's of the left options of this game, which can be turned into games in the [cgDatabase] */
-	const std::unordered_set<AlternatingId>& getLeftOptions() const { return leftOptions; }
+	const std::set<AlternatingId>& getLeftOptions() const { return leftOptions; }
     /** Get the id's of the right options of this game, which can be turned into games in the <A NAME="cgDatabase"> cgDatabase</A> */
-	const std::unordered_set<AlternatingId>& getRightOptions() const { return rightOptions; }
+	const std::set<AlternatingId>& getRightOptions() const { return rightOptions; }
 
     /** Get the canonical, most simplified, form of this game */
 	CombinatorialGame& getCanonicalForm() const;
@@ -107,9 +98,8 @@ public:
 
 private:
 
-	std::unordered_set<AlternatingId> leftOptions;
-	std::unordered_set<AlternatingId> rightOptions;
-//    std::unordered_set<AbstractId> parents;
+	std::set<AlternatingId> leftOptions;
+	std::set<AlternatingId> rightOptions;
     const size_t id;
 
 	/** Only caches results, so does not change the data structure */
@@ -118,8 +108,6 @@ private:
     /** Returns the canonical form if it is already calculated; otherwise returns this */
 	CombinatorialGame& getSimplestAlreadyCalculatedForm() const;
     bool _isNumber() const;
-
-	void copyCacheToCanonicalForm() const;
 
 	bool isCanonicalNumber() const;
 

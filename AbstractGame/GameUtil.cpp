@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 01/06/2022.
+// Created by Xander Lenstra on 01/06/2022.
 //
 
 #include "GameUtil.h"

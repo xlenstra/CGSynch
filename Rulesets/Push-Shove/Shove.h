@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 09/03/2022.
+// Created by Xander Lenstra on 09/03/2022.
 //
 
 #include "../AbstractGame.h"
@@ -17,6 +17,7 @@ public:
 	void exploreAlternating() override;
 	bool tryToDetermineAlternatingId() override;
 	void exploreSynched() override;
+	bool determineDecidedSynchedValue() override;
 
 private:
 	PushShovePosition position;
@@ -25,7 +26,7 @@ private:
 
 Shove& createShovePosition(const std::string& inputString);
 
-extern std::shared_ptr<GameDatabase<PushShovePosition, Shove>> shoveDatabase;
+extern const std::shared_ptr<GameDatabase<PushShovePosition, Shove>> shoveDatabase;
 
 
 

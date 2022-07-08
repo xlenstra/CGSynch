@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 09/03/2022.
+// Created by Xander Lenstra on 09/03/2022.
 //
 
 #include <utility>
@@ -8,13 +8,7 @@
 #include "Shove.h"
 #include "CombinatorialGame/CombinatorialGame.h"
 
-// Initialize static member variables
-template<> std::shared_ptr<GameDatabase<PushShovePosition, Shove>> GameDatabase<PushShovePosition, Shove>::instance = nullptr;
-template<> std::vector<std::shared_ptr<Shove>> GameDatabase<PushShovePosition, Shove>::database = {};
-template<> std::unordered_map<PushShovePosition, GameId> GameDatabase<PushShovePosition, Shove>::transpositionTable = {};
-// Get a global variable for the actual database
-// TODO: inline this
-std::shared_ptr<GameDatabase<PushShovePosition, Shove>> shoveDatabase = GameDatabase<PushShovePosition, Shove>::getInstance();
+CreateDatabase(PushShovePosition, Shove, shoveDatabase);
 
 Shove::Shove(PushShovePosition position) : position(std::move(position)) {
 	while (!this->position.empty() && this->position.back() == PieceColour::NONE) {
@@ -52,14 +46,13 @@ void Shove::exploreAlternating() {
 		std::copy(position.begin()+1, currentSquareIt+1, positionCopy.begin());
 		positionCopy[i] = PieceColour::NONE;
 		if (*currentSquareIt == PieceColour::BLUE) {
-			leftOptions.insert(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
+			leftOptions.push_back(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
 		} else {
-			rightOptions.insert(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
+			rightOptions.push_back(shoveDatabase->getOrInsertGameId(Shove(positionCopy)));
 		}
 
 		++currentSquareIt;
 	}
-	alternatingExplored = true;
 }
 
 void Shove::exploreSynched() {
@@ -71,8 +64,6 @@ void Shove::exploreSynched() {
 		else if (position[i] == PieceColour::RED)
 			rightOptions.push_back(i);
 	}
-	synchedOptions.leftMoveCount = leftOptions.size();
-	synchedOptions.rightMoveCount = rightOptions.size();
 
 	for (const auto& leftOption : leftOptions) {
 		std::vector<GameId> blueOptions;
@@ -89,8 +80,6 @@ void Shove::exploreSynched() {
 		}
 		synchedOptions.options.push_back(blueOptions);
 	}
-
-	synchedExplored = true;
 }
 
 // Source: LiP
@@ -128,9 +117,9 @@ bool Shove::tryToDetermineAlternatingId() {
 	}
 
 	// So now we have ended with two pieces of different colour. Next, we use the general formula.
-	int denominator = 1; // r
+	long long denominator = 1; // r
 	while (!positionWithoutEmpties.empty()) {
-		int numerator = pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
+		long long numerator = pieceColourToSign(positionWithoutEmpties.back()) * (int) simplifiedPosition.size();
 		gameValue += DyadicRational(numerator, denominator);
 		positionWithoutEmpties.pop_back();
 		simplifiedPosition.pop_back();
@@ -138,8 +127,33 @@ bool Shove::tryToDetermineAlternatingId() {
 			simplifiedPosition.pop_back();
 		}
 		denominator *= 2;
+		if (denominator >= 4294967296ll) {
+			std::cout << "Automatic shove value calculation failed; position has too large a denominator as a fraction. Trying manual search." << std::endl;
+			return false;
+		}
 	}
 	alternatingId = CGDatabase::getInstance().getDyadicRational(gameValue).getId();
+	return true;
+}
+
+bool Shove::determineDecidedSynchedValue() {
+	long long lastRedPos = -1;
+	long long lastBluePos = -1;
+	for (size_t i = 0; i < position.size(); ++i) {
+		switch (position[i]) {
+			case PieceColour::BLUE:
+				lastBluePos = i;
+				break;
+			case PieceColour::RED:
+				lastRedPos = i;
+				break;
+			case PieceColour::NONE:
+				break;
+		}
+		if (lastBluePos != -1 && lastRedPos != -1)
+			return false;
+	}
+	synchedId = SGDatabase::getInstance().getDecidedGameWithValueId((double) (lastBluePos - lastRedPos));
 	return true;
 }
 

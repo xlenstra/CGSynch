@@ -1,5 +1,5 @@
 //
-// Created by ardour on 10-05-22.
+// Created by Xander Lenstra on 10-05-22.
 //
 
 #ifndef CGSYNCH_2_GUROBISOLVER_H

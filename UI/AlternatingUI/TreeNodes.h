@@ -1,19 +1,20 @@
 //
-// Created by ardour on 07-04-22.
+// Created by Xander Lenstra on 07-04-22.
 //
 
 #ifndef CGSYNCH_2_TREENODES_H
 #define CGSYNCH_2_TREENODES_H
 
+#include <utility>
 #include <vector>
 #include "CombinatorialGame/CombinatorialGameUtil.h"
 
 namespace alternatingGamesParser {
 	struct SpiritParserTreeNode {
-		SpiritParserTreeNode* rightChild = nullptr;
-		virtual ~SpiritParserTreeNode() { delete rightChild; }
+		std::shared_ptr<SpiritParserTreeNode> rightChild = nullptr;
+		virtual ~SpiritParserTreeNode() = default;
 
-		void setRightChild(SpiritParserTreeNode* newChild) { rightChild = newChild; }
+		void setRightChild(std::shared_ptr<SpiritParserTreeNode> newChild) { rightChild = std::move(newChild); }
 		virtual void setLeftChild(AlternatingId newChild) { auto var = newChild; newChild = var; };
 		virtual AlternatingId explore(AlternatingId parent) = 0;
 	};

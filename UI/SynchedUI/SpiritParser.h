@@ -1,5 +1,5 @@
 //
-// Created by ardour on 22-05-22.
+// Created by Xander Lenstra on 22-05-22.
 //
 
 #ifndef CGSYNCH_SPIRITPARSER_H

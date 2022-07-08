@@ -1,5 +1,5 @@
 //
-// Created by ardour on 22-05-22.
+// Created by Xander Lenstra on 22-05-22.
 //
 
 #ifndef CGSYNCH_MATRIX_H
@@ -81,8 +81,8 @@ void Matrix<T>::push_back(const std::vector<T>& newRow) {
 	data.push_back(newRow);
 }
 
-template<typename value_type>
-std::ostream& operator<<(std::ostream& os, const Matrix<value_type>& matrix) {
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
 	for (const auto& row : matrix) {
 		for (const auto& value : row) {
 			os << value << ',';

@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 09/03/2022.
+// Created by Xander Lenstra on 09/03/2022.
 //
 
 #ifndef CGSYNCH_2_STACKCHERRIES_H
@@ -32,8 +32,8 @@ public:
 	void exploreAlternating() override;
 	StackCherriesPosition getAnyTransposition() const override;
 	std::unordered_set<StackCherriesPosition> getTranspositions() const override;
-	//GameId getIdOrInsertIntoDatabase() override;
 	void exploreSynched() override;
+	bool determineDecidedSynchedValue() override;
 
 private:
 	StackCherriesPosition position;
@@ -41,6 +41,9 @@ private:
 
 StackCherries& createStackCherriesPosition(const std::string& inputString);
 
-extern std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherries>> stackCherriesDatabase;
+namespace synchedGamesParser {
+	extern std::set<std::string> rulesetsForWhichUndecidableErrorWasShown;
+	extern bool ignoreNonSeparable;
+}
 
 #endif //CGSYNCH_2_STACKCHERRIES_H

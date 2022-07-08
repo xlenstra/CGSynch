@@ -1,5 +1,5 @@
 //
-// Created by ardour on 15-02-22.
+// Created by Xander Lenstra on 15-02-22.
 //
 
 #ifndef CGSYNCH_2_RULESETMATH_H
@@ -29,8 +29,6 @@ public:
 	std::unordered_set<std::string> getTranspositions() const override;
 	std::string getDisplayString() override;
 	bool tryToDetermineAlternatingId() override;
-
-	//void setOptions(std::pair<std::vector<MathPosition>, std::vector<MathPosition>>);
 
 private:
 	MathPosition position;

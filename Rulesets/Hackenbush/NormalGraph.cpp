@@ -1,5 +1,5 @@
 //
-// Created by ardour on 17-03-22.
+// Created by Xander Lenstra on 17-03-22.
 //
 
 #include "NormalGraph.h"
@@ -82,6 +82,9 @@ std::pair<size_t, size_t> NormalGraph::getAllEdgeColours() const {
 		edgeColours.first += colours.first;
 		edgeColours.second += colours.second;
 	}
+	// Divide by two as each edge was counted once from each node it's connected to.
+	edgeColours.first /= 2;
+	edgeColours.second /= 2;
 	return edgeColours;
 }
 
@@ -161,12 +164,6 @@ NormalGraph NormalGraph::getSubGraphConnectedToGround(NodeId from, NodeId to) co
 				reachableUnvisitedNodes.push_back(i);
 		}
 	}
-
-//	std::cout << "nodeIdTranslation" << std::endl;
-//	for (const auto& i : nodeIdTranslation) {
-//		std::cout << i << ",";
-//	}
-//	std::cout << std::endl;
 
 	subGraph.resizeNodeCount(nextUnusedNodeId);
 	for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {

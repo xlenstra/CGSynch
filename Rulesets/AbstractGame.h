@@ -1,5 +1,5 @@
 //
-// Created by ardour on 15-02-22.
+// Created by Xander Lenstra on 15-02-22.
 //
 
 #ifndef CGSYNCH_2_ABSTRACTGAME_H
@@ -28,13 +28,13 @@ class AbstractGame {
 public:
 
 	/** Get the left and right options of this game */
-	virtual std::unordered_set<GameId> getLeftOptions();
-	virtual std::unordered_set<GameId> getRightOptions();
+	virtual std::vector<GameId> getLeftOptions();
+	virtual std::vector<GameId> getRightOptions();
 
 	virtual SynchedOptionData getSynchedOptions();
 
 	/** Get a string of the position of this game */
-	virtual std::string getDisplayString() = 0;
+	virtual std::string getDisplayString() { return ""; };
 
 	/** Gets any transposition; used for checking if it is in the transposition table */
 	virtual Position getAnyTransposition() const = 0;
@@ -50,7 +50,7 @@ public:
 	bool hasBeenExploredSynched() { return synchedExplored; }
 
 	/** Determine the matrix of synchronized options of this position. Does not recursively exploreAlternating its options */
-	virtual void exploreSynched() {};
+	virtual void exploreSynched() = 0;
 
 	/** Returns the id of the abstract form of this game, or -1 if it has not been calculated yet */
 	AlternatingId getAlternatingId() { return alternatingId; }
@@ -64,23 +64,22 @@ public:
 	virtual bool tryToDetermineAlternatingId() { return false; }
 
 	SynchedId getSynchedId() { return synchedId; }
-	virtual void setSynchedId(SynchedId id) { synchedId = id; }
+	void setSynchedId(SynchedId id) { synchedId = id; }
 	virtual bool tryToDetermineSynchedId() { return false; }
+	virtual bool determineDecidedSynchedValue() { return false; }
 
 	/** Sets the ID of this game in the corresponding database */
 	void setGameId(GameId id) { gameId = id; }
 
 	GameId getGameId() const { return gameId; }
 
-	//virtual void determineAbstractForm() { getAbstractFormId<Position, AbstractGame>(this); }
-
 protected:
 	AbstractGame() = default;
 
 	bool alternatingExplored = false;
 	bool synchedExplored = false;
-	std::unordered_set<GameId> leftOptions {};
-	std::unordered_set<GameId> rightOptions {};
+	std::vector<GameId> leftOptions {};
+	std::vector<GameId> rightOptions {};
 	SynchedOptionData synchedOptions;
 	GameId gameId = -1ul;
 	AlternatingId alternatingId = -1;
@@ -88,25 +87,32 @@ protected:
 	std::string displayString;
 };
 
-
-
 // Templated class, so member functions need to go here
 
 template<isPosition Position>
-std::unordered_set<GameId> AbstractGame<Position>::getLeftOptions() {
-	if (!alternatingExplored) exploreAlternating();
+std::vector<GameId> AbstractGame<Position>::getLeftOptions() {
+	if (!alternatingExplored) {
+		exploreAlternating();
+		alternatingExplored = true;
+	}
 	return leftOptions;
 }
 
 template<isPosition Position>
-std::unordered_set<GameId> AbstractGame<Position>::getRightOptions() {
-	if (!alternatingExplored) exploreAlternating();
+std::vector<GameId> AbstractGame<Position>::getRightOptions() {
+	if (!alternatingExplored) {
+		exploreAlternating();
+		alternatingExplored = true;
+	}
 	return rightOptions;
 }
 
 template<typename Position>
 SynchedOptionData AbstractGame<Position>::getSynchedOptions() {
-	if (!synchedExplored) exploreSynched();
+	if (!synchedExplored) {
+		exploreSynched();
+		synchedExplored = true;
+	}
 	return synchedOptions;
 }
 
@@ -115,8 +121,8 @@ template<isPosition Position, isGame<Position> Game>
 AlternatingId getAlternatingId(Game& game) {
 	if (game.getAlternatingId() != -1ul) return game.getAlternatingId();
 	if (game.tryToDetermineAlternatingId()) return game.getAlternatingId();
-	std::unordered_set<AlternatingId> leftOptions;
-	std::unordered_set<AlternatingId> rightOptions;
+	std::set<AlternatingId> leftOptions;
+	std::set<AlternatingId> rightOptions;
 	GameDatabase<Position, Game>& database = *GameDatabase<Position, Game>::getInstance();
 	for (const auto& leftPosition : game.getLeftOptions()) {
 		leftOptions.insert(getAlternatingId<Position, Game>(database.idToGame(leftPosition)));
@@ -133,20 +139,39 @@ SynchedId getSynchedId(Game& game) {
 	if (game.getSynchedId() != -1ul) return game.getSynchedId();
 	if (game.tryToDetermineSynchedId()) return game.getSynchedId();
 	SynchedOptionData synchedOptions = game.getSynchedOptions();
+	if (synchedOptions.options.getHeight() * synchedOptions.options.getWidth() == 0) {
+		if (!game.determineDecidedSynchedValue()) {
+			throw std::logic_error("Could not determine value of a decided game.");
+		}
+		return game.getSynchedId();
+	}
 	SynchedMatrix synchedMatrix;
 	synchedMatrix.matrix = Matrix(synchedOptions.options.getWidth(), synchedOptions.options.getHeight(), -1ul);
-	synchedMatrix.leftMoveCount = synchedOptions.leftMoveCount;
-	synchedMatrix.rightMoveCount = synchedOptions.rightMoveCount;
 	GameDatabase<Position, Game>& database = *GameDatabase<Position, Game>::getInstance();
-	for (size_t row = 0; row < synchedOptions.leftMoveCount; ++row) {
-		for (size_t column = 0; column < synchedOptions.rightMoveCount; ++column) {
+	for (size_t row = 0; row < synchedOptions.options.size(); ++row) {
+		for (size_t column = 0; column < synchedOptions.options[row].size(); ++column) {
 			auto id = getSynchedId<Position, Game>(database.idToGame(synchedOptions.options[row][column]));
 			synchedMatrix.matrix[row][column] = id;
 		}
 	}
+	for (const auto& leftPosition : game.getLeftOptions()) {
+		synchedMatrix.leftOptions.push_back(getSynchedId<Position, Game>(database.idToGame(leftPosition)));
+	}
+	for (const auto& rightPosition : game.getRightOptions()) {
+		synchedMatrix.rightOptions.push_back(getSynchedId<Position, Game>(database.idToGame(rightPosition)));
+	}
 	game.setSynchedId(SGDatabase::getInstance().getGameId(synchedMatrix));
 	return game.getSynchedId();
 }
+
+#define CreateDatabase(PositionName, GameName, databaseName)                                                                   \
+	/* Initialize static member variables */                                                                                   \
+	template<> std::shared_ptr<GameDatabase<PositionName, GameName>> GameDatabase<PositionName, GameName>::instance = nullptr; \
+    template<> std::vector<std::shared_ptr<GameName>> GameDatabase<PositionName, GameName>::database = {};                     \
+    template<> std::unordered_map<PositionName, GameId> GameDatabase<PositionName, GameName>::transpositionTable = {};         \
+    /* Get a global variable for the actual database. Should probably be inlined */                                            \
+    const std::shared_ptr<GameDatabase<PositionName, GameName>> databaseName = GameDatabase<PositionName, GameName>::getInstance();
+
 
 
 #endif //CGSYNCH_2_ABSTRACTGAME_H

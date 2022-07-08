@@ -20,7 +20,7 @@ message(STATUS "License file: $ENV{GRB_LICENSE_FILE}")
 find_package(GUROBI REQUIRED)
 
 include_directories(${GUROBI_INCLUDE_DIRS})
-include_directories(AbstractGame Rulesets UI)
+include_directories(AbstractGame Rulesets UI Util)
 
 # list source files here
 set(sources main.cpp

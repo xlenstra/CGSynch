@@ -1,5 +1,5 @@
 //
-// Created by ardour on 03-02-22.
+// Created by Xander Lenstra on 03-02-22.
 //
 
 #include <unordered_set>
@@ -7,20 +7,9 @@
 #include <iostream>
 #include "CombinatorialGame.h"
 
-//CGCacheBlock::CGCacheBlock(
-//	std::string displayString,
-//	WinningPlayer cachedWinner,
-//	AbstractId canonicalFormId,
-//	AbstractId negativeFormId,
-//	const std::optional<bool>& cachedIsInteger,
-//	const std::optional<bool>& isNumber
-//) :
-//	displayString(std::move(displayString)), cachedWinner(cachedWinner), canonicalFormId(canonicalFormId),
-//	negativeFormId(negativeFormId), cachedIsInteger(cachedIsInteger), isNumber(isNumber) {}
-
 CombinatorialGame::CombinatorialGame(
-	std::unordered_set<AlternatingId> leftOptions,
-	std::unordered_set<AlternatingId> rightOptions,
+	std::set<AlternatingId> leftOptions,
+	std::set<AlternatingId> rightOptions,
 	AlternatingId id
 ) : leftOptions(std::move(leftOptions)), rightOptions(std::move(rightOptions)), id(id) {}
 
@@ -68,13 +57,11 @@ WinningPlayer CombinatorialGame::getWinner() const {
 CombinatorialGame& CombinatorialGame::operator-() const {
 	if (id == cgDatabase.zeroId) return cgDatabase.getZeroGame();
 	if (cacheBlock.negativeFormId != -1ul) return ID_TO_GAME(cacheBlock.negativeFormId);
-	std::unordered_set<AlternatingId> newRightOptions {};
-	newRightOptions.reserve(leftOptions.size());
+	std::set<AlternatingId> newRightOptions {};
 	for (const auto& leftOption : leftOptions) {
 		newRightOptions.insert((-ID_TO_GAME(leftOption)).getId());
 	}
-	std::unordered_set<AlternatingId> newLeftOptions;
-	newLeftOptions.reserve(rightOptions.size());
+	std::set<AlternatingId> newLeftOptions;
 	for (const auto& rightOption: rightOptions) {
 		newLeftOptions.insert((-ID_TO_GAME(rightOption)).getId());
 	}
@@ -88,10 +75,11 @@ CombinatorialGame& CombinatorialGame::operator+(const CombinatorialGame& other) 
 	if (other.getId() == cacheBlock.negativeFormId) return cgDatabase.getZeroGame();
 	if (cacheBlock.additionCache.contains(other.getId()))
 		return ID_TO_GAME(cacheBlock.additionCache[other.getId()]);
-	std::unordered_set<AlternatingId> newLeftOptions {};
-	std::unordered_set<AlternatingId> newRightOptions {};
-	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
-	newRightOptions.reserve(rightOptions.size() + other.rightOptions.size());
+	if (cacheBlock.isNumber.has_value() && other.cacheBlock.isNumber.has_value() && isNumber() && other.isNumber()) {
+		return cgDatabase.getDyadicRational(*getNumberValue() + *other.getNumberValue());
+	}
+	std::set<AlternatingId> newLeftOptions {};
+	std::set<AlternatingId> newRightOptions {};
 	for (const auto& leftOption : leftOptions) {
 		newLeftOptions.insert((ID_TO_GAME(leftOption) + other).getId());
 	}
@@ -115,10 +103,11 @@ CombinatorialGame& CombinatorialGame::operator-(const CombinatorialGame& other) 
 	if (id == other.getId()) return cgDatabase.getZeroGame();
 	if (cacheBlock.subtractionCache.contains(other.getId()))
 		return ID_TO_GAME(cacheBlock.subtractionCache[other.getId()]);
-	std::unordered_set<AlternatingId> newLeftOptions {};
-	std::unordered_set<AlternatingId> newRightOptions {};
-	newLeftOptions.reserve(leftOptions.size() + other.leftOptions.size());
-	newRightOptions.reserve(rightOptions.size() + other.rightOptions.size());
+	if (cacheBlock.isNumber.has_value() && other.cacheBlock.isNumber.has_value() && isNumber() && other.isNumber()) {
+		return cgDatabase.getDyadicRational(*getNumberValue() - *other.getNumberValue());
+	}
+	std::set<AlternatingId> newLeftOptions {};
+	std::set<AlternatingId> newRightOptions {};
 	for (const auto& leftOption : leftOptions) {
 		newLeftOptions.insert((ID_TO_GAME(leftOption) - other).getId());
 	}
@@ -133,6 +122,9 @@ CombinatorialGame& CombinatorialGame::operator-(const CombinatorialGame& other) 
 	}
 	CombinatorialGame& newGame = GET_GAME(newLeftOptions, newRightOptions);
 	cacheBlock.subtractionCache[other.getId()] = newGame.getId();
+	if (newGame.cacheBlock.negativeFormId != -1ul) {
+		other.cacheBlock.subtractionCache[getId()] = newGame.cacheBlock.negativeFormId;
+	}
 	return newGame;
 }
 
@@ -148,8 +140,8 @@ std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& ot
 		return leftGame.cacheBlock.compareCache.at(rightGame.getId());
 	// If we already know that this game is a number without doing additional calculations,
 	// just compare the numbers.
-	if (leftGame.cacheBlock.isNumber.has_value() && leftGame.isNumber() && rightGame.cacheBlock.isNumber.has_value() && rightGame.isNumber())
-		return leftGame.getNumberValue() <=> rightGame.getNumberValue();
+	if (leftGame.cacheBlock.isNumber.has_value() && rightGame.cacheBlock.isNumber.has_value() && leftGame.isNumber() && rightGame.isNumber())
+		return *leftGame.getNumberValue() <=> *rightGame.getNumberValue();
 	AlternatingId differenceGame;
 	bool swappedGames = false;
 	if (leftGame.getBirthday() < rightGame.getBirthday()) {
@@ -257,8 +249,8 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() const {
 	if (cacheBlock.canonicalFormId != AlternatingId(-1)) return ID_TO_GAME(cacheBlock.canonicalFormId);
 	if (getWinner() == WinningPlayer::PREVIOUS) return ID_TO_GAME(0);
 
-	std::unordered_set<AlternatingId> newLeftOptions {};
-	std::unordered_set<AlternatingId> newRightOptions {};
+	std::set<AlternatingId> newLeftOptions {};
+	std::set<AlternatingId> newRightOptions {};
 	// First we convert all our options to canonical form
 	for (const auto& leftId : leftOptions) {
 		newLeftOptions.insert(ID_TO_GAME(leftId).getCanonicalForm().getId());
@@ -268,8 +260,8 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() const {
 	}
 
 	// Then we delete any dominated positions
-	std::unordered_set<AlternatingId> undominatedLeftOptions {};
-	std::unordered_set<AlternatingId> undominatedRightOptions {};
+	std::set<AlternatingId> undominatedLeftOptions {};
+	std::set<AlternatingId> undominatedRightOptions {};
 	for (const auto& leftId : newLeftOptions) {
 		bool shouldAdd = true;
 		for (const auto& otherLeftId : newLeftOptions) {
@@ -322,8 +314,8 @@ CombinatorialGame& CombinatorialGame::getCanonicalForm() const {
 
 
 	// Lastly, we do reversibility
-	std::unordered_set<AlternatingId> finalLeftOptions {};
-	std::unordered_set<AlternatingId> finalRightOptions {};
+	std::set<AlternatingId> finalLeftOptions {};
+	std::set<AlternatingId> finalRightOptions {};
 	bool anyChangesWithReversibility = false;
 	for (const auto& leftId : undominatedLeftOptions) {
 		CombinatorialGame& leftOption = ID_TO_GAME(leftId);
@@ -432,7 +424,7 @@ std::optional<DyadicRational> CombinatorialGame::getNumberValue() const {
 		}
 	} else {
 		// If we're not a canonical number, but we are in canonical form, that must mean we're a dyadic rational.
-		// Calculate our value using the simples number theorem.
+		// Calculate our value using the simplest number theorem.
 		auto& leftGame = ID_TO_GAME(*leftOptions.begin());
 		auto& rightGame = ID_TO_GAME(*rightOptions.begin());
 		auto leftNumber = *leftGame.getNumberValue();

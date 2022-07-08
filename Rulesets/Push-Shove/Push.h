@@ -1,6 +1,7 @@
 //
-// Created by s1935534 on 09/03/2022.
+// Created by Xander Lenstra on 09/03/2022.
 //
+#pragma once
 
 #ifndef CGSYNCH_2_PUSH_H
 #define CGSYNCH_2_PUSH_H
@@ -14,18 +15,16 @@ public:
 	Push(const Push& other) = default;
 
 	std::string getDisplayString() override;
-	PushShovePosition getAnyTransposition() const override;
-	std::unordered_set<PushShovePosition> getTranspositions() const override;
+	[[nodiscard]] PushShovePosition getAnyTransposition() const override;
+	[[nodiscard]] std::unordered_set<PushShovePosition> getTranspositions() const override;
 	void exploreAlternating() override;
 	void exploreSynched() override;
+	bool determineDecidedSynchedValue() override;
 
 private:
 	PushShovePosition position;
 };
 
 Push& createPushPosition(const std::string& inputString);
-
-extern std::shared_ptr<GameDatabase<PushShovePosition, Push>> pushDatabase;
-
 
 #endif //CGSYNCH_2_PUSH_H

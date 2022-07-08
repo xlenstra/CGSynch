@@ -1,5 +1,5 @@
 //
-// Created by ardour on 18-02-22.
+// Created by Xander Lenstra on 18-02-22.
 //
 
 #ifndef CGSYNCH_2_CHERRIES_H
@@ -26,9 +26,9 @@ public:
 	void exploreAlternating() override;
 	CherriesPosition getAnyTransposition() const override;
 	std::unordered_set<CherriesPosition> getTranspositions() const override;
-//	GameId getIdOrInsertIntoDatabase() override;
 	bool tryToDetermineAlternatingId() override;
 	void exploreSynched() override;
+	bool determineDecidedSynchedValue() override;
 
 private:
 	void addTranspositionsRecursively(std::unordered_set<CherriesPosition>& transposition, std::unordered_set<size_t>& sectionsToReverse, const size_t& depth) const;
@@ -39,6 +39,11 @@ private:
 
 Cherries& createCherriesPosition(const std::string& inputString);
 
-extern std::shared_ptr<GameDatabase<CherriesPosition, Cherries>> cherriesDatabase;
+extern const std::shared_ptr<GameDatabase<CherriesPosition, Cherries>> cherriesDatabase;
+
+namespace synchedGamesParser {
+	extern std::set<std::string> rulesetsForWhichUndecidableErrorWasShown;
+	extern bool ignoreNonSeparable;
+}
 
 #endif //CGSYNCH_2_CHERRIES_H

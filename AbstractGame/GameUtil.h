@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 19/05/2022.
+// Created by Xander Lenstra on 19/05/2022.
 //
 
 #ifndef CGSYNCH_GAMEUTIL_H

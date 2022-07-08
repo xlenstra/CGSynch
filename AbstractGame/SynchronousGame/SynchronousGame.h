@@ -1,5 +1,5 @@
 //
-// Created by ardour on 03-02-22.
+// Created by Xander Lenstra on 03-02-22.
 //
 
 #ifndef CGSYNCH_2_SYNCHRONOUSGAME_H
@@ -21,12 +21,15 @@ struct SGCacheBlock {
 class SynchronizedGame {
 public:
 
+	SynchronizedGame() = delete;
 	SynchronizedGame(SynchedMatrix synchedMatrix, SynchedId id);
 
 	[[nodiscard]] SynchedId getId() const;
 	std::unordered_set<WinningPlayer> getWinners();
-	double getValue();
+	double getValue(bool printMatrix = false);
 	size_t getBirthday();
+
+	void setCache(const SGCacheBlock& other);
 
 	bool operator==(const SynchronizedGame& other);
 
@@ -35,9 +38,6 @@ private:
 	SGCacheBlock cacheBlock;
 	SynchedMatrix matrix;
 	SynchedId id;
-
-	SGDatabase& sgDatabase;
-
 };
 
 

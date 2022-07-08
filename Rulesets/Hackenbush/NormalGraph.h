@@ -1,5 +1,5 @@
 //
-// Created by ardour on 17-03-22.
+// Created by Xander Lenstra on 17-03-22.
 //
 
 #ifndef CGSYNCH_2_NORMALGRAPH_H
@@ -35,6 +35,7 @@ public:
 	void addEdge(NodeId from, NodeId to, PieceColour edgeColour);
 	void removeEdge(NodeId from, NodeId to);
 	std::set<std::tuple<NodeId, NodeId, PieceColour>> getAllEdges();
+	[[nodiscard]] std::pair<size_t, size_t> getAllEdgeColours() const;
 
 	[[nodiscard]] std::string getDisplayString() const;
 
@@ -50,7 +51,6 @@ private:
 	[[nodiscard]] std::multiset<size_t> getDegrees() const;
 	[[nodiscard]] size_t getDegree(NodeId id) const;
 	[[nodiscard]] std::pair<size_t, size_t> getEdgeColours(const NodeId& nodeId) const;
-	[[nodiscard]] std::pair<size_t, size_t> getAllEdgeColours() const;
 	[[nodiscard]] inline const NodeId& getGround() const { return groundId; }
 
 	void addVertex(const std::vector<PieceColour>& vertex, NodeId vertexId, const std::vector<NodeId>& nodeIdTranslation);

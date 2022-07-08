@@ -1,5 +1,5 @@
 //
-// Created by ardour on 18-02-22.
+// Created by Xander Lenstra on 18-02-22.
 //
 
 #include "Cherries.h"
@@ -8,13 +8,7 @@
 #include <utility>
 #include <iostream>
 
-// Initialize static member variables
-template<> std::shared_ptr<GameDatabase<CherriesPosition, Cherries>> GameDatabase<CherriesPosition, Cherries>::instance = nullptr;
-template<> std::vector<std::shared_ptr<Cherries>> GameDatabase<CherriesPosition, Cherries>::database = {};
-template<> std::unordered_map<CherriesPosition, GameId> GameDatabase<CherriesPosition, Cherries>::transpositionTable = {};
-// Get a global variable for the actual database
-// TODO: inline this
-std::shared_ptr<GameDatabase<CherriesPosition, Cherries>> cherriesDatabase = GameDatabase<CherriesPosition, Cherries>::getInstance();
+CreateDatabase(CherriesPosition, Cherries, cherriesDatabase);
 
 Cherries::Cherries(CherriesPosition position) : position(std::move(position)) {}
 
@@ -34,9 +28,9 @@ void Cherries::exploreAlternating() {
 		if (!replacement.empty())
 			copy.insert(replacement);
 		if (unconnectedLine.front() == PieceColour::BLUE) {
-			leftOptions.insert(cherriesDatabase->getOrInsertGameId(Cherries(copy)));
+			leftOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(copy)));
 		} else {
-			rightOptions.insert(cherriesDatabase->getOrInsertGameId(Cherries(copy)));
+			rightOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(copy)));
 		}
 
 		replacement = unconnectedLine;
@@ -44,9 +38,9 @@ void Cherries::exploreAlternating() {
 		if (!replacement.empty())
 			secondCopy.insert(replacement);
 		if (unconnectedLine.back() == PieceColour::BLUE) {
-			leftOptions.insert(cherriesDatabase->getOrInsertGameId(Cherries(secondCopy)));
+			leftOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(secondCopy)));
 		} else {
-			rightOptions.insert(cherriesDatabase->getOrInsertGameId(Cherries(secondCopy)));
+			rightOptions.push_back(cherriesDatabase->getOrInsertGameId(Cherries(secondCopy)));
 		}
 	}
 	alternatingExplored = true;
@@ -164,21 +158,6 @@ void Cherries::exploreSynched() {
 	}
 
 	synchedOptions.options = positions;
-	synchedOptions.leftMoveCount = blueMovesFound;
-	if (blueMovesFound > 0) {
-		synchedOptions.rightMoveCount = positions.getWidth();
-	} else {
-		synchedOptions.rightMoveCount = 0;
-		for (const auto& unconnectedLine : position) {
-			if (unconnectedLine.size() == 1) {
-				synchedOptions.rightMoveCount += 1;
-			} else {
-				synchedOptions.rightMoveCount += 2;
-			}
-		}
-	}
-
-	synchedExplored = true;
 }
 
 std::unordered_set<CherriesPosition> Cherries::getTranspositions() const {
@@ -261,23 +240,25 @@ bool Cherries::tryToDetermineAlternatingId() {
 				break;
 			}
 		}
-		for (int i = segmentSize-1; i >= 0; --i) {
+		int i = segmentSize-1;
+		for (; i >= 0; --i) {
 			if (segment[i] != lastBlockColour) {
 				lastBlockSize = segmentSize-1-i;
 				break;
 			}
 		}
+		int lastPosNotInLastBlock = i;
 		PieceColour firstLargeBlockColour = PieceColour::NONE; // x
 		PieceColour lastLargeBlockColour = PieceColour::NONE; // y
-		for (int i = 1; i < segmentSize; ++i) {
-			if (segment[i] == segment[i-1]) {
-				firstLargeBlockColour = segment[i];
+		for (int j = firstBlockSize; j <= lastPosNotInLastBlock; ++j) {
+			if (segment[j] == segment[j - 1]) {
+				firstLargeBlockColour = segment[j];
 				break;
 			}
 		}
-		for (int i = segmentSize-2; i >= 0; --i) {
-			if (segment[i] == segment[i+1]) {
-				lastLargeBlockColour = segment[i];
+		for (int j = lastPosNotInLastBlock; j >= firstBlockSize; --j) {
+			if (segment[j] == segment[j + 1]) {
+				lastLargeBlockColour = segment[j];
 				break;
 			}
 		}
@@ -289,6 +270,54 @@ bool Cherries::tryToDetermineAlternatingId() {
 		);
 	}
 	alternatingId = CGDatabase::getInstance().getInteger(value).getId();
+	return true;
+}
+
+bool Cherries::determineDecidedSynchedValue() {
+	long long whiteStoneCount = 0;
+	long long blackStoneCount = 0;
+	long long whiteEdgeCount = 0;
+	long long blackEdgeCount = 0;
+	for (const auto& component : position) {
+		for (const auto& piece : component) {
+			switch (piece) {
+				case PieceColour::BLUE:
+					++blackStoneCount;
+					break;
+				case PieceColour::RED:
+					++whiteStoneCount;
+					break;
+				case PieceColour::NONE:
+					break;
+			}
+		}
+		if (component[0] == PieceColour::BLUE) {
+			++blackEdgeCount;
+		} else {
+			++whiteEdgeCount;
+		}
+		if (component.size() > 1) {
+			if (component[component.size()-1] == PieceColour::BLUE) {
+				++blackEdgeCount;
+			} else {
+				++whiteEdgeCount;
+			}
+		}
+		if (blackEdgeCount * whiteEdgeCount != 0)
+			return false;
+	}
+	if (blackStoneCount * whiteStoneCount != 0) {
+		if (!synchedGamesParser::ignoreNonSeparable && !synchedGamesParser::rulesetsForWhichUndecidableErrorWasShown.contains("Cherries")) {
+			std::cout << "A decided Cherries position was analyzed that had an undecided child position." << std::endl
+			          << "In general, this is not allowed. However, we give a value to it anyway in case you want it." << std::endl
+					  << "This warning will only be shown once per session for this game."
+					  << "Type 'ignoreNonSeparable' to disable this warning for all games." << std::endl << std::endl << std::endl;
+			synchedGamesParser::rulesetsForWhichUndecidableErrorWasShown.insert("Cherries");
+		}
+		synchedId = SGDatabase::getInstance().getDecidedGameWithValueId(blackEdgeCount - whiteEdgeCount);
+		return true;
+	}
+	synchedId = SGDatabase::getInstance().getDecidedGameWithValueId(blackStoneCount - whiteStoneCount);
 	return true;
 }
 

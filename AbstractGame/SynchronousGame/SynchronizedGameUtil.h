@@ -1,5 +1,5 @@
 //
-// Created by ardour on 03-05-22.
+// Created by Xander Lenstra on 03-05-22.
 //
 
 #ifndef CGSYNCH_2_SYNCHRONIZEDGAMEUTIL_H
@@ -14,8 +14,8 @@ typedef size_t SynchedId;
 
 struct SynchedMatrix {
 	Matrix<SynchedId> matrix;
-	size_t leftMoveCount = 0;
-	size_t rightMoveCount = 0;
+	std::vector<SynchedId> leftOptions;
+	std::vector<SynchedId> rightOptions;
 
 	bool operator==(const SynchedMatrix& other) const = default;
 };
@@ -26,8 +26,8 @@ namespace std {
 	struct hash<SynchedMatrix> {
 		size_t operator()(const SynchedMatrix& synchedMatrix) const {
 			size_t matrixHash = boost::hash_range(synchedMatrix.matrix.begin(), synchedMatrix.matrix.end());
-			boost::hash_combine(matrixHash, synchedMatrix.leftMoveCount);
-			boost::hash_combine(matrixHash, synchedMatrix.rightMoveCount);
+			boost::hash_combine(matrixHash, boost::hash<std::vector<SynchedId>>()(synchedMatrix.leftOptions));
+			boost::hash_combine(matrixHash, boost::hash<std::vector<SynchedId>>()(synchedMatrix.rightOptions));
 			return matrixHash;
 		}
 	};

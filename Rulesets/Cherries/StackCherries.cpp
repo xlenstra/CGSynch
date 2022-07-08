@@ -1,5 +1,5 @@
 //
-// Created by s1935534 on 09/03/22.
+// Created by Xander Lenstra on 09/03/22.
 //
 
 #include "StackCherries.h"
@@ -7,13 +7,7 @@
 #include <utility>
 #include <iostream>
 
-// Initialize static member variables
-template<> std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherries>> GameDatabase<StackCherriesPosition, StackCherries>::instance = nullptr;
-template<> std::vector<std::shared_ptr<StackCherries>> GameDatabase<StackCherriesPosition, StackCherries>::database = {};
-template<> std::unordered_map<StackCherriesPosition, GameId> GameDatabase<StackCherriesPosition, StackCherries>::transpositionTable = {};
-// Get a global variable for the actual database
-// TODO: inline this
-std::shared_ptr<GameDatabase<StackCherriesPosition, StackCherries>> stackCherriesDatabase = GameDatabase<StackCherriesPosition, StackCherries>::getInstance();
+CreateDatabase(StackCherriesPosition, StackCherries, stackCherriesDatabase);
 
 StackCherries::StackCherries(StackCherriesPosition position) : position(std::move(position)) {}
 
@@ -32,12 +26,11 @@ void StackCherries::exploreAlternating() {
 		if (!replacement.empty())
 			copy.insert(replacement);
 		if (unconnectedLine.front() == PieceColour::BLUE) {
-			leftOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherries(copy)));
+			leftOptions.push_back(stackCherriesDatabase->getOrInsertGameId(StackCherries(copy)));
 		} else {
-			rightOptions.insert(stackCherriesDatabase->getOrInsertGameId(StackCherries(copy)));
+			rightOptions.push_back(stackCherriesDatabase->getOrInsertGameId(StackCherries(copy)));
 		}
 	}
-	alternatingExplored = true;
 }
 
 void StackCherries::exploreSynched() {
@@ -92,17 +85,6 @@ void StackCherries::exploreSynched() {
 			positions.push_back(redOptionsForBlueFront);
 		++positionElementCount;
 	}
-
-	synchedOptions.options = positions;
-	synchedOptions.leftMoveCount = blueMovesFound;
-	if (blueMovesFound > 0) {
-		synchedOptions.rightMoveCount = positions.getWidth();
-	} else {
-		// As each strip must start with red as it doesn't start with blue
-		synchedOptions.rightMoveCount = position.size();
-	}
-
-	synchedExplored = true;
 }
 
 std::unordered_set<StackCherriesPosition> StackCherries::getTranspositions() const {
@@ -124,6 +106,47 @@ std::string StackCherries::getDisplayString() {
 	}
 	displayString += "\b";
 	return displayString;
+}
+
+bool StackCherries::determineDecidedSynchedValue() {
+	long long whiteStoneCount = 0;
+	long long blackStoneCount = 0;
+	long long whiteEdgeCount = 0;
+	long long blackEdgeCount = 0;
+	for (const auto& component : position) {
+		for (const auto& piece : component) {
+			switch (piece) {
+				case PieceColour::BLUE:
+					++blackStoneCount;
+					break;
+				case PieceColour::RED:
+					++whiteStoneCount;
+					break;
+				case PieceColour::NONE:
+					break;
+			}
+		}
+		if (component[0] == PieceColour::BLUE) {
+			++blackEdgeCount;
+		} else {
+			++whiteEdgeCount;
+		}
+		if (blackEdgeCount * whiteEdgeCount != 0)
+			return false;
+	}
+	if (blackStoneCount * whiteStoneCount != 0) {
+		if (!synchedGamesParser::ignoreNonSeparable && !synchedGamesParser::rulesetsForWhichUndecidableErrorWasShown.contains("Cherries")) {
+			std::cout << "A decided Stack Cherries position was analyzed that had an undecided option." << std::endl
+			          << "In general, this is not allowed. However, we give a value to it anyway in case you want it." << std::endl
+			          << "This warning will only be shown once per session for this game."
+					  << "Type 'ignoreNonSeparable' to disable this warning for all games." << std::endl << std::endl << std::endl;
+			synchedGamesParser::rulesetsForWhichUndecidableErrorWasShown.insert("Cherries");
+		}
+		synchedId = SGDatabase::getInstance().getDecidedGameWithValueId(blackEdgeCount - whiteEdgeCount);
+		return true;
+	}
+	synchedId = SGDatabase::getInstance().getDecidedGameWithValueId(blackStoneCount - whiteStoneCount);
+	return true;
 }
 
 

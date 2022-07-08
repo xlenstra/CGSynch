@@ -1,6 +1,6 @@
-////
-//// Created by ardour on 08-02-22.
-////
+//
+// Created by Xander Lenstra on 08-02-22.
+//
 #include "CombinatorialGameDatabase.h"
 #include "CombinatorialGame.h"
 
@@ -9,8 +9,8 @@ CGDatabase CGDatabase::instance = CGDatabase();
 CGDatabase::CGDatabase() {
 	existingGames.emplace_back(
 		std::make_unique<CombinatorialGame>(
-			std::unordered_set<AlternatingId>(),
-			std::unordered_set<AlternatingId>(),
+			std::set<AlternatingId>(),
+			std::set<AlternatingId>(),
 			0
 		)
 	);
@@ -41,27 +41,28 @@ std::ostream& operator<<(std::ostream& os, const CGDatabase& database) {
     return os;
 }
 
-AlternatingId CGDatabase::getGameId(const std::unordered_set<AlternatingId>& left, const std::unordered_set<AlternatingId>& right) {
+AlternatingId CGDatabase::getGameId(const std::set<AlternatingId>& left, const std::set<AlternatingId>& right) {
     if (left.empty() && right.empty()) return zeroId;
-    for (const auto& game : existingGames) {
-        if (game->getLeftOptions() == left && game->getRightOptions() == right)
-			return game->getId();
-    }
+	std::pair<std::set<AlternatingId>, std::set<AlternatingId>> optionsPair = std::make_pair(left, right);
+	if (setsToIdMap.contains(optionsPair))
+		return setsToIdMap[optionsPair];
 
     existingGames.emplace_back(std::make_unique<CombinatorialGame>(left, right, existingGames.size()));
     return existingGames.size()-1;
 }
 
 CombinatorialGame& CGDatabase::getGame(
-	const std::unordered_set<AlternatingId>& left,
-	const std::unordered_set<AlternatingId>& right
+	const std::set<AlternatingId>& left,
+	const std::set<AlternatingId>& right
 ) {
     return idToGame(getGameId(left, right));
 }
 
-CombinatorialGame& CGDatabase::getInteger(int value) {
+CombinatorialGame& CGDatabase::getInteger(long long value) {
 	if (value == 0) {
 		return getZeroGame();
+	} else if (savedIntegers.contains(value)) {
+		return idToGame(savedIntegers.at(value));
 	} else if (value > 0) {
 		CombinatorialGame& newGame = getGame({getInteger(value - 1).getId()}, {});
         newGame.setCache(
@@ -76,6 +77,7 @@ CombinatorialGame& CGDatabase::getInteger(int value) {
                 DyadicRational(value, 1)
             }
         );
+		savedIntegers[value] = newGame.getId();
 		return newGame;
 	} else if (value < 0) {
 		CombinatorialGame& newGame = getGame({}, {getInteger(value + 1).getId()});
@@ -91,31 +93,53 @@ CombinatorialGame& CGDatabase::getInteger(int value) {
                 DyadicRational(value, 1)
             }
         );
+		savedIntegers[value] = newGame.getId();
 		return newGame;
 	} else {
 		throw(std::domain_error(std::to_string(value) + " is not a valid integer!"));
 	}
 }
 
-CombinatorialGame& CGDatabase::getDyadicRational(int numerator, int denominator) {
+CombinatorialGame& CGDatabase::getDyadicRational(long long numerator, long long denominator) {
     if (denominator == 0)
         throw(std::domain_error("0 is not a power of 2!"));
     if (denominator < 0)
         throw(std::domain_error(std::to_string(denominator) + " is a negative number, and thus not allowed as a denominator!"));
-    if (!std::has_single_bit((unsigned)denominator)) // bit magic
+    if (!std::has_single_bit((unsigned long long)denominator)) // bit magic
         throw(std::domain_error(std::to_string(denominator) + " is not a power of 2!"));
     return idToGame(_getDyadicRational(numerator, denominator));
 }
 
-AlternatingId CGDatabase::_getDyadicRational(int numerator, int denominator) {
-    if (denominator == 1)
-        return getInteger(numerator).getId();
-    if (numerator % 2 == 0)
-        return _getDyadicRational(numerator/2, denominator/2);
-    return getGameId(
-        { _getDyadicRational((numerator-1)/2,denominator/2) },
-        { _getDyadicRational((numerator+1)/2,denominator/2) }
-    );
+AlternatingId CGDatabase::_getDyadicRational(long long numerator, long long denominator) {
+    if (denominator == 1) {
+	    return getInteger(numerator).getId();
+    }
+
+	std::pair<long long, long long> fractionAsPair = std::make_pair(numerator, denominator);
+	if (savedFractions.contains(fractionAsPair)) {
+		return savedFractions[fractionAsPair];
+	} else if (numerator % 2 == 0) {
+		return _getDyadicRational(numerator / 2, denominator / 2);
+    } else {
+		AlternatingId newGameId = getGameId(
+		    { _getDyadicRational((numerator - 1) / 2, denominator / 2) },
+		    { _getDyadicRational((numerator + 1) / 2, denominator / 2) }
+	    );
+		savedFractions[fractionAsPair] = newGameId;
+		idToGame(newGameId).setCache(
+			{
+				{},
+				{},
+				{},
+				newGameId,
+				-1ul,
+				false,
+				true,
+				DyadicRational(numerator,denominator),
+			}
+		);
+		return newGameId;
+    }
 }
 
 CombinatorialGame& CGDatabase::getDyadicRational(const DyadicRational& dyadicRational) {

@@ -1,19 +1,12 @@
 //
-// Created by s1935534 on 09/03/2022.
+// Created by Xander Lenstra on 09/03/2022.
 //
 
 #include "Push.h"
 
 #include <utility>
 
-// Initialize static member variables
-template<> std::shared_ptr<GameDatabase<PushShovePosition, Push>> GameDatabase<PushShovePosition, Push>::instance = nullptr;
-template<> std::vector<std::shared_ptr<Push>> GameDatabase<PushShovePosition, Push>::database = {};
-template<> std::unordered_map<PushShovePosition, GameId> GameDatabase<PushShovePosition, Push>::transpositionTable = {};
-// Get a global variable for the actual database
-// TODO: inline this
-std::shared_ptr<GameDatabase<PushShovePosition, Push>> pushDatabase = GameDatabase<PushShovePosition, Push>::getInstance();
-
+CreateDatabase(PushShovePosition, Push, pushDatabase);
 
 Push::Push(PushShovePosition position) : position(std::move(position)) {
 	while (!this->position.empty() && this->position.back() == PieceColour::NONE) {
@@ -50,9 +43,9 @@ void Push::exploreAlternating() {
 			std::copy(lastEmptySquareIt+1, currentSquareIt+1, positionCopy.begin() + lastEmptySquareIndex);
 			positionCopy[i] = PieceColour::NONE;
 			if (*currentSquareIt == PieceColour::BLUE) {
-				leftOptions.insert(pushDatabase->getOrInsertGameId(Push(positionCopy)));
+				leftOptions.push_back(pushDatabase->getOrInsertGameId(Push(positionCopy)));
 			} else {
-				rightOptions.insert(pushDatabase->getOrInsertGameId(Push(positionCopy)));
+				rightOptions.push_back(pushDatabase->getOrInsertGameId(Push(positionCopy)));
 			}
 		} else {
 			lastEmptySquareIt = currentSquareIt;
@@ -61,7 +54,6 @@ void Push::exploreAlternating() {
 
 		++currentSquareIt;
 	}
-	alternatingExplored = true;
 }
 
 void Push::exploreSynched() {
@@ -73,63 +65,74 @@ void Push::exploreSynched() {
 		else if (position[i] == PieceColour::RED)
 			rightOptions.push_back(i);
 	}
-	synchedOptions.leftMoveCount = leftOptions.size();
-	synchedOptions.rightMoveCount = rightOptions.size();
 
 	for (const auto& leftOption : leftOptions) {
 		std::vector<GameId> redOptions;
-		size_t indexOfFirstEmptyLeftOfLeftMove = 0ul;
-		// We find the first empty square left of the current left move
-		for (size_t i = leftOption; i != -1ul; --i) {
-			if (position[i] == PieceColour::NONE) {
-				indexOfFirstEmptyLeftOfLeftMove = i;
-				break;
-			}
-		}
-
-		// Then we create the position where that entire segment is moved one square to the left
-		PushShovePosition positionCopy = position;
-		std::copy(
-			position.begin() + (long) indexOfFirstEmptyLeftOfLeftMove + 1,
-			position.begin() + (long) leftOption + 1,
-			positionCopy.begin() + (long) indexOfFirstEmptyLeftOfLeftMove
-		);
-		positionCopy[leftOption] = PieceColour::NONE;
-
-		// Then for each right move
 		for (const auto& rightOption : rightOptions) {
-			// If that right piece is already moved, we don't have to do anything and can add it to the vector of completed positions
-			if (indexOfFirstEmptyLeftOfLeftMove < rightOption && rightOption < leftOption) {
-				redOptions.push_back(pushDatabase->getOrInsertGameId(Push(positionCopy)));
-				continue;
-			}
 
-			// Otherwise, we find the first empty square left of that move
-			size_t indexOfFirstEmptyLeftOfRightMove = 0ul;
-			for (size_t i = rightOption; i != -1ul; --i) {
+			// We first move the left-most, that is smallest, hand
+			size_t smallestOption = std::min(leftOption, rightOption);
+			size_t largestOption = std::max(leftOption, rightOption);
+
+			// Find the first empty left of it
+			size_t indexOfFirstEmptyLeftOfFirstMove = 0ul;
+			for (size_t i = smallestOption; i != -1ul; --i) {
 				if (position[i] == PieceColour::NONE) {
-					indexOfFirstEmptyLeftOfRightMove = i;
+					indexOfFirstEmptyLeftOfFirstMove = i;
 					break;
 				}
 			}
 
-			// And copy that segment one square over.
-			PushShovePosition positionCopyCopy = positionCopy;
+			// And copy the segment between them one square over.
+			PushShovePosition positionCopy = position;
 			std::copy(
-				positionCopy.begin() + (long) indexOfFirstEmptyLeftOfRightMove + 1,
-				positionCopy.begin() + (long) rightOption + 1,
-				positionCopyCopy.begin() + (long) indexOfFirstEmptyLeftOfRightMove
+				position.begin() + (long) indexOfFirstEmptyLeftOfFirstMove + 1,
+				position.begin() + (long) smallestOption + 1,
+				positionCopy.begin() + (long) indexOfFirstEmptyLeftOfFirstMove
 			);
-			positionCopy[rightOption] = PieceColour::NONE;
+			positionCopy[smallestOption] = PieceColour::NONE;
 
-			// And add it to the vector of options.
-			redOptions.push_back(pushDatabase->getOrInsertGameId(Push(positionCopyCopy)));
+			// Then do the same for the right-most, that is largest, hand
+			size_t indexOfFirstEmptyLeftOfSecondMove = 0ul;
+			for (size_t i = largestOption; i != -1ul; --i) {
+				if (positionCopy[i] == PieceColour::NONE) {
+					indexOfFirstEmptyLeftOfSecondMove = i;
+					break;
+				}
+			}
+
+			std::copy(
+				positionCopy.begin() + (long) indexOfFirstEmptyLeftOfSecondMove + 1,
+				positionCopy.begin() + (long) largestOption + 1,
+				positionCopy.begin() + (long) indexOfFirstEmptyLeftOfSecondMove
+			);
+			positionCopy[largestOption] = PieceColour::NONE;
+
+			redOptions.push_back(pushDatabase->getOrInsertGameId(Push(positionCopy)));
 		}
 		synchedOptions.options.push_back(redOptions);
 	}
+}
 
-
-	synchedExplored = true;
+bool Push::determineDecidedSynchedValue() {
+	long long blueTotal = 0;
+	long long redTotal = 0;
+	for (size_t i = 0; i < position.size(); ++i) {
+		switch (position[i]) {
+			case PieceColour::BLUE:
+				blueTotal += i + 1;
+				break;
+			case PieceColour::RED:
+				redTotal += i + 1;
+			case PieceColour::NONE:
+			default:
+				break;
+		}
+	}
+	if (blueTotal * redTotal != 0)
+		return false;
+	synchedId = SGDatabase::getInstance().getDecidedGameWithValueId((double) (blueTotal - redTotal));
+	return true;
 }
 
 

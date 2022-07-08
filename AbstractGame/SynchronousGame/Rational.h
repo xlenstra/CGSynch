@@ -1,5 +1,5 @@
 //
-// Created by ardour on 03-05-22.
+// Created by Xander Lenstra on 03-05-22.
 //
 
 #ifndef CGSYNCH_2_RATIONAL_H

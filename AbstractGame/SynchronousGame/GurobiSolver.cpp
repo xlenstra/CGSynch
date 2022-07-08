@@ -1,5 +1,5 @@
 //
-// Created by ardour on 10-05-22.
+// Created by Xander Lenstra on 10-05-22.
 //
 
 #include "GurobiSolver.h"
@@ -10,7 +10,7 @@ GRBEnv GurobiSolver::gurobiEnvironment = GRBEnv(true);
 GurobiSolver::GurobiSolver(const Matrix<double>& rationalMatrix) : doubleMatrix(rationalMatrix) {
 	try {
 		gurobiEnvironment.set("OutputFlag", "0");
-		gurobiEnvironment.set("LogFile", "mip1.log");
+		gurobiEnvironment.set("LogFile", "gurobiLog.log");
 		gurobiEnvironment.start();
 	} catch (GRBException& e) {
 		std::cout << "Error code = " << e.getErrorCode () << std::endl;

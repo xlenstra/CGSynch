@@ -1,5 +1,5 @@
 //
-// Created by ardour on 22-05-22.
+// Created by Xander Lenstra on 22-05-22.
 //
 
 #include <chrono>
@@ -19,7 +19,10 @@ namespace x3 = boost::spirit::x3;
 
 namespace synchedGamesParser {
 	SGDatabase& localSGDatabase = SGDatabase::getInstance();
+	std::set<std::string> rulesetsForWhichUndecidableErrorWasShown = {};
 	bool ignoreNonSeparable = false;
+	bool printInputAgain = false;
+	bool printOutput = true;
 	bool timeOn = false;
 
 	using x3::char_;
@@ -40,21 +43,9 @@ namespace synchedGamesParser {
 		_val(ctx) = &(createPushPosition(_attr(ctx)));
 	};
 	auto createCherriesGame = [](auto& ctx) {
-		if (!ignoreNonSeparable)
-			std::cout << "Note that in general, the value of a cherries position doesn't make sense." << std::endl
-					  << "This follows from the fact that it can contain decided positions with undecided subpositions" << std::endl
-					  << "For more information, read the paper \"Combinatorial games and imperfect information variants\"" << std::endl
-					  << "By Mark van den Bergh, which discusses synchronization of non-separable games like cherries." << std::endl << std::endl
-					  << "Type 'ignoreNonSeparable' to disable this warning (this session)" << std::endl << std::endl << std::endl;
 		_val(ctx) = &(createCherriesPosition(_attr(ctx)));
 	};
 	auto createStackCherriesGame = [](auto& ctx) {
-		if (!ignoreNonSeparable)
-			std::cout << "Note that in general, the value of a (stack)cherries position doesn't make sense." << std::endl
-			          << "This follows from the fact that it can contain decided positions with undecided subpositions" << std::endl
-			          << "For more information, read the paper \"Combinatorial games and imperfect information variants\"" << std::endl
-			          << "By Mark van den Bergh, which discusses synchronization of non-separable games like cherries." << std::endl << std::endl
-			          << "Type 'ignoreNonSeparable' to disable this warning (this session)" << std::endl << std::endl << std::endl;
 		_val(ctx) = &(createStackCherriesPosition(_attr(ctx)));
 	};
 	auto createHackenbushGame = [](auto& ctx) {
@@ -75,7 +66,7 @@ namespace synchedGamesParser {
 		_val(ctx) = std::to_string(idToGame(_attr(ctx)).getBirthday());
 	};
 	auto abstractGetValue = [](auto& ctx) {
-		_val(ctx) = "Value: " + std::to_string(idToGame(_attr(ctx)).getValue());
+		_val(ctx) = std::to_string(idToGame(_attr(ctx)).getValue());
 	};
 	auto abstractGetWinners = [](auto& ctx) {
 		_val(ctx) = idToGame(_attr(ctx)).getWinners();
@@ -126,10 +117,10 @@ namespace synchedGamesParser {
 		| x3::lexeme[*x3::char_("a-zA-Z0-9_ ")[addLetter]]
 	;
 
-	const auto shoveGame_def = lit("Shove") > '(' > string[createShoveGame] > ')';
-	const auto pushGame_def = lit("Push") > '(' > string[createPushGame] > ')';
-	const auto cherriesGame_def = lit("Cherries") > '(' > string[createCherriesGame] > ')';
-	const auto stackCherriesGame_def = lit("StackCherries") > '(' > string[createStackCherriesGame] > ')';
+	const auto shoveGame_def = (lit("Shove") > '(' > string > ')')[createShoveGame];
+	const auto pushGame_def = (lit("Push") > '(' > string > ')')[createPushGame];
+	const auto cherriesGame_def = (lit("Cherries") > '(' > string > ')')[createCherriesGame];
+	const auto stackCherriesGame_def = (lit("StackCherries") > '(' > string > ')')[createStackCherriesGame];
 	const auto hackenbushGame_def = lit("Hackenbush") > '(' > (x3::int_ > char_(',') > string)[createHackenbushGame] > ')';
 
 	const auto synchedGame_def =
@@ -143,7 +134,7 @@ namespace synchedGamesParser {
 		)
 	;
 
-	const auto winnersSet_def = synchedGame[abstractGetWinners] >> lit(".GetWinners()");
+	const auto winnersSet_def = (synchedGame >> lit(".GetWinners()"))[abstractGetWinners];
 
 	const auto boolean_def =
 		(
@@ -163,7 +154,7 @@ namespace synchedGamesParser {
 		(
 			boolean[boolToString]
 			| winnersSet[winnersToString]
-			| (synchedGame[abstractGetBirthday] >> lit(".GetBirthday()"))
+			| (synchedGame >> lit(".GetBirthday()"))[abstractGetBirthday]
 			| synchedGame[abstractGetValue]
 			| string[copy]
 		) > x3::eoi
@@ -200,12 +191,7 @@ void synchedGameUI() {
 			std::cout << "Disabled warning from analyzing non-separable rulesets" << std::endl;
 			continue;
 		}
-//		else if (boost::iequals(input, "ignoreIllDefinedRulesets")) {
-//			synchedGamesParser::ignoreIllDefinedRulesets = true;
-//			std::cout << "Disabled warning from analyzing rulesets with multiple interpretations" << std::endl;
-//			continue;
-//		}
-		if (input == "help" || input == "h") {
+		else if (input == "help" || input == "h") {
 			std::cout << "You can enter the following games:" << std::endl
 			          << "Hackenbush(a, b) -- a: the number of nodes, b: the string representation of the adjacency matrix" << std::endl
 			          << "Cherries(a) -- a: The strip representation of the position" << std::endl
@@ -214,7 +200,6 @@ void synchedGameUI() {
 			          << "Shove(a) -- a: The strip representation of the position" << std::endl
 			          << std::endl
 					  << "By default, the value of this game is calculated and printed."
-//			          << "These can be added together with +, subtracted with -, compared with <, <=, ==, >=, !=, <| or |> or bracketed" << std::endl
 			          << "Additionally, the functions `.GetBirthday()` and `.GetWinner()` can be called on these synchronized games" << std::endl
 			          << std::endl
 			          << "The following commands are also supported:" << std::endl
@@ -223,6 +208,15 @@ void synchedGameUI() {
 			          << "  (t)ime -- time how long execution takes and print that time" << std::endl
 					  << "  (i)gnoreNonSeparable -- disable the warnings for analyzing non-separable games" << std::endl
 			          << std::endl;
+			continue;
+		} else if (boost::iequals(input, "toggleOutput")) {
+			synchedGamesParser::printOutput = !synchedGamesParser::printOutput;
+			if (synchedGamesParser::printOutput)
+				std::cout << "Enabled printing of output" << std::endl;
+			continue;
+		} else if (boost::iequals(input, "printInput")) {
+			synchedGamesParser::printInputAgain = !synchedGamesParser::printInputAgain;
+			continue;
 		}
 
 		auto first = input.begin();
@@ -231,6 +225,8 @@ void synchedGameUI() {
 		std::string output;
 		bool result;
 
+		if (synchedGamesParser::printInputAgain)
+			std::cout << input << std::endl;
 
 		if (synchedGamesParser::timeOn)
 			startTime = std::chrono::steady_clock::now();
@@ -253,7 +249,8 @@ void synchedGameUI() {
 			std::cout << "Program is in an invalid state. Please send your query to `xanderlenstra (at) gmail (dot) com`" << std::endl;
 			continue;
 		}
-		std::cout << "  " << output << '.' << std::endl;
+		if (synchedGamesParser::printOutput)
+			std::cout << "  " << output << '.' << std::endl;
 
 		if (synchedGamesParser::timeOn) {
 			auto takenTime = endTime - startTime;

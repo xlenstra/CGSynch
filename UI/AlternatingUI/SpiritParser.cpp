@@ -1,10 +1,11 @@
 //
-// Created by s1935534 on 04/04/2022.
+// Created by Xander Lenstra on 04/04/2022.
 //
 
 #include <iostream>
 #include <chrono>
 #include <boost/algorithm/string.hpp>
+#include <utility>
 
 #include "SpiritParser.h"
 #include "Push-Shove/Push.h"
@@ -19,6 +20,10 @@ namespace x3 = boost::spirit::x3;
 
 namespace alternatingGamesParser {
 	CGDatabase& localCGDatabase = CGDatabase::getInstance();
+
+	bool printInputAgain = false;
+	bool printOutput = true;
+	bool timeOn = false;
 
 	using x3::char_;
 	using x3::lit;
@@ -42,8 +47,12 @@ namespace alternatingGamesParser {
 //		}
 //	};
 
-	auto addLetter = [](auto& ctx) { _val(ctx) += _attr(ctx); };
 	auto copy = [](auto& ctx) { _val(ctx) = _attr(ctx); };
+	auto addLetter = [](auto& ctx) { _val(ctx) += _attr(ctx); };
+
+	auto createFraction = [](auto& ctx) {
+		_val(ctx) = std::make_pair(at_c<0>(_attr(ctx)), at_c<1>(_attr(ctx)));
+    };
 
 	auto createShoveGame = [](auto& ctx) {
 		_val(ctx) = &(createShovePosition(_attr(ctx)));
@@ -71,6 +80,13 @@ namespace alternatingGamesParser {
 	auto hackenbushToAbstract = [](auto& ctx) {
 		_val(ctx) = getAlternatingId<HackenbushPosition>(*_attr(ctx));
 	};
+	auto integerToAbstract = [](auto& ctx) {
+		_val(ctx) = localCGDatabase.getInteger(_attr(ctx)).getId();
+	};
+	auto fractionToAbstract = [](auto& ctx) {
+		_val(ctx) = localCGDatabase.getDyadicRational(_attr(ctx).first, _attr(ctx).second).getId();
+	};
+
 
 	auto unaryMinusGame = [](auto& ctx) {
 		_val(ctx) = (-idToGame(_attr(ctx))).getId();
@@ -86,13 +102,13 @@ namespace alternatingGamesParser {
 		_val(ctx) = nullptr;
 	};
 	auto createAddNode = [](auto& ctx) {
-		_val(ctx) = new SpiritParserTreeNodeAdd();
+		_val(ctx) = std::make_shared<SpiritParserTreeNodeAdd>();
 	};
 	auto createSubtractNode = [](auto& ctx) {
-		_val(ctx) = new SpiritParserTreeNodeSubtract();
+		_val(ctx) = std::make_shared<SpiritParserTreeNodeSubtract>();
 	};
 	auto createCanonicalFormNode = [](auto& ctx) {
-		_val(ctx) = new SpiritParserTreeNodeCanonical();
+		_val(ctx) = std::make_shared<SpiritParserTreeNodeCanonical>();
 	};
 
 	auto exploreTree = [](auto& ctx) {
@@ -119,17 +135,44 @@ namespace alternatingGamesParser {
 		_val(ctx) = winningPlayerGetDisplayString(_attr(ctx));
 	};
 
+	auto compareGameLess = [](auto& ctx) {
+		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) < idToGame(at_c<1>(x3::_attr(ctx)));
+	};
+	auto compareGameGreater = [](auto& ctx) {
+		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) > idToGame(at_c<1>(x3::_attr(ctx)));
+	};
+	auto compareGameLessEqual = [](auto& ctx) {
+		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) <= idToGame(at_c<1>(x3::_attr(ctx)));
+	};
+	auto compareGameGreaterEqual = [](auto& ctx) {
+		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) >= idToGame(at_c<1>(x3::_attr(ctx)));
+	};
+	auto compareGameEqual = [](auto& ctx) {
+		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) <=> idToGame(at_c<1>(x3::_attr(ctx))) == 0;
+	};
+	auto compareGameUnequal = [](auto& ctx) {
+		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) <=> idToGame(at_c<1>(x3::_attr(ctx))) != 0;
+	};
+	auto compareGameIncomparable = [](auto& ctx) {
+		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered;
+	};
+	auto compareGameLessIncomparable = [](auto& ctx) {
+		_val(ctx) =
+			at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered
+			|| at_c<0>(x3::_attr(ctx)) < at_c<1>(x3::_attr(ctx))
+			;
+	};
+	auto compareGameGreaterIncomparable = [](auto& ctx) {
+		_val(ctx) =
+			at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered
+			|| at_c<0>(x3::_attr(ctx)) > at_c<1>(x3::_attr(ctx))
+			;
+	};
 	auto compareLess = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) < at_c<1>(x3::_attr(ctx));
 	};
 	auto compareGreater = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) > at_c<1>(x3::_attr(ctx));
-	};
-	auto compareEquivalent = [](auto& ctx) {
-		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == 0;
-	};
-	auto compareUnequivalent = [](auto& ctx) {
-		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) != 0;
 	};
 	auto compareEqual = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) == at_c<1>(x3::_attr(ctx));
@@ -143,21 +186,6 @@ namespace alternatingGamesParser {
 	auto compareGreaterEqual = [](auto& ctx) {
 		_val(ctx) = at_c<0>(x3::_attr(ctx)) >= at_c<1>(x3::_attr(ctx));
 	};
-	auto compareIncomparable = [](auto& ctx) {
-		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered;
-	};
-	auto compareLessIncomparable = [](auto& ctx) {
-		_val(ctx) =
-			at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered
-			|| at_c<0>(x3::_attr(ctx)) < at_c<1>(x3::_attr(ctx))
-		;
-	};
-	auto compareGreaterIncomparable = [](auto& ctx) {
-		_val(ctx) =
-			at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered
-			|| at_c<0>(x3::_attr(ctx)) > at_c<1>(x3::_attr(ctx))
-		;
-	};
 
 	auto boolToString = [](auto& ctx) {
 		_val(ctx) = _attr(ctx) ? "true" : "false";
@@ -167,6 +195,7 @@ namespace alternatingGamesParser {
 
 	const x3::rule<class quotedString, std::string> quotedString = "readString";
 	const x3::rule<class string, std::string> string = "string";
+	const x3::rule<class fraction, std::pair<long long, long long>> fraction = "fraction";
 
 	const x3::rule<class shoveGame, Shove*> shoveGame = "shoveGame";
 	const x3::rule<class pushGame, Push*> pushGame = "pushGame";
@@ -175,7 +204,7 @@ namespace alternatingGamesParser {
 	const x3::rule<class hackenbushGame, Hackenbush*> hackenbushGame = "hackenbushGame";
 
 	const x3::rule<class abstractGame, AlternatingId> abstractGame = "abstractGame";
-	const x3::rule<class abstractGamePrime, SpiritParserTreeNode*> abstractGamePrime = "abstractGamePrime";
+	const x3::rule<class abstractGamePrime, std::shared_ptr<SpiritParserTreeNode>> abstractGamePrime = "abstractGamePrime";
 	const x3::rule<class abstractGameTerminal, AlternatingId> abstractGameTerminal = "abstractGameTerminal";
 
 	const x3::rule<class boolean, bool> boolean = "boolean";
@@ -189,6 +218,7 @@ namespace alternatingGamesParser {
 		quotedString[copy]
 		| x3::lexeme[*x3::char_("a-zA-Z0-9_ ")[addLetter]]
 	;
+	const auto fraction_def = (x3::long_long >> '/' > x3::long_long)[createFraction];
 
 	const auto shoveGame_def = lit("Shove") > '(' > string[createShoveGame] > ')';
 	const auto pushGame_def = lit("Push") > '(' > string[createPushGame] > ')';
@@ -218,6 +248,8 @@ namespace alternatingGamesParser {
 		| cherriesGame[cherriesToAbstract]
 		| stackCherriesGame[cherriesToAbstract]
 		| hackenbushGame[hackenbushToAbstract]
+		| fraction[fractionToAbstract]
+		| x3::long_long[integerToAbstract]
 		| ('(' > abstractGame[copy] > ')')
 		| ('-' > abstractGame[unaryMinusGame])
 	;
@@ -227,16 +259,16 @@ namespace alternatingGamesParser {
 	;
 
 	const auto boolean_def =
-			(abstractGame >> '<' >> abstractGame)[compareLess]
-			| (abstractGame >> '>' >> abstractGame)[compareGreater]
-			| (abstractGame >> "==" > abstractGame)[compareEquivalent]
-			| (abstractGame >> "=" > abstractGame)[compareEquivalent]
-			| (abstractGame >> "!=" > abstractGame)[compareUnequivalent]
-			| (abstractGame >> "<=" > abstractGame)[compareLessEqual]
-			| (abstractGame >> ">=" > abstractGame)[compareGreaterEqual]
-			| (abstractGame >> "||" > abstractGame)[compareIncomparable]
-			| (abstractGame >> "|>" > abstractGame)[compareGreaterIncomparable]
-			| (abstractGame >> "<|" > abstractGame)[compareLessIncomparable]
+			(abstractGame >> '<' >> abstractGame)[compareGameLess]
+			| (abstractGame >> '>' >> abstractGame)[compareGameGreater]
+			| (abstractGame >> "==" > abstractGame)[compareGameEqual]
+			| (abstractGame >> "=" > abstractGame)[compareGameEqual]
+			| (abstractGame >> "!=" > abstractGame)[compareGameUnequal]
+			| (abstractGame >> "<=" > abstractGame)[compareGameLessEqual]
+			| (abstractGame >> ">=" > abstractGame)[compareGameGreaterEqual]
+			| (abstractGame >> "||" > abstractGame)[compareGameIncomparable]
+			| (abstractGame >> "|>" > abstractGame)[compareGameGreaterIncomparable]
+			| (abstractGame >> "<|" > abstractGame)[compareGameLessIncomparable]
 			| (string >> '<' > string)[compareLess]
 			| (string >> '>' > string)[compareGreater]
 			| (string >> '=' > string)[compareEqual]
@@ -264,7 +296,8 @@ namespace alternatingGamesParser {
 		) > x3::eoi
 	;
 
-	BOOST_SPIRIT_DEFINE(quotedString, string, shoveGame, pushGame, cherriesGame, stackCherriesGame, hackenbushGame);
+	BOOST_SPIRIT_DEFINE(quotedString, string, fraction);
+	BOOST_SPIRIT_DEFINE(shoveGame, pushGame, cherriesGame, stackCherriesGame, hackenbushGame);
 	BOOST_SPIRIT_DEFINE(abstractGame, abstractGameTerminal, abstractGamePrime);
 	BOOST_SPIRIT_DEFINE(outputString);
 	BOOST_SPIRIT_DEFINE(winner);
@@ -275,7 +308,6 @@ namespace alternatingGamesParser {
 
 void alternatingGameUI() {
 	std::cout << "Enter a command. 'help' for help" << std::endl;
-	bool timeOn = false;
 	auto startTime = std::chrono::steady_clock::now();
 	auto endTime = std::chrono::steady_clock::now();
 	while (true) {
@@ -283,35 +315,48 @@ void alternatingGameUI() {
 		std::getline(std::cin, input);
 		if (input == "q" || input == "quit") return;
 		if (input == "time" || input == "t") {
-			timeOn = !timeOn;
-			std::cout << "Timing on: " << timeOn << std::endl;
+			alternatingGamesParser::timeOn = !alternatingGamesParser::timeOn;
+			std::cout << "Timing on: " << alternatingGamesParser::timeOn << std::endl;
 			continue;
 		} else if (boost::iequals(input, "timeOn")) {
-			timeOn = true;
-			std::cout << "Timing on: " << timeOn << std::endl;
+			alternatingGamesParser::timeOn = true;
+			std::cout << "Timing on: " << alternatingGamesParser::timeOn << std::endl;
 			continue;
 		} else if (boost::iequals(input, "timeOff")) {
-			timeOn = false;
-			std::cout << "Timing on: " << timeOn << std::endl;
+			alternatingGamesParser::timeOn = false;
+			std::cout << "Timing on: " << alternatingGamesParser::timeOn << std::endl;
+			continue;
+		} else if (input == "help" || input == "h") {
+			std::cout << "You can enter the following games:" << std::endl
+			          << "Hackenbush(a, b) -- a: the number of nodes, b: the string representation of the adjacency matrix" << std::endl
+			          << "Cherries(a) -- a: The strip representation of the position" << std::endl
+			          << "StackCherries(a) -- a: The strip representation of the position" << std::endl
+			          << "Push(a) -- a: The strip representation of the position" << std::endl
+			          << "Shove(a) -- a: The strip representation of the position" << std::endl
+			          << std::endl
+			          << "These can be added together with +, subtracted with -, compared with <, <=, ==, >=, !=, <| or |> or bracketed" << std::endl
+			          << "Additionally, the functions `.CanonicalForm()`, `.IsInCanonicalForm()`, `.GetBirthday()`, `isNumber()` and `getWinner()` can be called" << std::endl
+			          << std::endl
+			          << "The following commands are also supported:" << std::endl
+			          << "  (h)elp       -- show this message" << std::endl
+			          << "  (q)uit       -- quit" << std::endl
+			          << "  (t)ime       -- time how long execution takes and print that time" << std::endl
+			          << "  toggleOutput -- toggles whether output is printed" << std::endl
+					  << "  printInput   -- toggles whether input is printed again" << std::endl
+			          << std::endl;
+			continue;
+		} else if (boost::iequals(input, "toggleOutput")) {
+			alternatingGamesParser::printOutput = !alternatingGamesParser::printOutput;
+			if (alternatingGamesParser::printOutput)
+				std::cout << "Enabled printing of output" << std::endl;
+			continue;
+		} else if (boost::iequals(input, "printInput")) {
+			alternatingGamesParser::printInputAgain = !alternatingGamesParser::printInputAgain;
 			continue;
 		}
-		if (input == "help" || input == "h") {
-			std::cout << "You can enter the following games:" << std::endl
-					  << "Hackenbush(a, b) -- a: the number of nodes, b: the string representation of the adjacency matrix" << std::endl
-					  << "Cherries(a) -- a: The strip representation of the position" << std::endl
-					  << "StackCherries(a) -- a: The strip representation of the position" << std::endl
-					  << "Push(a) -- a: The strip representation of the position" << std::endl
-					  << "Shove(a) -- a: The strip representation of the position" << std::endl
-					  << std::endl
-					  << "These can be added together with +, subtracted with -, compared with <, <=, ==, >=, !=, <| or |> or bracketed" << std::endl
-					  << "Additionally, the functions `.CanonicalForm()`, `.IsInCanonicalForm()`, `.GetBirthday()`, `isNumber()` and `getWinner()` can be called" << std::endl
-					  << std::endl
-					  << "The following commands are also supported:" << std::endl
-					  << "  (h)elp -- show this message" << std::endl
-					  << "  (q)uit -- quit" << std::endl
-					  << "  (t)ime -- time how long execution takes and print that time" << std::endl
-					  << std::endl;
-		}
+
+		if (alternatingGamesParser::printInputAgain)
+			std::cout << input << std::endl;
 
 		auto first = input.begin();
 		auto last = input.end();
@@ -320,7 +365,7 @@ void alternatingGameUI() {
 		bool result;
 		std::string error;
 
-		if (timeOn)
+		if (alternatingGamesParser::timeOn)
 			startTime = std::chrono::steady_clock::now();
 
 		try {
@@ -330,7 +375,7 @@ void alternatingGameUI() {
 			error = exception.what();
 		}
 
-		if (timeOn)
+		if (alternatingGamesParser::timeOn)
 			endTime = std::chrono::steady_clock::now();
 
 
@@ -342,9 +387,11 @@ void alternatingGameUI() {
 			}
 			continue;
 		}
-		std::cout << "  " << output << '.' << std::endl;
 
-		if (timeOn) {
+		if (alternatingGamesParser::printOutput)
+			std::cout << "  " << output << '.' << std::endl;
+
+		if (alternatingGamesParser::timeOn) {
 			auto takenTime = endTime - startTime;
 			std::cout << "Caculation time: " << std::chrono::duration_cast<std::chrono::microseconds>(takenTime).count() << " microseconds" << std::endl;
 		}
