@@ -9,4 +9,4 @@ As a result, the players no longer have perfect information of the game state, w
 A link to my thesis, which goes much more in-depth on both the math behind combinatorial and synchronized game theory as well as how this program works, will be posted here when it is published on the website of Leiden University.
 
 Currently, this program is only able to analyze positions from the games Hackenbush, Push, Shove, Cherries and Stack Cherries.
-If you want to extend this program to analyze a different game, instructions can be found [in this file](Extending CGSynch for your own rulesets).
+If you want to extend this program to analyze a different game, instructions can be found [in this pdf](Extending%20CGSynch%20for%20your%20own%20rulesets.pdf).
