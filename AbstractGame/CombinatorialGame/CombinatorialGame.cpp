@@ -205,8 +205,8 @@ std::string CombinatorialGame::getDisplayString() const {
 		cacheBlock.displayString = "0";
 		return cacheBlock.displayString;
 	}
+	if (!cacheBlock.displayString.empty()) return cacheBlock.displayString;
 	if (isCanonicalNumber()) {
-
 		DyadicRational numberValue = *getNumberValue();
 		if (numberValue.denominator == 1) {
 			cacheBlock.displayString = std::to_string(numberValue.numerator);
@@ -215,7 +215,6 @@ std::string CombinatorialGame::getDisplayString() const {
 		}
 		return cacheBlock.displayString;
 	}
-	if (!cacheBlock.displayString.empty()) return cacheBlock.displayString;
 	cacheBlock.displayString = "{";
 	for (const auto &leftId: leftOptions) {
 		cacheBlock.displayString += ID_TO_GAME(leftId).getDisplayString() + ",";

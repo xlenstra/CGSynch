@@ -48,7 +48,9 @@ AlternatingId CGDatabase::getGameId(const std::set<AlternatingId>& left, const s
 		return setsToIdMap[optionsPair];
 
     existingGames.emplace_back(std::make_unique<CombinatorialGame>(left, right, existingGames.size()));
-    return existingGames.size()-1;
+	AlternatingId newId = existingGames.size()-1;
+	setsToIdMap[optionsPair] = newId;
+    return newId;
 }
 
 CombinatorialGame& CGDatabase::getGame(

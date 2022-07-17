@@ -53,13 +53,13 @@ namespace synchedGamesParser {
 	};
 
 	auto pushShoveToAbstract = [](auto& ctx) {
-		_val(ctx) = getSynchedId<PushShovePosition>(*_attr(ctx));
+		_val(ctx) = determineSynchedId<PushShovePosition>(*_attr(ctx));
 	};
 	auto cherriesToAbstract = [](auto& ctx) {
-		_val(ctx) = getSynchedId<CherriesPosition>(*_attr(ctx));
+		_val(ctx) = determineSynchedId<CherriesPosition>(*_attr(ctx));
 	};
 	auto hackenbushToAbstract = [](auto& ctx) {
-		_val(ctx) = getSynchedId<HackenbushPosition>(*_attr(ctx));
+		_val(ctx) = determineSynchedId<HackenbushPosition>(*_attr(ctx));
 	};
 
 	auto abstractGetBirthday = [](auto& ctx) {
@@ -88,7 +88,7 @@ namespace synchedGamesParser {
 	};
 
 	auto boolToString = [](auto& ctx) {
-		_val(ctx) = _attr(ctx) ? "true" : "false";
+		_val(ctx) = _attr(ctx) ? "True" : "False";
 	};
 
 
@@ -207,6 +207,8 @@ void synchedGameUI() {
 			          << "  (q)uit -- quit" << std::endl
 			          << "  (t)ime -- time how long execution takes and print that time" << std::endl
 					  << "  (i)gnoreNonSeparable -- disable the warnings for analyzing non-separable games" << std::endl
+					  << "  toggleOutput -- toggles whether output is printed" << std::endl
+					  << "  printInput   -- toggles whether input is printed again" << std::endl
 			          << std::endl;
 			continue;
 		} else if (boost::iequals(input, "toggleOutput")) {
@@ -235,7 +237,7 @@ void synchedGameUI() {
 			result = phrase_parse(first, last, synchedGamesParser::outputString, x3::ascii::space, output);
 		} catch (std::exception& exception) {
 			std::string error = exception.what();
-			std::cout << "Parsing error, please try again" << std::endl;
+			std::cout << "Error while parsing input:" << std::endl;
 			if (!error.empty()) {
 				std::cout << error << std::endl;
 			}

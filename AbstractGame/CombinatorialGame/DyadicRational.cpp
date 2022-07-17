@@ -103,9 +103,12 @@ DyadicRational DyadicRational::roundToZero() const {
 	return { numerator / denominator, 1 };
 }
 
+double DyadicRational::asDouble() const {
+	return numerator * 1.0 / denominator;
+}
+
 std::optional<DyadicRational> getSimplestNumber(const DyadicRational& left, const DyadicRational& right) {
-	if (left > right) return {};
-	if (left == right) return left;
+	if (left >= right) return {};
 	// so we now know that left < right.
 	// We then use the simplest number theorem to find the simplest number between the two.
 	if (left >= 0) {

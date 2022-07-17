@@ -34,6 +34,7 @@ public:
 
     DyadicRational simplify();
     [[nodiscard]] DyadicRational roundToZero() const;
+	[[nodiscard]] double asDouble() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const DyadicRational rational);

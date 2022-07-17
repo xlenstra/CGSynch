@@ -72,13 +72,13 @@ namespace alternatingGamesParser {
 
 
 	auto pushShoveToAbstract = [](auto& ctx) {
-		_val(ctx) = getAlternatingId<PushShovePosition>(*_attr(ctx));
+		_val(ctx) = determineAlternatingId<PushShovePosition>(*_attr(ctx));
 	};
 	auto cherriesToAbstract = [](auto& ctx) {
-		_val(ctx) = getAlternatingId<CherriesPosition>(*_attr(ctx));
+		_val(ctx) = determineAlternatingId<CherriesPosition>(*_attr(ctx));
 	};
 	auto hackenbushToAbstract = [](auto& ctx) {
-		_val(ctx) = getAlternatingId<HackenbushPosition>(*_attr(ctx));
+		_val(ctx) = determineAlternatingId<HackenbushPosition>(*_attr(ctx));
 	};
 	auto integerToAbstract = [](auto& ctx) {
 		_val(ctx) = localCGDatabase.getInteger(_attr(ctx)).getId();
@@ -113,6 +113,10 @@ namespace alternatingGamesParser {
 
 	auto exploreTree = [](auto& ctx) {
 		if (_attr(ctx)) _val(ctx) = _attr(ctx)->explore(_val(ctx));
+	};
+
+	auto abstractFromSets = [](auto& ctx) {
+		_val(ctx) = localCGDatabase.getGameId(at_c<0>(x3::_attr(ctx)), at_c<1>(x3::_attr(ctx)));
 	};
 
 	auto abstractGetDisplay = [](auto& ctx) {
@@ -154,7 +158,7 @@ namespace alternatingGamesParser {
 		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) <=> idToGame(at_c<1>(x3::_attr(ctx))) != 0;
 	};
 	auto compareGameIncomparable = [](auto& ctx) {
-		_val(ctx) = at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx)) == std::partial_ordering::unordered;
+		_val(ctx) = (at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx))) == std::partial_ordering::unordered;
 	};
 	auto compareGameLessIncomparable = [](auto& ctx) {
 		_val(ctx) =
@@ -188,7 +192,7 @@ namespace alternatingGamesParser {
 	};
 
 	auto boolToString = [](auto& ctx) {
-		_val(ctx) = _attr(ctx) ? "true" : "false";
+		_val(ctx) = _attr(ctx) ? "True" : "False";
 	};
 
 
@@ -206,6 +210,8 @@ namespace alternatingGamesParser {
 	const x3::rule<class abstractGame, AlternatingId> abstractGame = "abstractGame";
 	const x3::rule<class abstractGamePrime, std::shared_ptr<SpiritParserTreeNode>> abstractGamePrime = "abstractGamePrime";
 	const x3::rule<class abstractGameTerminal, AlternatingId> abstractGameTerminal = "abstractGameTerminal";
+
+	const x3::rule<class abstractGameSet, std::set<AlternatingId>> abstractGameSet = "abstractGameSet";
 
 	const x3::rule<class boolean, bool> boolean = "boolean";
 	const x3::rule<class winner, WinningPlayer> winner = "winner";
@@ -252,7 +258,10 @@ namespace alternatingGamesParser {
 		| x3::long_long[integerToAbstract]
 		| ('(' > abstractGame[copy] > ')')
 		| ('-' > abstractGame[unaryMinusGame])
+		| ('{' > abstractGameSet > '|' > abstractGameSet > '}')[abstractFromSets]
 	;
+
+	const auto abstractGameSet_def = abstractGame % ',';
 
 	const auto winner_def =
 		abstractGame[abstractGetWinner] >> ".GetWinner()"
@@ -298,7 +307,7 @@ namespace alternatingGamesParser {
 
 	BOOST_SPIRIT_DEFINE(quotedString, string, fraction);
 	BOOST_SPIRIT_DEFINE(shoveGame, pushGame, cherriesGame, stackCherriesGame, hackenbushGame);
-	BOOST_SPIRIT_DEFINE(abstractGame, abstractGameTerminal, abstractGamePrime);
+	BOOST_SPIRIT_DEFINE(abstractGame, abstractGameTerminal, abstractGamePrime, abstractGameSet);
 	BOOST_SPIRIT_DEFINE(outputString);
 	BOOST_SPIRIT_DEFINE(winner);
 	BOOST_SPIRIT_DEFINE(boolean);
@@ -381,7 +390,7 @@ void alternatingGameUI() {
 
 
 		if (!result) {
-			std::cout << "Parsing error, please try again" << std::endl;
+			std::cout << "Error while parsing input:" << std::endl;
 			if (!error.empty()) {
 				std::cout << error << std::endl;
 			}

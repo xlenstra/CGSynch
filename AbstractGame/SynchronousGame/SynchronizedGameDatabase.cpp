@@ -27,7 +27,9 @@ SynchedId SGDatabase::getGameId(const SynchedMatrix& synchedMatrix) {
 		return matrixToIdMap[synchedMatrix];
 
 	existingGames.emplace_back(std::make_unique<SynchronizedGame>(synchedMatrix, existingGames.size()));
-	return existingGames.size()-1;
+	SynchedId newId = existingGames.size()-1;
+	matrixToIdMap[synchedMatrix] = newId;
+	return newId;
 }
 
 SynchronizedGame& SGDatabase::getGame(const SynchedMatrix& synchedMatrix) {
