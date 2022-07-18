@@ -3,6 +3,7 @@
 
 #include <AlternatingUI/SpiritParser.h>
 #include <SynchedUI/SpiritParser.h>
+#include <boost/algorithm/string/predicate.hpp>
 #include "SynchronousGame/SynchronizedGameDatabase.h"
 #include "Hackenbush/Hackenbush.h"
 
@@ -22,35 +23,29 @@ int main() {
 		std::cout << "No Gurobi License Key was found. Analyzing Synchronized Positions will not be possible." << std::endl << std::endl;
 	}
 
-	char userInput;
-	bool running = true;
+	std::string userInput;
 
-	while(running) {
-		std::cout << "Do you want to analyze [A]lternating or [S]synchronized Combinatorial Games?" << std::endl;
+	while(true) {
+		std::cout << "Do you want to analyze Combinatorial or Ssynchronized Combinatorial Games?" << std::endl;
 		std::cin >> userInput;
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		userInput = tolower(userInput);
-		switch (userInput) {
-			case 'a':
-				alternatingGameUI();
-				break;
-			case 's':
-				synchedGameUI();
-				break;
-			case 'h':
-				std::cout << "Press 'a' for alternating" << std::endl
-						  << "Press 's' for synchronized" << std::endl
-						  << "Press 'h' for help" << std::endl
-						  << "Press 'q' to quit" << std::endl;
-				break;
-			case 'q':
-				running = false;
-				break;
-			default:
-				std::cout << "Unknown option '" << userInput << "'" << std::endl << "Press 'h' for help." << std::endl;
+		std::getline(std::cin, userInput);
+		if (boost::iequals("c", userInput) || boost::iequals(userInput, "Combinatorial")) {
+			std::cout << "Analyzing Combinatorial Games" << std::endl;
+			alternatingGameUI();
+		} else if (boost::iequals("s", userInput) || boost::iequals(userInput, "Synchronized") || boost::iequals(userInput, "Synched")) {
+			std::cout << "Analyzing Synchronized Games" << std::endl;
+			synchedGameUI();
+		} else if (boost::iequals("h", userInput) || boost::iequals(userInput, "Help")) {
+			std::cout << "Type 'c' or 'Combinatorial' to enter and analyze combinatorial games" << std::endl
+			          << "Type 'c' or 'Synched' to enter and analyze synchronized games" << std::endl
+			          << "Type 'h' or 'Help' to show this screen" << std::endl
+			          << "Type 'q' or 'quit' to quit" << std::endl;
+		} else if (boost::iequals("q", userInput) || boost::iequals(userInput, "Quit")) {
+			break;
+		} else {
+			std::cout << "Unknown option '" << userInput << "'" << std::endl << "Type 'help' for help." << std::endl;
 		}
-	};
-
+	}
 
 	return 0;
 }
