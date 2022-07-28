@@ -12,7 +12,7 @@ int main() {
 //	std::cout << "Gurobi license key location: " << std::string(tmp ?: "Key not found!") << std::endl;
 	std::cout << "-------------------------------- CGSYNCH --------------------------------" << std::endl
 	          << std::endl
-			  << "A program for analyzing Alternating and Synchronized Combinatorial games." << std::endl
+			  << "A program for analyzing Combinatorial and Synchronized Games." << std::endl
 			  << "Written by Xander Lenstra for his Bachelor Thesis at Leiden University.  " << std::endl
 			  << "Supervised by Walter Kosters (LIACS) and Mark van den Bergh (MI)." << std::endl
 			  << std::endl
@@ -26,8 +26,7 @@ int main() {
 	std::string userInput;
 
 	while(true) {
-		std::cout << "Do you want to analyze Combinatorial or Ssynchronized Combinatorial Games?" << std::endl;
-		std::cin >> userInput;
+		std::cout << "Do you want to analyze Combinatorial or Synchronized Games?" << std::endl;
 		std::getline(std::cin, userInput);
 		if (boost::iequals("c", userInput) || boost::iequals(userInput, "Combinatorial")) {
 			std::cout << "Analyzing Combinatorial Games" << std::endl;

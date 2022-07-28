@@ -144,7 +144,7 @@ std::partial_ordering CombinatorialGame::operator<=>(const CombinatorialGame& ot
 		return *leftGame.getNumberValue() <=> *rightGame.getNumberValue();
 	AlternatingId differenceGame;
 	bool swappedGames = false;
-	if (leftGame.getBirthday() < rightGame.getBirthday()) {
+	if (leftGame.getBirthday() > rightGame.getBirthday()) {
 		differenceGame = (leftGame - rightGame).getId();
 	} else {
 		differenceGame = (rightGame - leftGame).getId();

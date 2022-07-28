@@ -131,7 +131,7 @@ AlternatingId CGDatabase::_getDyadicRational(long long numerator, long long deno
 		idToGame(newGameId).setCache(
 			{
 				{},
-				{},
+				WinningPlayer::NONE,
 				{},
 				newGameId,
 				-1ul,
