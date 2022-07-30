@@ -158,7 +158,7 @@ namespace alternatingGamesParser {
 		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) <=> idToGame(at_c<1>(x3::_attr(ctx))) != 0;
 	};
 	auto compareGameIncomparable = [](auto& ctx) {
-		_val(ctx) = (at_c<0>(x3::_attr(ctx)) <=> at_c<1>(x3::_attr(ctx))) == std::partial_ordering::unordered;
+		_val(ctx) = idToGame(at_c<0>(x3::_attr(ctx))) <=> idToGame(at_c<1>(x3::_attr(ctx))) == std::partial_ordering::unordered;
 	};
 	auto compareGameLessIncomparable = [](auto& ctx) {
 		_val(ctx) =
@@ -258,10 +258,13 @@ namespace alternatingGamesParser {
 		| x3::long_long[integerToAbstract]
 		| ('(' > abstractGame[copy] > ')')
 		| ('-' > abstractGame[unaryMinusGame])
-		| ('{' > abstractGameSet > '|' > abstractGameSet > '}')[abstractFromSets]
+		| ('{' > abstractGameSet > '|' >> abstractGameSet > '}')[abstractFromSets]
 	;
 
-	const auto abstractGameSet_def = abstractGame % ',';
+	const auto abstractGameSet_def =
+		(abstractGame % ',')
+		| x3::eps
+	;
 
 	const auto winner_def =
 		abstractGame[abstractGetWinner] >> ".GetWinner()"
